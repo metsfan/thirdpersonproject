@@ -27,6 +27,6 @@ void AFireball::OnGeometryComponentHit(class AActor* OtherActor, class UPrimitiv
 {
 	Super::OnGeometryComponentHit(OtherActor, OtherComp, NormalImpulse, Hit);
 
-	GetWorldTimerManager().SetTimer(ExplosionTimer, this, )
+	//GetWorldTimerManager().SetTimer(ExplosionTimer, this, )
 	ParticleSystemComponent->SetTemplate(ExplosionParticles);
 }
