@@ -16,4 +16,5 @@ class THIRDPERSONPROJECT_API AMainPlayerController : public APlayerController
 
 		virtual void BeginPlay();
 	
+public:
 };

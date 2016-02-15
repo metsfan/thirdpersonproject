@@ -17,6 +17,12 @@ void AFireball::Tick(float deltaSeconds)
 	Super::Tick(deltaSeconds);
 }
 
+AFireball::~AFireball() 
+{
+	if (GetWorld() && GetWorldTimerManager().TimerExists(ExplosionTimer)) {
+		GetWorldTimerManager().ClearTimer(ExplosionTimer);
+	}
+}
 
 void AFireball::BeginPlay()
 {
@@ -27,6 +33,12 @@ void AFireball::OnGeometryComponentHit(class AActor* OtherActor, class UPrimitiv
 {
 	Super::OnGeometryComponentHit(OtherActor, OtherComp, NormalImpulse, Hit);
 
-	//GetWorldTimerManager().SetTimer(ExplosionTimer, this, )
+	FTimerDelegate TimerCallback;
+	TimerCallback.BindLambda([this] {
+		this->Destroy();
+	});
+
+	GetWorldTimerManager().SetTimer(ExplosionTimer, TimerCallback, 1.0, false, 1.0);
+
 	ParticleSystemComponent->SetTemplate(ExplosionParticles);
 }

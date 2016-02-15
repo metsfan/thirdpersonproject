@@ -16,10 +16,11 @@ class THIRDPERSONPROJECT_API AFireball : public AProjectileSpell
 {
 	GENERATED_BODY()
 
-		AFireball();
+	AFireball();
+	~AFireball();
 
-		virtual void BeginPlay() override;
-		virtual void Tick(float deltaSeconds) override;
+	virtual void BeginPlay() override;
+	virtual void Tick(float deltaSeconds) override;
 	
 	
 protected:
