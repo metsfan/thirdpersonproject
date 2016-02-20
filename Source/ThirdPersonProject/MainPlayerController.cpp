@@ -8,3 +8,20 @@ void AMainPlayerController::BeginPlay()
 	APlayerController::BeginPlay();
 }
 
+void AMainPlayerController::SetupInputComponent()
+{
+	InputComponent->BindAction("LeftMouseButton", IE_Pressed, this, &AMainPlayerController::OnLeftMouseButtonPressed);
+	InputComponent->BindAction("LeftMouseButton", IE_Released, this, &AMainPlayerController::OnReleasedMouseButtonPressed);
+}
+
+void AMainPlayerController::OnLeftMouseButtonPressed()
+{
+
+}
+
+void OnLeftMouseButtonReleased()
+{
+
+}
+
+

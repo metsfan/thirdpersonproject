@@ -34,4 +34,8 @@ protected:
 
 private:
 
+	void OnMousePressed();
+	void OnMouseReleased();
+
+	float MousePressedTime;
 };

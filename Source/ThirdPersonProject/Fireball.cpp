@@ -15,6 +15,8 @@ AFireball::AFireball():
 void AFireball::Tick(float deltaSeconds)
 {
 	Super::Tick(deltaSeconds);
+
+	MousePressedTime += deltaSeconds;
 }
 
 AFireball::~AFireball() 
@@ -27,6 +29,18 @@ AFireball::~AFireball()
 void AFireball::BeginPlay()
 {
 	Super::BeginPlay();
+
+	MovementComponent->SetActive(false);
+}
+
+void AFireball::OnMousePressed()
+{
+	MousePressedTime = 0;
+}
+
+void AFireball::OnMouseReleased()
+{
+	MovementComponent->SetActive(true);
 }
 
 void AFireball::OnGeometryComponentHit(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)

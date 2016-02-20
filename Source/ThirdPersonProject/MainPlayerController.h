@@ -17,4 +17,11 @@ class THIRDPERSONPROJECT_API AMainPlayerController : public APlayerController
 		virtual void BeginPlay();
 	
 public:
+
+protected:
+	virtual void SetupInputComponent() override;
+
+private:
+	void OnLeftMouseButtonPressed();
+	void OnLeftMouseButtonReleased();
 };
