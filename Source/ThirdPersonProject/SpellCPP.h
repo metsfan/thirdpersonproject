@@ -27,8 +27,13 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		float Damage;
 
+	
+
 	UPROPERTY(BlueprintReadWrite)
 		TArray<USpellEffect *> Effects;
+
+	void SetDamageScaleModifier(float modifier);
+
 
 protected:
 	virtual void ApplyEffects(AThirdPersonProjectCharacter* target);

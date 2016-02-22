@@ -42,16 +42,12 @@ UParticleSystems * UParticleSystems::GetInstance()
 	return sInstance;
 }
 
-UParticleSystem* UParticleSystems::GetParticleSystem(const FString& name)
+UParticleSystem* UParticleSystems::GetParticleSystem(const FString& path, const FString& name)
 {
-	auto instance = GetInstance();
+	auto formattedPath = FString::Printf(TEXT("ParticleSystem'%s/%s.%s'"), *path, *name, *name);
+	auto fObject = ConstructorHelpers::FObjectFinder<UParticleSystem>(*formattedPath);
 
-	auto ps = instance->ParticleSystems.Find(name);
-	if (ps) {
-		return *ps;
-	}
-
-	return nullptr;
+	return fObject.Object;
 }
 
 

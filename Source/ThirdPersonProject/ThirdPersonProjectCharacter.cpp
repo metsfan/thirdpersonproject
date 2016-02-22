@@ -113,9 +113,6 @@ void AThirdPersonProjectCharacter::SetupPlayerInputComponent(class UInputCompone
 	// handle touch devices
 	InputComponent->BindTouch(IE_Pressed, this, &AThirdPersonProjectCharacter::TouchStarted);
 	InputComponent->BindTouch(IE_Released, this, &AThirdPersonProjectCharacter::TouchStopped);
-
-	InputComponent->BindAction("LeftMouseButton", IE_Pressed, this, &AFireball::OnMousePressed);
-	InputComponent->BindAction("LeftMouseButton", IE_Released, this, &AFireball::OnMouseReleased);
 }
 
 void AThirdPersonProjectCharacter::MouseTurn(float Yaw)

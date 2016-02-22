@@ -6,23 +6,40 @@
 
 static UParticleSystem* ExplosionParticles;
 
+static const float kMaxChargeTime = 5.0f;
+
 AFireball::AFireball():
 	Super()
 {
-	ExplosionParticles = UParticleSystems::GetParticleSystem(FString("P_Explosion"));
+	ExplosionParticles = UParticleSystems::GetParticleSystem(FString("/Game/StarterContent/Particles"), FString("P_Explosion"));
 }
 
 void AFireball::Tick(float deltaSeconds)
 {
 	Super::Tick(deltaSeconds);
 
-	MousePressedTime += deltaSeconds;
+	if (!MovementComponent->IsActive()) {
+		MousePressedTime += deltaSeconds;
+
+		FireScale = FMath::Min(kMaxChargeTime, 1.0f + MousePressedTime);
+		if (FireScale == kMaxChargeTime) {
+			if (MousePressedTime >= kMaxChargeTime + 1) {
+				this->Finish();
+			}
+		}
+		else {
+			ParticleSystemComponent->SetRelativeScale3D(FVector(FireScale));
+		}
+	}
 }
 
 AFireball::~AFireball() 
 {
 	if (GetWorld() && GetWorldTimerManager().TimerExists(ExplosionTimer)) {
 		GetWorldTimerManager().ClearTimer(ExplosionTimer);
+
+		auto pc = Cast<AMainPlayerController>(GetGameInstance()->GetFirstLocalPlayerController());
+		pc->OnMouseEvent.RemoveDynamic(this, &AFireball::OnMouseEvent);
 	}
 }
 
@@ -31,16 +48,30 @@ void AFireball::BeginPlay()
 	Super::BeginPlay();
 
 	MovementComponent->SetActive(false);
-}
+	this->RemoveOwnedComponent(MovementComponent);
 
-void AFireball::OnMousePressed()
-{
 	MousePressedTime = 0;
+	
+	FireScale = 1;
+
+	auto pc = Cast<AMainPlayerController>(GetGameInstance()->GetFirstLocalPlayerController());
+	pc->OnMouseEvent.AddDynamic(this, &AFireball::OnMouseEvent);
 }
 
-void AFireball::OnMouseReleased()
+void AFireball::OnMouseEvent(UActionEvent* args)
 {
+	if (args->Type == EActionEvent::AE_Released) {
+		this->Finish();
+	}
+}
+
+void AFireball::Finish()
+{
+	//MovementComponent->UpdateComponentVelocity();
 	MovementComponent->SetActive(true);
+	this->AddOwnedComponent(MovementComponent);
+
+	this->SetDamageScaleModifier(FMath::Floor(FireScale));
 }
 
 void AFireball::OnGeometryComponentHit(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)

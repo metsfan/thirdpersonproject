@@ -3,6 +3,7 @@
 #include "ThirdPersonProject.h"
 #include "SpellCPP.h"
 #include "ThirdPersonProjectCharacter.h"
+#include "DirectDamageSpellEffect.h"
 
 // Sets default values
 ASpellCPP::ASpellCPP()
@@ -39,6 +40,15 @@ void ASpellCPP::ApplyEffects(TArray<AThirdPersonProjectCharacter *> targets)
 {
 	for (auto effect : Effects) {
 		effect->ApplyEffect(targets);
+	}
+}
+
+void ASpellCPP::SetDamageScaleModifier(float modifier)
+{
+	auto effects = this->GetComponentsByClass(UDirectDamageSpellEffect::StaticClass());
+	for (auto effect : effects) {
+		auto damageEffect = Cast<UDirectDamageSpellEffect>(effect);
+		damageEffect->Damage *= modifier;
 	}
 }
 

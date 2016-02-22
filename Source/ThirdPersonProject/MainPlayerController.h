@@ -3,11 +3,10 @@
 #pragma once
 
 #include "GameFramework/PlayerController.h"
+#include "ActionEvent.h"
 #include "MainPlayerController.generated.h"
 
-/**
- * 
- */
+
 UCLASS(Blueprintable)
 class THIRDPERSONPROJECT_API AMainPlayerController : public APlayerController
 {
@@ -17,6 +16,11 @@ class THIRDPERSONPROJECT_API AMainPlayerController : public APlayerController
 		virtual void BeginPlay();
 	
 public:
+
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnMouseEvent, class UActionEvent*, Event);
+
+	UPROPERTY(BlueprintAssignable)
+	FOnMouseEvent OnMouseEvent;
 
 protected:
 	virtual void SetupInputComponent() override;

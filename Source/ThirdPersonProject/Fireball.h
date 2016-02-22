@@ -5,8 +5,11 @@
 #include "ProjectileSpell.h"
 
 #include "Particles/ParticleSystemComponent.h"
+#include "MainPlayerController.h"
 
 #include "Fireball.generated.h"
+
+
 
 /**
  * 
@@ -33,9 +36,11 @@ protected:
 	void OnGeometryComponentHit(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
 
 private:
-
-	void OnMousePressed();
-	void OnMouseReleased();
+	UFUNCTION()
+	void OnMouseEvent(UActionEvent* args);
 
 	float MousePressedTime;
+	float FireScale;
+
+	void Finish();
 };

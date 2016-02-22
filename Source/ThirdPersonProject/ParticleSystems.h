@@ -14,7 +14,7 @@ class THIRDPERSONPROJECT_API UParticleSystems : public UObject
 	GENERATED_BODY()
 
 public:
-	static UParticleSystem* GetParticleSystem(const FString& name);
+	static UParticleSystem* GetParticleSystem(const FString& path, const FString& name);
 
 private:
 	UParticleSystems();
