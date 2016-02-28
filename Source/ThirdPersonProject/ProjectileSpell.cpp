@@ -16,8 +16,14 @@ void AProjectileSpell::BeginPlay()
 
 void AProjectileSpell::OnGeometryComponentHit(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
-	auto thirdPersonCharacter = dynamic_cast<AThirdPersonProjectCharacter *>(OtherActor);
-	if (thirdPersonCharacter) {
-		this->ApplyEffects(thirdPersonCharacter);
+	auto character = dynamic_cast<ABaseCharacter *>(OtherActor);
+	if (character) {
+		this->ApplyEffects(character);
 	}
+}
+
+void AProjectileSpell::UpdateProjectileVelocity()
+{
+	auto rotator = this->GetInstigator()->GetActorForwardVector();
+	MovementComponent->Velocity = rotator * MovementComponent->InitialSpeed;
 }

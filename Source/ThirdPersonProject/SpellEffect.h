@@ -3,7 +3,7 @@
 #pragma once
 
 #include "Components/ActorComponent.h"
-#include "ThirdPersonProjectCharacter.h"
+#include "BaseCharacter.h"
 
 #include "SpellEffect.generated.h"
 
@@ -24,6 +24,6 @@ public:
 	virtual void TickComponent( float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction ) override;
 
 	UFUNCTION(BlueprintCallable, Category="Default")
-		virtual void ApplyEffect(TArray<AThirdPersonProjectCharacter*> character);
+		virtual void ApplyEffect(TArray<ABaseCharacter*> character);
 	
 };

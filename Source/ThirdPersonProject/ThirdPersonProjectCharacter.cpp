@@ -6,7 +6,8 @@
 //////////////////////////////////////////////////////////////////////////
 // AThirdPersonProjectCharacter
 
-AThirdPersonProjectCharacter::AThirdPersonProjectCharacter()
+AThirdPersonProjectCharacter::AThirdPersonProjectCharacter():
+	Super()
 {
 	// Set size for collision capsule
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
@@ -46,7 +47,8 @@ AThirdPersonProjectCharacter::AThirdPersonProjectCharacter()
 
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named MyCharacter (to avoid direct content references in C++)
-
+	Energy = 100;
+	MaxEnergy = 100;
 
 }
 
@@ -65,25 +67,34 @@ void AThirdPersonProjectCharacter::OnAgroRadiusCollision(class AActor* OtherActo
 }
 
 void AThirdPersonProjectCharacter::BeginPlay() {
-	ACharacter::BeginPlay();
+	Super::BeginPlay();
 
 	AgroRadiusSphere->SetSphereRadius(AgroRadius);
 }
 
 void AThirdPersonProjectCharacter::Tick(float deltaSeconds)
 {
-	ACharacter::Tick(deltaSeconds);
+	Super::Tick(deltaSeconds);
 
-	HealthPercent = (float)Health / (float)MaxHealth;
+	EnergyCooloffTime += deltaSeconds;
+
+	if (EnergyCooloffTime >= EnergyCooloff && Energy < MaxEnergy) {
+		Energy += EnergyRegenRate * deltaSeconds;
+		Energy = FMath::Min(Energy, MaxEnergy);
+	}
 }
 
-void AThirdPersonProjectCharacter::AddHealth(int delta)
+void AThirdPersonProjectCharacter::ExecuteSpell(UClass* action)
 {
-	Health += delta;
+	if (action) {
+		FActorSpawnParameters spawnParams;
+		spawnParams.Owner = this;
 
-	if (Health <= 0) {
-		// Actor is dead, kill it
-		this->Destroy();
+		FTransform* transform = new FTransform(FVector(75, 0, 0));
+
+		auto actor = GetWorld()->SpawnActor(action, transform, spawnParams);
+		actor->Instigator = this;
+		actor->AttachRootComponentToActor(this);
 	}
 }
 
@@ -135,6 +146,23 @@ void AThirdPersonProjectCharacter::TouchStarted(ETouchIndex::Type FingerIndex, F
 	{
 		Jump();
 	}
+}
+
+void AThirdPersonProjectCharacter::Jump()
+{
+	if (Energy >= 20) {
+		Super::Jump();
+
+		Energy -= 20;
+
+		EnergyCooloffTime = 0;
+		EnergyTickTime = 0;
+	}
+}
+
+bool AThirdPersonProjectCharacter::CanJumpInternal_Implementation() const
+{
+	return (GetCharacterMovement()->IsFalling()) || Super::CanJumpInternal_Implementation();
 }
 
 void AThirdPersonProjectCharacter::TouchStopped(ETouchIndex::Type FingerIndex, FVector Location)

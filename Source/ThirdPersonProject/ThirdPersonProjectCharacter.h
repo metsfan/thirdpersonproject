@@ -1,10 +1,11 @@
 // Copyright 1998-2015 Epic Games, Inc. All Rights Reserved.
 #pragma once
 #include "GameFramework/Character.h"
+#include "BaseCharacter.h"
 #include "ThirdPersonProjectCharacter.generated.h"
 
 UCLASS(config=Game)
-class AThirdPersonProjectCharacter : public ACharacter
+class AThirdPersonProjectCharacter : public ABaseCharacter
 {
 	GENERATED_BODY()
 
@@ -44,19 +45,10 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Default)
 	float AgroRadius;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Default)
-		float Health;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Default)
-		float MaxHealth;
-
-	UPROPERTY(BlueprintReadOnly, Category = Default)
-		float HealthPercent;
-
 	virtual void BeginPlay() override;
 	virtual void Tick(float deltaSeconds) override;
 
-	void AddHealth(int delta);
+	
 
 protected:
 
@@ -86,10 +78,17 @@ protected:
 
 	void MouseTurn(float Yaw);
 
+	void Jump() override;
+
+	bool CanJumpInternal_Implementation() const override;
+
 protected:
 	// APawn interface
 	virtual void SetupPlayerInputComponent(class UInputComponent* InputComponent) override;
 	// End of APawn interface
+
+	UFUNCTION(BlueprintCallable, Category = "Default")
+	void ExecuteSpell(UClass* action);
 
 public:
 	/** Returns CameraBoom subobject **/
@@ -100,5 +99,9 @@ public:
 	DECLARE_MULTICAST_DELEGATE_TwoParams(FOnInCombatChanged, AThirdPersonProjectCharacter *, bool);
 
 	FOnInCombatChanged OnInCombatChanged;
+
+private:
+	float EnergyCooloffTime = 0;
+	float EnergyTickTime = 0;
 };
 

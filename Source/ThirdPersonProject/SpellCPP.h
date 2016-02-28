@@ -36,8 +36,8 @@ public:
 
 
 protected:
-	virtual void ApplyEffects(AThirdPersonProjectCharacter* target);
-	virtual void ApplyEffects(TArray<AThirdPersonProjectCharacter *> targets);
+	virtual void ApplyEffects(ABaseCharacter* target);
+	virtual void ApplyEffects(TArray<ABaseCharacter *> targets);
 
 	
 	

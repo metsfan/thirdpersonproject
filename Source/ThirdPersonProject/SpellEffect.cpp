@@ -34,7 +34,7 @@ void USpellEffect::TickComponent( float DeltaTime, ELevelTick TickType, FActorCo
 	// ...
 }
 
-void USpellEffect::ApplyEffect(TArray<AThirdPersonProjectCharacter*> characters)
+void USpellEffect::ApplyEffect(TArray<ABaseCharacter*> characters)
 {
 }
 

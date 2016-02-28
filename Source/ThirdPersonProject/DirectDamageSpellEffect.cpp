@@ -4,7 +4,7 @@
 #include "DirectDamageSpellEffect.h"
 
 
-void UDirectDamageSpellEffect::ApplyEffect(TArray<AThirdPersonProjectCharacter*> characters)
+void UDirectDamageSpellEffect::ApplyEffect(TArray<ABaseCharacter*> characters)
 {
 	for (auto character : characters) {
 		character->AddHealth(Damage * -1);

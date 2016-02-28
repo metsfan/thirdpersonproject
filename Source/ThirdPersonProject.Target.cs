@@ -8,7 +8,8 @@ public class ThirdPersonProjectTarget : TargetRules
 	public ThirdPersonProjectTarget(TargetInfo Target)
 	{
 		Type = TargetType.Game;
-	}
+        bUsesSteam = true;
+    }
 
     //
     // TargetRules interface.

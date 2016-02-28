@@ -3,7 +3,7 @@
 #ifndef __THIRDPERSONPROJECT_H__
 #define __THIRDPERSONPROJECT_H__
 
-#include "EngineMinimal.h"
+#include "Engine.h"
 #include "SlateBasics.h"
 
 #endif

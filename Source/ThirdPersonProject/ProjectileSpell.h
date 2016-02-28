@@ -25,6 +25,8 @@ public:
 	UPROPERTY(BlueprintReadWrite)
 		UShapeComponent* GeometryComponent = NULL;
 
+	void UpdateProjectileVelocity();
+
 protected:
 	UFUNCTION()
 		virtual void OnGeometryComponentHit(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);

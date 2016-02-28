@@ -31,12 +31,12 @@ void ASpellCPP::Tick( float DeltaTime )
 
 }
 
-void ASpellCPP::ApplyEffects(AThirdPersonProjectCharacter* target)
+void ASpellCPP::ApplyEffects(ABaseCharacter* target)
 {
-	this->ApplyEffects(TArrayBuilder<AThirdPersonProjectCharacter *>().Add(target).Build());
+	this->ApplyEffects(TArrayBuilder<ABaseCharacter *>().Add(target).Build());
 }
 
-void ASpellCPP::ApplyEffects(TArray<AThirdPersonProjectCharacter *> targets)
+void ASpellCPP::ApplyEffects(TArray<ABaseCharacter *> targets)
 {
 	for (auto effect : Effects) {
 		effect->ApplyEffect(targets);

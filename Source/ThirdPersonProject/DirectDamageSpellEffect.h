@@ -15,7 +15,7 @@ class THIRDPERSONPROJECT_API UDirectDamageSpellEffect : public USpellEffect
 
 public:
 	UFUNCTION(BlueprintCallable, Category = "Default")
-		virtual void ApplyEffect(TArray<AThirdPersonProjectCharacter*> characters);
+		virtual void ApplyEffect(TArray<ABaseCharacter*> characters);
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		int32 Damage;

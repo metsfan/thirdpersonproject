@@ -67,11 +67,11 @@ void AFireball::OnMouseEvent(UActionEvent* args)
 
 void AFireball::Finish()
 {
-	//MovementComponent->UpdateComponentVelocity();
 	MovementComponent->SetActive(true);
 	this->AddOwnedComponent(MovementComponent);
+	this->UpdateProjectileVelocity();
 
-	this->SetDamageScaleModifier(FMath::Floor(FireScale));
+	this->SetDamageScaleModifier(FMath::Pow(FireScale, 2));
 }
 
 void AFireball::OnGeometryComponentHit(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
