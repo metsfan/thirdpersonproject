@@ -10,7 +10,7 @@ ASpellCPP::ASpellCPP()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-
+	bReplicates = true;
 }
 
 // Called when the game starts or when spawned
@@ -36,7 +36,13 @@ void ASpellCPP::ApplyEffects(ABaseCharacter* target)
 	this->ApplyEffects(TArrayBuilder<ABaseCharacter *>().Add(target).Build());
 }
 
-void ASpellCPP::ApplyEffects(TArray<ABaseCharacter *> targets)
+bool ASpellCPP::ApplyEffects_Validate(const TArray<ABaseCharacter *>& targets)
+{
+	return true;
+}
+
+
+void ASpellCPP::ApplyEffects_Implementation(const TArray<ABaseCharacter *>& targets)
 {
 	for (auto effect : Effects) {
 		effect->ApplyEffect(targets);
