@@ -27,8 +27,6 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		float Damage;
 
-	
-
 	UPROPERTY(BlueprintReadWrite)
 		TArray<USpellEffect *> Effects;
 
@@ -37,7 +35,9 @@ public:
 
 protected:
 	virtual void ApplyEffects(ABaseCharacter* target);
-	virtual void ApplyEffects(TArray<ABaseCharacter *> targets);
+
+	UFUNCTION(Server, Reliable, WithValidation)
+	virtual void ApplyEffects(const TArray<ABaseCharacter *>& targets);
 
 	
 	

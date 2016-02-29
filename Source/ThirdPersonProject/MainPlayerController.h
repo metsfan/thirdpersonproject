@@ -17,15 +17,7 @@ class THIRDPERSONPROJECT_API AMainPlayerController : public APlayerController
 	
 public:
 
-	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnMouseEvent, class UActionEvent*, Event);
-
-	UPROPERTY(BlueprintAssignable)
-	FOnMouseEvent OnMouseEvent;
-
+	
 protected:
 	virtual void SetupInputComponent() override;
-
-private:
-	void OnLeftMouseButtonPressed();
-	void OnLeftMouseButtonReleased();
 };

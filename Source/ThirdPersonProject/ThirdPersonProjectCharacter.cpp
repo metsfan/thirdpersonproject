@@ -1,6 +1,7 @@
 // Copyright 1998-2015 Epic Games, Inc. All Rights Reserved.
 
 #include "ThirdPersonProject.h"
+#include "ActionEvent.h"
 #include "ThirdPersonProjectCharacter.h"
 
 //////////////////////////////////////////////////////////////////////////
@@ -82,13 +83,17 @@ void AThirdPersonProjectCharacter::Tick(float deltaSeconds)
 		Energy += EnergyRegenRate * deltaSeconds;
 		Energy = FMath::Min(Energy, MaxEnergy);
 	}
+
+	if (Controller) {
+		Controller->SetControlRotation(this->GetActorRotation());
+	}
 }
 
 void AThirdPersonProjectCharacter::ExecuteSpell(UClass* action)
 {
 	if (action) {
 		FActorSpawnParameters spawnParams;
-		spawnParams.Owner = this;
+		spawnParams.Owner = Controller;
 
 		FTransform* transform = new FTransform(FVector(75, 0, 0));
 
@@ -124,15 +129,36 @@ void AThirdPersonProjectCharacter::SetupPlayerInputComponent(class UInputCompone
 	// handle touch devices
 	InputComponent->BindTouch(IE_Pressed, this, &AThirdPersonProjectCharacter::TouchStarted);
 	InputComponent->BindTouch(IE_Released, this, &AThirdPersonProjectCharacter::TouchStopped);
+
+	InputComponent->BindAction("LeftMouseButton", IE_Pressed, this, &AThirdPersonProjectCharacter::OnLeftMouseButtonPressed);
+	InputComponent->BindAction("LeftMouseButton", IE_Released, this, &AThirdPersonProjectCharacter::OnLeftMouseButtonReleased);
+}
+
+void AThirdPersonProjectCharacter::OnLeftMouseButtonPressed()
+{
+	UActionEvent* args = NewObject<UActionEvent>();
+	args->Button = 0;
+	args->Type = EActionEvent::AE_Pressed;
+
+	OnMouseEvent.Broadcast(args);
+}
+
+void AThirdPersonProjectCharacter::OnLeftMouseButtonReleased()
+{
+	UActionEvent* args = NewObject<UActionEvent>();
+	args->Button = 0;
+	args->Type = EActionEvent::AE_Released;
+
+	OnMouseEvent.Broadcast(args);
 }
 
 void AThirdPersonProjectCharacter::MouseTurn(float Yaw)
 {
 	// find out which way is forward
-	FRotator Rotation = Controller->GetControlRotation();
+	FRotator Rotation = this->GetActorRotation();
 	Rotation.Yaw += Yaw;
 
-	Controller->SetControlRotation(Rotation);
+	this->SetActorRotation(Rotation);
 
 	auto transform = this->GetTransform();
 	transform.Accumulate(FTransform(FRotator(0, Yaw, 0)));

@@ -2,6 +2,7 @@
 
 #include "ThirdPersonProject.h"
 #include "Fireball.h"
+#include "ThirdPersonProjectCharacter.h"
 #include "ParticleSystems.h"
 
 static UParticleSystem* ExplosionParticles;
@@ -38,7 +39,7 @@ AFireball::~AFireball()
 	if (GetWorld() && GetWorldTimerManager().TimerExists(ExplosionTimer)) {
 		GetWorldTimerManager().ClearTimer(ExplosionTimer);
 
-		auto pc = Cast<AMainPlayerController>(GetGameInstance()->GetFirstLocalPlayerController());
+		auto pc = Cast<AThirdPersonProjectCharacter>(GetGameInstance()->GetFirstLocalPlayerController()->GetPawn());
 		pc->OnMouseEvent.RemoveDynamic(this, &AFireball::OnMouseEvent);
 	}
 }
@@ -54,7 +55,7 @@ void AFireball::BeginPlay()
 	
 	FireScale = 1;
 
-	auto pc = Cast<AMainPlayerController>(GetGameInstance()->GetFirstLocalPlayerController());
+	auto pc = Cast<AThirdPersonProjectCharacter>(GetGameInstance()->GetFirstLocalPlayerController()->GetPawn());
 	pc->OnMouseEvent.AddDynamic(this, &AFireball::OnMouseEvent);
 }
 
