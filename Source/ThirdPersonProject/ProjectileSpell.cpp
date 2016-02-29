@@ -24,6 +24,6 @@ void AProjectileSpell::OnGeometryComponentHit(class AActor* OtherActor, class UP
 
 void AProjectileSpell::UpdateProjectileVelocity()
 {
-	auto rotator = this->GetInstigator()->GetActorForwardVector();
+	auto rotator = this->GetInstigator()->GetActorRotation().Vector();
 	MovementComponent->Velocity = rotator * MovementComponent->InitialSpeed;
 }

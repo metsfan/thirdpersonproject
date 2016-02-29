@@ -24,11 +24,13 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* InputComponent) override;
 
+	void ABaseCharacter::GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLifetimeProps) const;
+
 	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Stats)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Stats, Replicated)
 		float Health;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Stats)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Stats, Replicated)
 		float MaxHealth;
 
 	UPROPERTY(BlueprintReadOnly, Category = Default)
@@ -55,5 +57,6 @@ public:
 	UPROPERTY(BlueprintReadWrite, Category = Controllers)
 		ABaseMovementController* MovementController;
 
-	void AddHealth(int delta);
+	UFUNCTION()
+	void AddHealth(int32 delta);
 };

@@ -1,6 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "ThirdPersonProject.h"
+#include "UnrealNetwork.h"
 #include "BaseCharacter.h"
 
 
@@ -11,6 +12,8 @@ ABaseCharacter::ABaseCharacter()
 	PrimaryActorTick.bCanEverTick = true;
 	EnergyRegenRate = 25.0;
 	EnergyCooloff = 1.0;
+
+	bReplicates = true;
 }
 
 // Called when the game starts or when spawned
@@ -41,13 +44,23 @@ void ABaseCharacter::SetupPlayerInputComponent(class UInputComponent* InputCompo
 
 }
 
-void ABaseCharacter::AddHealth(int delta)
+void ABaseCharacter::AddHealth(int32 delta)
 {
-	Health += delta;
+	if (HasAuthority()) {
+		Health += delta;
 
-	if (Health <= 0) {
-		// Actor is dead, kill it
-		this->Destroy();
+		if (Health <= 0) {
+			// Actor is dead, kill it
+			this->Destroy();
+		}
 	}
+}
+
+void ABaseCharacter::GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(ABaseCharacter, Health);
+	DOREPLIFETIME(ABaseCharacter, MaxHealth);
 }
 

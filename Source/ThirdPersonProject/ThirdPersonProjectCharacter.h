@@ -2,6 +2,7 @@
 #pragma once
 #include "GameFramework/Character.h"
 #include "BaseCharacter.h"
+#include "ActionEvent.h"
 #include "ThirdPersonProjectCharacter.generated.h"
 
 UCLASS(config=Game)
@@ -99,6 +100,15 @@ public:
 	DECLARE_MULTICAST_DELEGATE_TwoParams(FOnInCombatChanged, AThirdPersonProjectCharacter *, bool);
 
 	FOnInCombatChanged OnInCombatChanged;
+
+	void OnLeftMouseButtonPressed();
+	void OnLeftMouseButtonReleased();
+
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnMouseEvent, class UActionEvent*, Event);
+
+	UPROPERTY(BlueprintAssignable)
+		FOnMouseEvent OnMouseEvent;
+
 
 private:
 	float EnergyCooloffTime = 0;
