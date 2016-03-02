@@ -57,6 +57,9 @@ public:
 	UPROPERTY(BlueprintReadWrite, Category = Controllers)
 		ABaseMovementController* MovementController;
 
-	UFUNCTION()
+	UPROPERTY(Replicated)
+		FRotator CurrentRotation;
+
+	UFUNCTION(Server, Reliable, WithValidation)
 	void AddHealth(int32 delta);
 };

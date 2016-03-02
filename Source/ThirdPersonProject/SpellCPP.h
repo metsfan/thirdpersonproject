@@ -32,6 +32,7 @@ public:
 
 	void SetDamageScaleModifier(float modifier);
 
+	virtual void Finish();
 
 protected:
 	virtual void ApplyEffects(ABaseCharacter* target);
@@ -39,6 +40,10 @@ protected:
 	UFUNCTION(Server, Reliable, WithValidation)
 	virtual void ApplyEffects(const TArray<ABaseCharacter *>& targets);
 
+	UFUNCTION(Server, Reliable, WithValidation)
+	virtual void ServerFinish();
+	virtual bool ServerFinish_Validate();
+	virtual void ServerFinish_Implementation();
 	
 	
 };

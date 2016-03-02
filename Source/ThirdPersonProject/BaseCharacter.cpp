@@ -14,6 +14,7 @@ ABaseCharacter::ABaseCharacter()
 	EnergyCooloff = 1.0;
 
 	bReplicates = true;
+	bReplicateMovement = true;
 }
 
 // Called when the game starts or when spawned
@@ -21,6 +22,7 @@ void ABaseCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	CurrentRotation = this->GetActorRotation();
 }
 
 // Called every frame
@@ -35,6 +37,12 @@ void ABaseCharacter::Tick( float DeltaTime )
 	if (MaxEnergy > 0) {
 		EnergyPercent = (float)Energy / (float)MaxEnergy;
 	}
+
+	//this->SetActorRotation(CurrentRotation);
+
+	auto transform = this->GetTransform();
+	transform.SetRotation(CurrentRotation.Quaternion());
+	this->SetActorTransform(transform);
 }
 
 // Called to bind functionality to input
@@ -44,15 +52,20 @@ void ABaseCharacter::SetupPlayerInputComponent(class UInputComponent* InputCompo
 
 }
 
-void ABaseCharacter::AddHealth(int32 delta)
+bool ABaseCharacter::AddHealth_Validate(int32 delta)
 {
-	if (HasAuthority()) {
-		Health += delta;
+	return true;
+}
 
-		if (Health <= 0) {
-			// Actor is dead, kill it
-			this->Destroy();
-		}
+void ABaseCharacter::AddHealth_Implementation(int32 delta)
+{
+	Health += delta;
+
+	UE_LOG(MyLog, Log, TEXT("A character took some damage: %d"), delta);
+
+	if (Health <= 0) {
+		// Actor is dead, kill it
+		this->Destroy();
 	}
 }
 
@@ -62,5 +75,6 @@ void ABaseCharacter::GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & Ou
 
 	DOREPLIFETIME(ABaseCharacter, Health);
 	DOREPLIFETIME(ABaseCharacter, MaxHealth);
+	DOREPLIFETIME(ABaseCharacter, CurrentRotation);
 }
 

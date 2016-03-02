@@ -2,6 +2,7 @@
 
 #include "ThirdPersonProject.h"
 #include "MainPlayerController.h"
+#include "ThirdPersonProjectCharacter.h"
 #include "ActionEvent.h"
 
 void AMainPlayerController::BeginPlay()
@@ -15,5 +16,8 @@ void AMainPlayerController::SetupInputComponent()
 
 	//InputComponent->BindAction("LeftMouseButton", IE_Pressed, this, &AMainPlayerController::OnLeftMouseButtonPressed);
 	//InputComponent->BindAction("LeftMouseButton", IE_Released, this, &AMainPlayerController::OnLeftMouseButtonReleased);
+
+	//auto inputManager = UInputEventManager::Get();
+	//inputManager->Setup(InputComponent);
 }
 

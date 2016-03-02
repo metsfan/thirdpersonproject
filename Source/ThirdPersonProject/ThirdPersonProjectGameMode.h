@@ -10,6 +10,7 @@ class AThirdPersonProjectGameMode : public AGameMode
 
 public:
 	AThirdPersonProjectGameMode();
+
 };
 
 

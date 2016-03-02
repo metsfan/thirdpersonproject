@@ -3,6 +3,7 @@
 #include "GameFramework/Character.h"
 #include "BaseCharacter.h"
 #include "ActionEvent.h"
+#include "SpellCPP.h"
 #include "ThirdPersonProjectCharacter.generated.h"
 
 UCLASS(config=Game)
@@ -10,6 +11,7 @@ class AThirdPersonProjectCharacter : public ABaseCharacter
 {
 	GENERATED_BODY()
 
+protected:
 	/** Camera boom positioning the camera behind the character */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class USpringArmComponent* CameraBoom;
@@ -25,9 +27,11 @@ class AThirdPersonProjectCharacter : public ABaseCharacter
 	UPROPERTY(BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	bool InCombat;
 
+	UPROPERTY(BlueprintReadOnly)
+	ASpellCPP* ActiveSpell;
+
 	UPROPERTY(BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	AThirdPersonProjectCharacter *Target;
-
 	UFUNCTION()
 	void OnAgroRadiusCollision(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, 
 		int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
@@ -45,6 +49,7 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Default)
 	float AgroRadius;
+
 
 	virtual void BeginPlay() override;
 	virtual void Tick(float deltaSeconds) override;
@@ -77,7 +82,13 @@ protected:
 	/** Handler for when a touch input stops. */
 	void TouchStopped(ETouchIndex::Type FingerIndex, FVector Location);
 
+	UFUNCTION(Server, Reliable, WithValidation)
 	void MouseTurn(float Yaw);
+
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+		UClass* Action1;
+
 
 	void Jump() override;
 
@@ -88,7 +99,7 @@ protected:
 	virtual void SetupPlayerInputComponent(class UInputComponent* InputComponent) override;
 	// End of APawn interface
 
-	UFUNCTION(BlueprintCallable, Category = "Default")
+	UFUNCTION(BlueprintCallable, Category = "Default", Server, Reliable, WithValidation)
 	void ExecuteSpell(UClass* action);
 
 public:
@@ -101,9 +112,6 @@ public:
 
 	FOnInCombatChanged OnInCombatChanged;
 
-	void OnLeftMouseButtonPressed();
-	void OnLeftMouseButtonReleased();
-
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnMouseEvent, class UActionEvent*, Event);
 
 	UPROPERTY(BlueprintAssignable)
@@ -113,5 +121,10 @@ public:
 private:
 	float EnergyCooloffTime = 0;
 	float EnergyTickTime = 0;
+
+	void OnLeftMouseButtonPressed();
+	void OnLeftMouseButtonReleased();
+
+	
 };
 

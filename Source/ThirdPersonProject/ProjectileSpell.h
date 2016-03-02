@@ -20,9 +20,9 @@ public:
 	void BeginPlay();
 	
 	UPROPERTY(BlueprintReadWrite)
-		UProjectileMovementComponent* MovementComponent = NULL;
+	UProjectileMovementComponent* MovementComponent = NULL;
 
-	UPROPERTY(BlueprintReadWrite)
+	UPROPERTY(BlueprintReadWrite, Replicated)
 		UShapeComponent* GeometryComponent = NULL;
 
 	void UpdateProjectileVelocity();
@@ -30,4 +30,7 @@ public:
 protected:
 	UFUNCTION()
 		virtual void OnGeometryComponentHit(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
+
+	UFUNCTION(Server, Reliable, WithValidation)
+		virtual void ServerFinish();
 };

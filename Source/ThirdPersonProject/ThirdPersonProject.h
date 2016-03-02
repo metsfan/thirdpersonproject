@@ -6,4 +6,6 @@
 #include "Engine.h"
 #include "SlateBasics.h"
 
+DEFINE_LOG_CATEGORY_STATIC(MyLog, Log, All);
+
 #endif

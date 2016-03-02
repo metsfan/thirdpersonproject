@@ -11,6 +11,7 @@ ASpellCPP::ASpellCPP()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 	bReplicates = true;
+	bReplicateMovement = true;
 }
 
 // Called when the game starts or when spawned
@@ -41,7 +42,6 @@ bool ASpellCPP::ApplyEffects_Validate(const TArray<ABaseCharacter *>& targets)
 	return true;
 }
 
-
 void ASpellCPP::ApplyEffects_Implementation(const TArray<ABaseCharacter *>& targets)
 {
 	for (auto effect : Effects) {
@@ -55,6 +55,23 @@ void ASpellCPP::SetDamageScaleModifier(float modifier)
 	for (auto effect : effects) {
 		auto damageEffect = Cast<UDirectDamageSpellEffect>(effect);
 		damageEffect->Damage *= modifier;
+	}
+}
+
+bool ASpellCPP::ServerFinish_Validate()
+{
+	return true;
+}
+
+void ASpellCPP::ServerFinish_Implementation()
+{
+	this->Finish();
+}
+
+void ASpellCPP::Finish()
+{
+	if (!HasAuthority()) {
+		this->ServerFinish();
 	}
 }
 

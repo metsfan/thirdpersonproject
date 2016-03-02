@@ -27,7 +27,7 @@ class THIRDPERSONPROJECT_API AFireball : public AProjectileSpell
 	
 	
 protected:
-	UPROPERTY(BlueprintReadWrite)
+	UPROPERTY(BlueprintReadWrite, Replicated)
 		UParticleSystemComponent* ParticleSystemComponent;
 
 	FTimerHandle ExplosionTimer;
@@ -35,12 +35,17 @@ protected:
 
 	void OnGeometryComponentHit(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
 
+	UFUNCTION()
+	virtual void Finish() override;
+
 private:
 	UFUNCTION()
 	void OnMouseEvent(UActionEvent* args);
 
+	UFUNCTION(NetMulticast, Unreliable)
+	void ShowExplosionEffect();
+
 	float MousePressedTime;
 	float FireScale;
-
-	void Finish();
+	
 };

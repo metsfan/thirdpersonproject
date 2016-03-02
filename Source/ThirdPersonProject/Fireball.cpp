@@ -4,6 +4,8 @@
 #include "Fireball.h"
 #include "ThirdPersonProjectCharacter.h"
 #include "ParticleSystems.h"
+#include "ThirdPersonProjectGameMode.h"
+#include "UnrealNetwork.h"
 
 static UParticleSystem* ExplosionParticles;
 
@@ -39,8 +41,8 @@ AFireball::~AFireball()
 	if (GetWorld() && GetWorldTimerManager().TimerExists(ExplosionTimer)) {
 		GetWorldTimerManager().ClearTimer(ExplosionTimer);
 
-		auto pc = Cast<AThirdPersonProjectCharacter>(GetGameInstance()->GetFirstLocalPlayerController()->GetPawn());
-		pc->OnMouseEvent.RemoveDynamic(this, &AFireball::OnMouseEvent);
+		//auto inputManager = UInputEventManager::Get();
+		//inputManager->OnMouseEvent.RemoveDynamic(this, &AFireball::OnMouseEvent);
 	}
 }
 
@@ -55,8 +57,13 @@ void AFireball::BeginPlay()
 	
 	FireScale = 1;
 
-	auto pc = Cast<AThirdPersonProjectCharacter>(GetGameInstance()->GetFirstLocalPlayerController()->GetPawn());
-	pc->OnMouseEvent.AddDynamic(this, &AFireball::OnMouseEvent);
+	ParticleSystemComponent->SetIsReplicated(true);
+
+	if (GetGameInstance()->GetFirstLocalPlayerController() != NULL) {
+		//auto inputManager = UInputEventManager::Get();
+		auto pc = Cast<AThirdPersonProjectCharacter>(GetGameInstance()->GetFirstLocalPlayerController()->GetPawn());
+		pc->OnMouseEvent.AddDynamic(this, &AFireball::OnMouseEvent);
+	}
 }
 
 void AFireball::OnMouseEvent(UActionEvent* args)
@@ -66,13 +73,22 @@ void AFireball::OnMouseEvent(UActionEvent* args)
 	}
 }
 
+/*bool AFireball::Finish_Validate()
+{
+	return true;
+}
+*/
 void AFireball::Finish()
 {
+	Super::Finish();
+
 	MovementComponent->SetActive(true);
 	this->AddOwnedComponent(MovementComponent);
 	this->UpdateProjectileVelocity();
 
-	this->SetDamageScaleModifier(FMath::Pow(FireScale, 2));
+	if (FireScale > 2) {
+		this->SetDamageScaleModifier(FMath::Pow(FireScale, 1.1));
+	}
 }
 
 void AFireball::OnGeometryComponentHit(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
@@ -86,5 +102,19 @@ void AFireball::OnGeometryComponentHit(class AActor* OtherActor, class UPrimitiv
 
 	GetWorldTimerManager().SetTimer(ExplosionTimer, TimerCallback, 1.0, false, 1.0);
 
+	this->ShowExplosionEffect();
+
+	UE_LOG(MyLog, Log, TEXT("Showing Fireball animation on machine with role: %d"), (int32) Role.GetValue());
+}
+
+void AFireball::ShowExplosionEffect_Implementation()
+{
 	ParticleSystemComponent->SetTemplate(ExplosionParticles);
+}
+
+void AFireball::GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(AFireball, ParticleSystemComponent);
 }

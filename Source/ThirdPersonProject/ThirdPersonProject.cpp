@@ -4,4 +4,6 @@
 
 
 IMPLEMENT_PRIMARY_GAME_MODULE( FDefaultGameModuleImpl, ThirdPersonProject, "ThirdPersonProject" );
+
+//DEFINE_LOG_CATEGORY(BaseCharacterLog);
  

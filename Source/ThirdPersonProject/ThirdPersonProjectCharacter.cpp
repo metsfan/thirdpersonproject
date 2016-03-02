@@ -3,6 +3,7 @@
 #include "ThirdPersonProject.h"
 #include "ActionEvent.h"
 #include "ThirdPersonProjectCharacter.h"
+#include "ThirdPersonProjectGameMode.h"
 
 //////////////////////////////////////////////////////////////////////////
 // AThirdPersonProjectCharacter
@@ -50,7 +51,7 @@ AThirdPersonProjectCharacter::AThirdPersonProjectCharacter():
 	// are set in the derived blueprint asset named MyCharacter (to avoid direct content references in C++)
 	Energy = 100;
 	MaxEnergy = 100;
-
+	ActiveSpell = NULL;
 }
 
 void AThirdPersonProjectCharacter::OnAgroRadiusCollision(class AActor* OtherActor, class UPrimitiveComponent* OtherComp,
@@ -89,17 +90,24 @@ void AThirdPersonProjectCharacter::Tick(float deltaSeconds)
 	}
 }
 
-void AThirdPersonProjectCharacter::ExecuteSpell(UClass* action)
+bool AThirdPersonProjectCharacter::ExecuteSpell_Validate(UClass* action)
+{
+	return action != NULL;
+}
+
+void AThirdPersonProjectCharacter::ExecuteSpell_Implementation(UClass* action)
 {
 	if (action) {
 		FActorSpawnParameters spawnParams;
-		spawnParams.Owner = Controller;
+		spawnParams.Owner = this;
 
 		FTransform* transform = new FTransform(FVector(75, 0, 0));
 
 		auto actor = GetWorld()->SpawnActor(action, transform, spawnParams);
 		actor->Instigator = this;
 		actor->AttachRootComponentToActor(this);
+
+		ActiveSpell = Cast<ASpellCPP>(actor);
 	}
 }
 
@@ -136,11 +144,9 @@ void AThirdPersonProjectCharacter::SetupPlayerInputComponent(class UInputCompone
 
 void AThirdPersonProjectCharacter::OnLeftMouseButtonPressed()
 {
-	UActionEvent* args = NewObject<UActionEvent>();
-	args->Button = 0;
-	args->Type = EActionEvent::AE_Pressed;
-
-	OnMouseEvent.Broadcast(args);
+	if (Action1) {
+		this->ExecuteSpell(Action1);
+	}
 }
 
 void AThirdPersonProjectCharacter::OnLeftMouseButtonReleased()
@@ -150,19 +156,29 @@ void AThirdPersonProjectCharacter::OnLeftMouseButtonReleased()
 	args->Type = EActionEvent::AE_Released;
 
 	OnMouseEvent.Broadcast(args);
+
+	/*if (ActiveSpell) {
+		ActiveSpell->Finish();
+		ActiveSpell = NULL;
+	}*/
 }
 
-void AThirdPersonProjectCharacter::MouseTurn(float Yaw)
+bool AThirdPersonProjectCharacter::MouseTurn_Validate(float Yaw)
+{
+	return true;
+}
+
+
+
+void AThirdPersonProjectCharacter::MouseTurn_Implementation(float Yaw)
 {
 	// find out which way is forward
-	FRotator Rotation = this->GetActorRotation();
-	Rotation.Yaw += Yaw;
+	//FRotator Rotation = this->GetActorRotation();
+	CurrentRotation.Yaw += Yaw;
 
-	this->SetActorRotation(Rotation);
+	//this->SetActorRotation(Rotation);
 
-	auto transform = this->GetTransform();
-	transform.Accumulate(FTransform(FRotator(0, Yaw, 0)));
-	this->SetActorTransform(transform);
+	//CurrentRotation = Rotation;
 }
 
 void AThirdPersonProjectCharacter::TouchStarted(ETouchIndex::Type FingerIndex, FVector Location)
