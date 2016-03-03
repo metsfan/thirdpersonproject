@@ -44,6 +44,7 @@ bool ASpellCPP::ApplyEffects_Validate(const TArray<ABaseCharacter *>& targets)
 
 void ASpellCPP::ApplyEffects_Implementation(const TArray<ABaseCharacter *>& targets)
 {
+
 	for (auto effect : Effects) {
 		effect->ApplyEffect(targets);
 	}

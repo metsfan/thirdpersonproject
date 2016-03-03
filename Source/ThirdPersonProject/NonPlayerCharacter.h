@@ -6,6 +6,8 @@
 #include "AIController.h"
 #include "BaseCharacter.h"
 #include "HealthFrame.h"
+#include "Components/WidgetComponent.h"
+#include "Components/CanvasPanel.h"
 #include "NonPlayerCharacter.generated.h"
 
 UCLASS()
@@ -29,6 +31,16 @@ public:
 	UPROPERTY(BlueprintReadWrite)
 		AAIController* AIController;
 
-	UPROPERTY(BlueprintReadWrite)
-		UHealthFrame* HealthFrameWidget;
+	UPROPERTY(BlueprintReadWrite, Replicated)
+		UWidgetComponent* HealthFrameWidgetComponent;
+
+	virtual void AddHealth_Implementation(int32 delta) override;
+
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const;
+
+private:
+	UCanvasPanelSlot* CanvasSlot;
+
+	UPROPERTY(Replicated)
+	float HealthFrameVisibleTime = 0;
 };

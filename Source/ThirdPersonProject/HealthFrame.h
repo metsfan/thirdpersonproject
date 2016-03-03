@@ -3,12 +3,13 @@
 #pragma once
 
 #include "Blueprint/UserWidget.h"
-#include "BaseCharacter.h"
 #include "HealthFrame.generated.h"
 
 /**
  * 
  */
+class ABaseCharacter;
+
 UCLASS()
 class THIRDPERSONPROJECT_API UHealthFrame : public UUserWidget
 {
