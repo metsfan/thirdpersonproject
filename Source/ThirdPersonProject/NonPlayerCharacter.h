@@ -5,6 +5,7 @@
 #include "GameFramework/Character.h"
 #include "AIController.h"
 #include "BaseCharacter.h"
+#include "HealthFrame.h"
 #include "NonPlayerCharacter.generated.h"
 
 UCLASS()
@@ -28,6 +29,6 @@ public:
 	UPROPERTY(BlueprintReadWrite)
 		AAIController* AIController;
 
-
-	
+	UPROPERTY(BlueprintReadWrite)
+		UHealthFrame* HealthFrameWidget;
 };

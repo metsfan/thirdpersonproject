@@ -61,5 +61,7 @@ public:
 		FRotator CurrentRotation;
 
 	UFUNCTION(Server, Reliable, WithValidation)
-	void AddHealth(int32 delta);
+	virtual void AddHealth(int32 delta);
+	virtual bool AddHealth_Validate(int32 delta);
+	virtual void AddHealth_Implementation(int32 delta);
 };

@@ -19,7 +19,7 @@ public:
 
 	void BeginPlay();
 	
-	UPROPERTY(BlueprintReadWrite)
+	UPROPERTY(BlueprintReadWrite, Replicated)
 	UProjectileMovementComponent* MovementComponent = NULL;
 
 	UPROPERTY(BlueprintReadWrite, Replicated)

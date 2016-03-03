@@ -17,6 +17,7 @@ void ANonPlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	HealthFrameWidget->
 }
 
 // Called every frame

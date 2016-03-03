@@ -10,6 +10,7 @@ void AProjectileSpell::BeginPlay()
 	Super::BeginPlay();
 
 	GeometryComponent->IgnoreActorWhenMoving(this->GetInstigator(), true);
+	GeometryComponent->SetIsReplicated(true);
 
 	if (HasAuthority()) {
 		GeometryComponent->OnComponentHit.AddDynamic(this, &AProjectileSpell::OnGeometryComponentHit);

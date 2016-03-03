@@ -89,6 +89,8 @@ void AFireball::Finish()
 	if (FireScale > 2) {
 		this->SetDamageScaleModifier(FMath::Pow(FireScale, 1.1));
 	}
+
+	UE_LOG(MyLog, Log, TEXT("Shooting Fireball animation on machine with role: %d"), (int32)Role.GetValue())
 }
 
 void AFireball::OnGeometryComponentHit(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
@@ -104,7 +106,7 @@ void AFireball::OnGeometryComponentHit(class AActor* OtherActor, class UPrimitiv
 
 	this->ShowExplosionEffect();
 
-	UE_LOG(MyLog, Log, TEXT("Showing Fireball animation on machine with role: %d"), (int32) Role.GetValue());
+	//UE_LOG(MyLog, Log, TEXT("Showing Fireball animation on machine with role: %d"), (int32) Role.GetValue());
 }
 
 void AFireball::ShowExplosionEffect_Implementation()
