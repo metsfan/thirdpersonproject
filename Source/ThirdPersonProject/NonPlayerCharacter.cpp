@@ -25,12 +25,6 @@ void ANonPlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
-	//HealthFrameWidget = CreateWidget<UHealthFrame>(GetWorld(), HealthFrameBPClass->Class);
-	//HealthFrameWidget->SetVisibility(ESlateVisibility::Hidden);
-	//HealthFrameWidget->Character = this;
-
-	//CanvasSlot = HealthFrameCanvas->AddChildToCanvas(HealthFrameWidget);
-
 	Cast<UHealthFrame>(HealthFrameWidgetComponent->GetUserWidgetObject())->Character = this;
 	HealthFrameWidgetComponent->SetVisibility(false);
 	HealthFrameWidgetComponent->SetIsReplicated(true);

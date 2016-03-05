@@ -4,6 +4,8 @@
 #include "BaseCharacter.h"
 #include "ActionEvent.h"
 #include "SpellCPP.h"
+#include "GameHUD.h"
+
 #include "ThirdPersonProjectCharacter.generated.h"
 
 UCLASS(config=Game)
@@ -35,6 +37,9 @@ protected:
 	UFUNCTION()
 	void OnAgroRadiusCollision(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, 
 		int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
+	UPROPERTY(BlueprintReadWrite)
+	UGameHUD* PlayerHUD;
 
 public:
 	AThirdPersonProjectCharacter();

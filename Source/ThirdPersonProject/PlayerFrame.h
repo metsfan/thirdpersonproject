@@ -3,12 +3,15 @@
 #pragma once
 
 #include "Blueprint/UserWidget.h"
-#include "ThirdPersonProjectCharacter.h"
+#include "MyPlayerState.h"
 #include "PlayerFrame.generated.h"
 
 /**
  * 
  */
+
+class AThirdPersonProjectCharacter;
+
 UCLASS()
 class THIRDPERSONPROJECT_API UPlayerFrame : public UUserWidget
 {
@@ -16,6 +19,6 @@ class THIRDPERSONPROJECT_API UPlayerFrame : public UUserWidget
 
 public:
 	UPROPERTY(BlueprintReadWrite)
-	AThirdPersonProjectCharacter* Player;
+		AThirdPersonProjectCharacter* Player;
 	
 };

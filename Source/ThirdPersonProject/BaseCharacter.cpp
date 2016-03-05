@@ -2,6 +2,7 @@
 
 #include "ThirdPersonProject.h"
 #include "UnrealNetwork.h"
+#include "MyPlayerState.h"
 #include "BaseCharacter.h"
 
 

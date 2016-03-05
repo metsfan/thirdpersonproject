@@ -3,6 +3,7 @@
 #include "ThirdPersonProject.h"
 #include "ActionEvent.h"
 #include "ThirdPersonProjectCharacter.h"
+#include "MyPlayerState.h"
 #include "ThirdPersonProjectGameMode.h"
 
 //////////////////////////////////////////////////////////////////////////
@@ -51,6 +52,9 @@ AThirdPersonProjectCharacter::AThirdPersonProjectCharacter():
 	// are set in the derived blueprint asset named MyCharacter (to avoid direct content references in C++)
 	Energy = 100;
 	MaxEnergy = 100;
+	Health = 10000;
+	MaxHealth = 10000;
+	Name = "Metsfan";
 	ActiveSpell = NULL;
 }
 
@@ -87,6 +91,9 @@ void AThirdPersonProjectCharacter::Tick(float deltaSeconds)
 
 	if (Controller) {
 		Controller->SetControlRotation(this->GetActorRotation());
+
+		//auto playerState = Cast<AMyPlayerState>(this->Controller->PlayerState);
+		//playerState->Update(Cast<ABaseCharacter>(this));
 	}
 }
 

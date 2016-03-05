@@ -5,11 +5,15 @@
 #include "ThirdPersonProjectCharacter.h"
 #include "GameFramework/HUD.h"
 #include "MainPlayerController.h"
+#include "MainGameState.h"
+#include "MyPlayerState.h"
 #include "EngineUtils.h"
+#include "AIController.h"
 
-static const float kSpawnTimerInterval = 5.0;
+static const float kSpawnTimerInterval = 20.0;
 
 static ConstructorHelpers::FClassFinder<AActor> *GenericEnemyBPClass = NULL;
+static ConstructorHelpers::FClassFinder<AAIController> *GenericEnemyAIControllerBPClass = NULL;
 
 AThirdPersonProjectGameMode::AThirdPersonProjectGameMode() :
 	AGameMode()
@@ -21,11 +25,18 @@ AThirdPersonProjectGameMode::AThirdPersonProjectGameMode() :
 		GenericEnemyBPClass = new ConstructorHelpers::FClassFinder<AActor>(TEXT("/Game/BP_GenericEnemy"));
 	}
 
+	if (!GenericEnemyAIControllerBPClass) {
+		GenericEnemyAIControllerBPClass = new ConstructorHelpers::FClassFinder<AAIController>(TEXT("/Game/GenericEnemyAIController"));
+	}
+
 	if (PlayerPawnBPClass.Class != NULL)
 	{
 		DefaultPawnClass = PlayerPawnBPClass.Class;
 		PlayerControllerClass = AMainPlayerController::StaticClass();
 	}
+
+	GameStateClass = AMainGameState::StaticClass();
+	PlayerStateClass = AMyPlayerState::StaticClass();
 }
 
 AThirdPersonProjectGameMode::~AThirdPersonProjectGameMode()
@@ -52,7 +63,7 @@ void AThirdPersonProjectGameMode::BeginPlay()
 		this->SpawnEnemies();
 	});
 
-	GetWorldTimerManager().SetTimer(SpawnTimer, TimerCallback, kSpawnTimerInterval, true, 0.0);
+	GetWorldTimerManager().SetTimer(SpawnTimer, TimerCallback, kSpawnTimerInterval, true, 5.0);
 }
 
 void AThirdPersonProjectGameMode::UpdateSpawnPoints()
@@ -68,12 +79,13 @@ void AThirdPersonProjectGameMode::SpawnEnemies()
 	auto spawnPoint = SpawnPoints[FMath::RandRange(0, SpawnPoints.Num() - 1)];
 	auto spawnLocation = spawnPoint->GetActorLocation();
 
-	int numSpawns = FMath::RandRange(1, 5);
+	int numSpawns = FMath::RandRange(4, 7);
 
 	for (int i = 0; i < numSpawns; i++) {
 		auto staggeredLocation = spawnLocation + (FMath::VRand() * FMath::FRandRange(5, 10));
 		auto transform = FTransform(staggeredLocation);
 
-		GetWorld()->SpawnActor(GenericEnemyBPClass->Class, &transform);
+		auto actor = Cast<APawn>(GetWorld()->SpawnActor(GenericEnemyBPClass->Class, &transform));
+		actor->AIControllerClass = GenericEnemyAIControllerBPClass->Class;
 	}
 }

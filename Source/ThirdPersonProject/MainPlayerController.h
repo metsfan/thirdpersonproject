@@ -12,9 +12,12 @@ class THIRDPERSONPROJECT_API AMainPlayerController : public APlayerController
 {
 	GENERATED_BODY()
 
+	AMainPlayerController();
 
-		virtual void BeginPlay();
+	virtual void BeginPlay();
 	
+	virtual void SetPawn(APawn* InPawn) override;
+	virtual void Tick(float deltaSeconds) override;
 public:
 
 	
