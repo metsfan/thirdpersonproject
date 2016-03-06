@@ -4,6 +4,7 @@
 #include "ProjectileSpell.h"
 #include "UnrealNetwork.h"
 #include "ThirdPersonProjectCharacter.h"
+#include "BaseCharacter.h"
 
 void AProjectileSpell::BeginPlay()
 {
@@ -14,10 +15,21 @@ void AProjectileSpell::BeginPlay()
 
 	if (HasAuthority()) {
 		GeometryComponent->OnComponentHit.AddDynamic(this, &AProjectileSpell::OnGeometryComponentHit);
+		GeometryComponent->OnComponentBeginOverlap.AddDynamic(this, &AProjectileSpell::OnGeometryComponentBeginOverlap);
 	}
 }
 
 void AProjectileSpell::OnGeometryComponentHit(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
+{
+	this->OnCollision(OtherActor);
+}
+
+void AProjectileSpell::OnGeometryComponentBeginOverlap(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bSweepTest, const FHitResult& Hit)
+{
+	this->OnCollision(OtherActor);
+}
+
+void AProjectileSpell::OnCollision(class AActor* OtherActor)
 {
 	if (Role == ROLE_Authority) {
 		auto character = dynamic_cast<ABaseCharacter *>(OtherActor);
@@ -29,7 +41,8 @@ void AProjectileSpell::OnGeometryComponentHit(class AActor* OtherActor, class UP
 
 void AProjectileSpell::UpdateProjectileVelocity()
 {
-	auto rotator = this->GetInstigator()->GetActorRotation().Vector();
+	auto character = Cast<ABaseCharacter>(this->GetInstigator());
+	auto rotator = character->Controller->GetControlRotation().Vector();
 	MovementComponent->Velocity = rotator * MovementComponent->InitialSpeed;
 }
 
@@ -40,6 +53,10 @@ void AProjectileSpell::GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & 
 	DOREPLIFETIME(AProjectileSpell, GeometryComponent);
 }
 
+void AProjectileSpell::StopCollision()
+{
+	GeometryComponent->OnComponentHit.RemoveDynamic(this, &AProjectileSpell::OnGeometryComponentHit);
+}
 
 bool AProjectileSpell::ServerFinish_Validate()
 {

@@ -42,8 +42,6 @@ void ANonPlayerCharacter::Tick( float DeltaTime )
 			HealthFrameWidgetComponent->SetVisibility(false);
 		}
 	}
-
-	
 }
 
 // Called to bind functionality to input

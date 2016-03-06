@@ -79,7 +79,9 @@ protected:
 	 * Called via input to turn look up/down at a given rate. 
 	 * @param Rate	This is a normalized rate, i.e. 1.0 means 100% of desired turn rate
 	 */
-	void LookUpAtRate(float Rate);
+
+	void MouseTilt(float Pitch);
+	void MouseTurn(float Yaw);
 
 	/** Handler for when a touch input begins. */
 	void TouchStarted(ETouchIndex::Type FingerIndex, FVector Location);
@@ -87,8 +89,7 @@ protected:
 	/** Handler for when a touch input stops. */
 	void TouchStopped(ETouchIndex::Type FingerIndex, FVector Location);
 
-	UFUNCTION(Server, Reliable, WithValidation)
-	void MouseTurn(float Yaw);
+	
 
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)

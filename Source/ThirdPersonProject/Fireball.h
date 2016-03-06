@@ -32,8 +32,7 @@ protected:
 
 	FTimerHandle ExplosionTimer;
 
-
-	void OnGeometryComponentHit(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
+	void OnCollision(class AActor* OtherActor) override;
 
 	UFUNCTION()
 	virtual void Finish() override;
@@ -42,7 +41,7 @@ private:
 	UFUNCTION()
 	void OnMouseEvent(UActionEvent* args);
 
-	UFUNCTION(NetMulticast, Unreliable)
+	UFUNCTION()
 	void ShowExplosionEffect();
 
 	float MousePressedTime;

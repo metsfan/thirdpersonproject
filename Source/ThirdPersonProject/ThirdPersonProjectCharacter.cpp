@@ -20,26 +20,26 @@ AThirdPersonProjectCharacter::AThirdPersonProjectCharacter():
 	BaseLookUpRate = 45.f;
 
 	// Don't rotate when the controller rotates. Let that just affect the camera.
-	bUseControllerRotationPitch = false;
-	bUseControllerRotationYaw = false;
-	bUseControllerRotationRoll = false;
+	//bUseControllerRotationPitch = false;
+	bUseControllerRotationYaw = true;
+	//bUseControllerRotationRoll = false;
 
 	// Configure character movement
-	GetCharacterMovement()->bOrientRotationToMovement = false; // Character moves in the direction of input...	
-	GetCharacterMovement()->RotationRate = FRotator(0.0f, 540.0f, 0.0f); // ...at this rotation rate
-	GetCharacterMovement()->JumpZVelocity = 600.f;
-	GetCharacterMovement()->AirControl = 0.2f;
+	//GetCharacterMovement()->bOrientRotationToMovement = false; // Character moves in the direction of input...	
+	//GetCharacterMovement()->RotationRate = FRotator(0.0f, 540.0f, 0.0f); // ...at this rotation rate
+	//GetCharacterMovement()->JumpZVelocity = 600.f;
+	//GetCharacterMovement()->AirControl = 0.2f;
 
 	// Create a camera boom (pulls in towards the player if there is a collision)
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
 	CameraBoom->AttachTo(RootComponent);
 	CameraBoom->TargetArmLength = 300.0f; // The camera follows at this distance behind the character	
-	CameraBoom->bUsePawnControlRotation = true; // Rotate the arm based on the controller
+	//CameraBoom->bUsePawnControlRotation = true; // Rotate the arm based on the controller
 
 	// Create a follow camera
 	FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
 	FollowCamera->AttachTo(CameraBoom, USpringArmComponent::SocketName); // Attach the camera to the end of the boom and let the boom adjust to match the controller orientation
-	FollowCamera->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
+	//FollowCamera->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
 
 	// Create agro radius component
 	AgroRadiusSphere = CreateDefaultSubobject<USphereComponent>(TEXT("AgroRadius"));
@@ -90,7 +90,7 @@ void AThirdPersonProjectCharacter::Tick(float deltaSeconds)
 	}
 
 	if (Controller) {
-		Controller->SetControlRotation(this->GetActorRotation());
+		//Controller->SetControlRotation(this->GetActorRotation());
 
 		//auto playerState = Cast<AMyPlayerState>(this->Controller->PlayerState);
 		//playerState->Update(Cast<ABaseCharacter>(this));
@@ -138,12 +138,8 @@ void AThirdPersonProjectCharacter::SetupPlayerInputComponent(class UInputCompone
 	// "turnrate" is for devices that we choose to treat as a rate of change, such as an analog joystick
 	InputComponent->BindAxis("Turn", this, &AThirdPersonProjectCharacter::MouseTurn);
 	//InputComponent->BindAxis("TurnRate", this, &AThirdPersonProjectCharacter::TurnAtRate);
-	//InputComponent->BindAxis("LookUp", this, &APawn::AddControllerPitchInput);
+	InputComponent->BindAxis("LookUp", this, &AThirdPersonProjectCharacter::MouseTilt);
 	//InputComponent->BindAxis("LookUpRate", this, &AThirdPersonProjectCharacter::LookUpAtRate);
-
-	// handle touch devices
-	InputComponent->BindTouch(IE_Pressed, this, &AThirdPersonProjectCharacter::TouchStarted);
-	InputComponent->BindTouch(IE_Released, this, &AThirdPersonProjectCharacter::TouchStopped);
 
 	InputComponent->BindAction("LeftMouseButton", IE_Pressed, this, &AThirdPersonProjectCharacter::OnLeftMouseButtonPressed);
 	InputComponent->BindAction("LeftMouseButton", IE_Released, this, &AThirdPersonProjectCharacter::OnLeftMouseButtonReleased);
@@ -170,22 +166,16 @@ void AThirdPersonProjectCharacter::OnLeftMouseButtonReleased()
 	}*/
 }
 
-bool AThirdPersonProjectCharacter::MouseTurn_Validate(float Yaw)
+void AThirdPersonProjectCharacter::MouseTurn(float Yaw)
 {
-	return true;
+	AddControllerYawInput(Yaw);
 }
 
 
-
-void AThirdPersonProjectCharacter::MouseTurn_Implementation(float Yaw)
+void AThirdPersonProjectCharacter::MouseTilt(float Pitch)
 {
-	// find out which way is forward
-	//FRotator Rotation = this->GetActorRotation();
-	CurrentRotation.Yaw += Yaw;
-
-	//this->SetActorRotation(Rotation);
-
-	//CurrentRotation = Rotation;
+	// calculate delta for this frame from the rate information
+	AddControllerPitchInput(Pitch);
 }
 
 void AThirdPersonProjectCharacter::TouchStarted(ETouchIndex::Type FingerIndex, FVector Location)
@@ -222,17 +212,6 @@ void AThirdPersonProjectCharacter::TouchStopped(ETouchIndex::Type FingerIndex, F
 	}
 }
 
-void AThirdPersonProjectCharacter::TurnAtRate(float Rate)
-{
-	// calculate delta for this frame from the rate information
-	AddControllerYawInput(Rate * BaseTurnRate * GetWorld()->GetDeltaSeconds());
-}
-
-void AThirdPersonProjectCharacter::LookUpAtRate(float Rate)
-{
-	// calculate delta for this frame from the rate information
-	AddControllerPitchInput(Rate * BaseLookUpRate * GetWorld()->GetDeltaSeconds());
-}
 
 void AThirdPersonProjectCharacter::MoveForward(float Value)
 {

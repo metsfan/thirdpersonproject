@@ -8,6 +8,7 @@
 #include "HealthFrame.h"
 #include "Components/WidgetComponent.h"
 #include "Components/CanvasPanel.h"
+#include "BehaviorTree/BlackboardComponent.h"
 #include "NonPlayerCharacter.generated.h"
 
 UCLASS()

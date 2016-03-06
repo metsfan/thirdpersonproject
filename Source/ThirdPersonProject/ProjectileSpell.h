@@ -27,10 +27,20 @@ public:
 
 	void UpdateProjectileVelocity();
 
+	void StopCollision();
+
 protected:
-	UFUNCTION()
-		virtual void OnGeometryComponentHit(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
+	
+	virtual void OnCollision(class AActor* OtherActor);
 
 	UFUNCTION(Server, Reliable, WithValidation)
 		virtual void ServerFinish();
+
+private:
+	UFUNCTION()
+		void OnGeometryComponentHit(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
+
+	UFUNCTION()
+		void OnGeometryComponentBeginOverlap(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bSweepTest, const FHitResult& Hit);
+
 };

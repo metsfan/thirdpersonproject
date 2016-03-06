@@ -41,9 +41,9 @@ void ABaseCharacter::Tick( float DeltaTime )
 
 	//this->SetActorRotation(CurrentRotation);
 
-	auto transform = this->GetTransform();
-	transform.SetRotation(CurrentRotation.Quaternion());
-	this->SetActorTransform(transform);
+	//auto transform = this->GetTransform();
+	//transform.SetRotation(CurrentRotation.Quaternion());
+	//this->SetActorTransform(transform);
 }
 
 // Called to bind functionality to input

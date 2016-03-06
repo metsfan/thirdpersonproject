@@ -9,12 +9,18 @@
 
 static UParticleSystem* ExplosionParticles;
 
+static ConstructorHelpers::FClassFinder<AActor> *ExplosionEffectBPClass = NULL;
+
 static const float kMaxChargeTime = 5.0f;
 
 AFireball::AFireball():
 	Super()
 {
 	ExplosionParticles = UParticleSystems::GetParticleSystem(FString("/Game/StarterContent/Particles"), FString("P_Explosion"));
+
+	if (!ExplosionEffectBPClass) {
+		ExplosionEffectBPClass = new ConstructorHelpers::FClassFinder<AActor>(TEXT("/Game/BP_ExplosionEffect"));
+	}
 }
 
 void AFireball::Tick(float deltaSeconds)
@@ -38,11 +44,8 @@ void AFireball::Tick(float deltaSeconds)
 
 AFireball::~AFireball() 
 {
-	if (GetWorld() && GetWorldTimerManager().TimerExists(ExplosionTimer)) {
+	if (GetWorld()) {
 		GetWorldTimerManager().ClearTimer(ExplosionTimer);
-
-		//auto inputManager = UInputEventManager::Get();
-		//inputManager->OnMouseEvent.RemoveDynamic(this, &AFireball::OnMouseEvent);
 	}
 }
 
@@ -90,28 +93,40 @@ void AFireball::Finish()
 		this->SetDamageScaleModifier(FMath::Pow(FireScale, 1.1));
 	}
 
-	UE_LOG(MyLog, Log, TEXT("Shooting Fireball animation on machine with role: %d"), (int32)Role.GetValue())
-}
-
-void AFireball::OnGeometryComponentHit(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
-{
-	Super::OnGeometryComponentHit(OtherActor, OtherComp, NormalImpulse, Hit);
-
 	FTimerDelegate TimerCallback;
 	TimerCallback.BindLambda([this] {
+		this->ShowExplosionEffect();
+
 		this->Destroy();
 	});
 
-	GetWorldTimerManager().SetTimer(ExplosionTimer, TimerCallback, 1.0, false, 1.0);
+	GetWorldTimerManager().SetTimer(ExplosionTimer, TimerCallback, 0.0, false, 3.0);
+
+	UE_LOG(MyLog, Log, TEXT("Shooting Fireball animation on machine with role: %d"), (int32)Role.GetValue())
+}
+
+void AFireball::OnCollision(class AActor* OtherActor)
+{
+	Super::OnCollision(OtherActor);
+
+	StopCollision();
+
+	
+	//GetWorldTimerManager().SetTimer(ExplosionTimer, TimerCallback, 1.0, false, 1.0);
 
 	this->ShowExplosionEffect();
 
+	this->Destroy();
+
+	GetWorldTimerManager().ClearTimer(ExplosionTimer);
 	//UE_LOG(MyLog, Log, TEXT("Showing Fireball animation on machine with role: %d"), (int32) Role.GetValue());
 }
 
-void AFireball::ShowExplosionEffect_Implementation()
+void AFireball::ShowExplosionEffect()
 {
-	ParticleSystemComponent->SetTemplate(ExplosionParticles);
+	//ParticleSystemComponent->SetTemplate(ExplosionParticles);
+	FTransform transform(this->GetTransform().GetLocation());
+	GetWorld()->SpawnActor(ExplosionEffectBPClass->Class, &transform);
 }
 
 void AFireball::GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLifetimeProps) const

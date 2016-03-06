@@ -59,8 +59,14 @@ void AMainPlayerController::Tick(float deltaSeconds)
 	if (Player && this->PlayerState) {
 		if (HasAuthority()) {
 			//Player->AddHealth(-100);
+			PlayerState->Health = Player->Health;
 		}
-		//Player->Health = PlayerState->Health;
+		else
+		{
+			Player->Health = PlayerState->Health;
+		}
+		
+		//
 		//Player->MaxHealth = PlayerState->MaxHealth;
 	}
 }

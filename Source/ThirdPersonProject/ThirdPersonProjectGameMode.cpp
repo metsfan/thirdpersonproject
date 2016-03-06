@@ -9,10 +9,11 @@
 #include "MyPlayerState.h"
 #include "EngineUtils.h"
 #include "AIController.h"
+#include "Blueprint/AIBlueprintHelperLibrary.h"
 
-static const float kSpawnTimerInterval = 20.0;
+static const float kSpawnTimerInterval = 5.0f;
 
-static ConstructorHelpers::FClassFinder<AActor> *GenericEnemyBPClass = NULL;
+static ConstructorHelpers::FClassFinder<ACharacter> *GenericEnemyBPClass = NULL;
 static ConstructorHelpers::FClassFinder<AAIController> *GenericEnemyAIControllerBPClass = NULL;
 
 AThirdPersonProjectGameMode::AThirdPersonProjectGameMode() :
@@ -22,7 +23,7 @@ AThirdPersonProjectGameMode::AThirdPersonProjectGameMode() :
 	static ConstructorHelpers::FClassFinder<APawn> PlayerPawnBPClass(TEXT("/Game/ThirdPersonCPP/Blueprints/ThirdPersonCharacter"));
 
 	if (!GenericEnemyBPClass) {
-		GenericEnemyBPClass = new ConstructorHelpers::FClassFinder<AActor>(TEXT("/Game/BP_GenericEnemy"));
+		GenericEnemyBPClass = new ConstructorHelpers::FClassFinder<ACharacter>(TEXT("/Game/BP_GenericEnemy"));
 	}
 
 	if (!GenericEnemyAIControllerBPClass) {
@@ -63,7 +64,7 @@ void AThirdPersonProjectGameMode::BeginPlay()
 		this->SpawnEnemies();
 	});
 
-	GetWorldTimerManager().SetTimer(SpawnTimer, TimerCallback, kSpawnTimerInterval, true, 5.0);
+	//GetWorldTimerManager().SetTimer(SpawnTimer, TimerCallback, kSpawnTimerInterval, true, 1.0);
 }
 
 void AThirdPersonProjectGameMode::UpdateSpawnPoints()
@@ -79,13 +80,13 @@ void AThirdPersonProjectGameMode::SpawnEnemies()
 	auto spawnPoint = SpawnPoints[FMath::RandRange(0, SpawnPoints.Num() - 1)];
 	auto spawnLocation = spawnPoint->GetActorLocation();
 
-	int numSpawns = FMath::RandRange(4, 7);
+	int numSpawns = FMath::RandRange(1, 3);
 
 	for (int i = 0; i < numSpawns; i++) {
-		auto staggeredLocation = spawnLocation + (FMath::VRand() * FMath::FRandRange(5, 10));
+		auto staggeredLocation = spawnLocation + FVector(i * 10, 0, 0);
 		auto transform = FTransform(staggeredLocation);
 
-		auto actor = Cast<APawn>(GetWorld()->SpawnActor(GenericEnemyBPClass->Class, &transform));
-		actor->AIControllerClass = GenericEnemyAIControllerBPClass->Class;
+		auto actor = UAIBlueprintHelperLibrary::SpawnAIFromClass(this, GenericEnemyBPClass->Class, NULL, staggeredLocation);
+		//actor->AIControllerClass = NewObject<AController>(GetLevel(), GenericEnemyAIControllerBPClass->Class);
 	}
 }
