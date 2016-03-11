@@ -20,7 +20,9 @@ class THIRDPERSONPROJECT_API AMainPlayerController : public APlayerController
 	virtual void Tick(float deltaSeconds) override;
 public:
 
-	
+	UPROPERTY(BlueprintReadWrite)
+	FString Nickname;
+
 protected:
 	virtual void SetupInputComponent() override;
 };

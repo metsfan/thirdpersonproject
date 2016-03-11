@@ -16,4 +16,6 @@ class THIRDPERSONPROJECT_API AMainGameState : public AGameState
 public:
 	UPROPERTY(BlueprintReadOnly)
 	float GameStartCountdown;
+
+
 };

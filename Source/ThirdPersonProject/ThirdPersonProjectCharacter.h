@@ -44,6 +44,8 @@ protected:
 public:
 	AThirdPersonProjectCharacter();
 
+	virtual bool IsPlayerControlled() { return true; }
+
 	/** Base turn rate, in deg/sec. Other scaling may affect final turn rate. */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Camera)
 	float BaseTurnRate;
@@ -93,7 +95,7 @@ protected:
 
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-		UClass* Action1;
+		UClass* MainAction;
 
 
 	void Jump() override;

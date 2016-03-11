@@ -42,8 +42,10 @@ void AProjectileSpell::OnCollision(class AActor* OtherActor)
 void AProjectileSpell::UpdateProjectileVelocity()
 {
 	auto character = Cast<ABaseCharacter>(this->GetInstigator());
-	auto rotator = character->Controller->GetControlRotation().Vector();
-	MovementComponent->Velocity = rotator * MovementComponent->InitialSpeed;
+	if (character->Controller) {
+		auto rotator = character->Controller->GetControlRotation().Vector();
+		MovementComponent->Velocity = rotator * MovementComponent->InitialSpeed;
+	}
 }
 
 void AProjectileSpell::GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLifetimeProps) const

@@ -26,6 +26,7 @@ public:
 
 	void ABaseCharacter::GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLifetimeProps) const;
 
+	virtual bool IsPlayerControlled() { return false; }
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Stats, Replicated)
 		float Health;

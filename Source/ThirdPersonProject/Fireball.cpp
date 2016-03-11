@@ -54,7 +54,7 @@ void AFireball::BeginPlay()
 	Super::BeginPlay();
 
 	MovementComponent->SetActive(false);
-	this->RemoveOwnedComponent(MovementComponent);
+	this->RemoveInstanceComponent(MovementComponent);
 
 	MousePressedTime = 0;
 	
@@ -64,8 +64,10 @@ void AFireball::BeginPlay()
 
 	if (GetGameInstance()->GetFirstLocalPlayerController() != NULL) {
 		//auto inputManager = UInputEventManager::Get();
-		auto pc = Cast<AThirdPersonProjectCharacter>(GetGameInstance()->GetFirstLocalPlayerController()->GetPawn());
-		pc->OnMouseEvent.AddDynamic(this, &AFireball::OnMouseEvent);
+		auto pc = Cast<AThirdPersonProjectCharacter>(GetOwner());
+		if (pc && pc->IsLocallyControlled()) {
+			pc->OnMouseEvent.AddDynamic(this, &AFireball::OnMouseEvent);
+		}
 	}
 }
 
@@ -86,7 +88,7 @@ void AFireball::Finish()
 	Super::Finish();
 
 	MovementComponent->SetActive(true);
-	this->AddOwnedComponent(MovementComponent);
+	this->AddInstanceComponent(MovementComponent);
 	this->UpdateProjectileVelocity();
 
 	if (FireScale > 2) {

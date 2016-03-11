@@ -35,6 +35,12 @@ public:
 	virtual void Finish();
 
 protected:
+	UPROPERTY(BlueprintReadWrite)
+		float Cooldown;
+
+	UPROPERTY(BlueprintReadWrite)
+		float MinimumRange;
+
 	virtual void ApplyEffects(ABaseCharacter* target);
 
 	UFUNCTION(Server, Reliable, WithValidation)

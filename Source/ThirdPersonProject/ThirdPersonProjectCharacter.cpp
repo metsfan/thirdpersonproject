@@ -141,14 +141,14 @@ void AThirdPersonProjectCharacter::SetupPlayerInputComponent(class UInputCompone
 	InputComponent->BindAxis("LookUp", this, &AThirdPersonProjectCharacter::MouseTilt);
 	//InputComponent->BindAxis("LookUpRate", this, &AThirdPersonProjectCharacter::LookUpAtRate);
 
-	InputComponent->BindAction("LeftMouseButton", IE_Pressed, this, &AThirdPersonProjectCharacter::OnLeftMouseButtonPressed);
-	InputComponent->BindAction("LeftMouseButton", IE_Released, this, &AThirdPersonProjectCharacter::OnLeftMouseButtonReleased);
+	InputComponent->BindAction("MainAction", IE_Pressed, this, &AThirdPersonProjectCharacter::OnLeftMouseButtonPressed);
+	InputComponent->BindAction("MainAction", IE_Released, this, &AThirdPersonProjectCharacter::OnLeftMouseButtonReleased);
 }
 
 void AThirdPersonProjectCharacter::OnLeftMouseButtonPressed()
 {
-	if (Action1) {
-		this->ExecuteSpell(Action1);
+	if (MainAction) {
+		this->ExecuteSpell(MainAction);
 	}
 }
 

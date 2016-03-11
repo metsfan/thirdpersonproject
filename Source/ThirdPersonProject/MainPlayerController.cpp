@@ -40,6 +40,10 @@ void AMainPlayerController::SetPawn(APawn* InPawn)
 	auto Player = Cast<ABaseCharacter>(InPawn);
 	auto PlayerState = Cast<AMyPlayerState>(this->PlayerState);
 	if (Player && PlayerState) {
+		if (!Nickname.IsEmpty()) {
+			Player->Name = Nickname;
+		}
+
 		PlayerState->Health = Player->Health;
 		PlayerState->MaxHealth = Player->MaxHealth;
 		PlayerState->Name = Player->Name;

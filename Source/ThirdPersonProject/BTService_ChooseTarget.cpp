@@ -15,12 +15,10 @@ void UBTService_ChooseTarget::TickNode(UBehaviorTreeComponent& OwnerComp, uint8*
 	Super::TickNode(OwnerComp, NodeMemory, DeltaSeconds);
 
 	if (GetWorld()) {
-		if (PlayerActors.Num() == 0)
+		PlayerActors.Empty();
+		for (TActorIterator<AThirdPersonProjectCharacter> ActorItr(GetWorld()); ActorItr; ++ActorItr)
 		{
-			for (TActorIterator<AThirdPersonProjectCharacter> ActorItr(GetWorld()); ActorItr; ++ActorItr)
-			{
-				PlayerActors.Add(*ActorItr);
-			}
+			PlayerActors.Add(*ActorItr);
 		}
 
 		auto owningActor = OwnerComp.GetAIOwner()->GetPawn();
