@@ -6,9 +6,9 @@
 #include "ActionEvent.h"
 #include "MyPlayerState.h"
 
-AMainPlayerController::AMainPlayerController(): Super()
+AMainPlayerController::AMainPlayerController(): Super(),
+	mUniqueID(FGuid::NewGuid())
 {
-	
 }
 
 void AMainPlayerController::BeginPlay()

@@ -18,6 +18,8 @@ class THIRDPERSONPROJECT_API AMainPlayerController : public APlayerController
 	
 	virtual void SetPawn(APawn* InPawn) override;
 	virtual void Tick(float deltaSeconds) override;
+
+	virtual const FGuid& GetId() { return mUniqueID; }
 public:
 
 	UPROPERTY(BlueprintReadWrite)
@@ -25,4 +27,7 @@ public:
 
 protected:
 	virtual void SetupInputComponent() override;
+
+private:
+	FGuid mUniqueID;
 };
