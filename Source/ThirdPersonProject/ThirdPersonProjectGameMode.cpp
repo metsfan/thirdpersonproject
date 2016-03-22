@@ -64,7 +64,7 @@ void AThirdPersonProjectGameMode::BeginPlay()
 		this->SpawnEnemies();
 	});
 
-	//GetWorldTimerManager().SetTimer(SpawnTimer, TimerCallback, kSpawnTimerInterval, true, 1.0);
+	GetWorldTimerManager().SetTimer(SpawnTimer, TimerCallback, kSpawnTimerInterval, true, 1.0);
 }
 
 void AThirdPersonProjectGameMode::UpdateSpawnPoints()

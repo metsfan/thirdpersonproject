@@ -25,6 +25,6 @@ public class ThirdPersonProject : ModuleRules
             "OnlineSubsystemUtils"
         });
         
-        DynamicallyLoadedModuleNames.Add("OnlineSubsystemSteam");
+        //DynamicallyLoadedModuleNames.Add("OnlineSubsystemSteam");
     }
 }
