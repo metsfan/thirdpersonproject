@@ -18,9 +18,6 @@ public:
 	UPROPERTY(BlueprintReadOnly)
 	float GameStartCountdown;
 
-	UFUNCTION(Server, Reliable, WithValidation)
-	void ServerSetPlayerName(uint32 id, const FString& name);
-
 private:
 	TMap<uint32, AMainPlayerController*> ConnectedPlayers;
 };

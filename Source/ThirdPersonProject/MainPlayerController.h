@@ -6,6 +6,7 @@
 #include "ActionEvent.h"
 #include "MainPlayerController.generated.h"
 
+class ULobbyHUD;
 
 UCLASS(Blueprintable)
 class THIRDPERSONPROJECT_API AMainPlayerController : public APlayerController
@@ -19,15 +20,29 @@ class THIRDPERSONPROJECT_API AMainPlayerController : public APlayerController
 	virtual void SetPawn(APawn* InPawn) override;
 	virtual void Tick(float deltaSeconds) override;
 
-	virtual const FGuid& GetId() { return mUniqueID; }
 public:
-
-	UPROPERTY(BlueprintReadWrite)
+	UPROPERTY(BlueprintReadWrite, ReplicatedUsing = OnRep_Nickname)
 	FString Nickname;
+
+	UFUNCTION(Server, Reliable, WithValidation)
+	void SetNickname(const FString& newNickname);
+
+	UFUNCTION(NetMulticast, Reliable)
+	void NotifyPlayerJoinedLobby();
+
+	UPROPERTY(BlueprintReadWrite, Replicated)
+	bool Ready;
+
+	UFUNCTION(Server, Reliable, WithValidation, BlueprintCallable, Category = "Default")
+	void Server_NotifyReady(bool pReady);
 
 protected:
 	virtual void SetupInputComponent() override;
 
+	UPROPERTY(BlueprintReadWrite)
+	ULobbyHUD* LobbyHUDWidget;
+
 private:
-	FGuid mUniqueID;
+	UFUNCTION()
+	void OnRep_Nickname();
 };

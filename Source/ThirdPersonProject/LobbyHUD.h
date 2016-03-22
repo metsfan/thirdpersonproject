@@ -9,10 +9,19 @@
 /**
  * 
  */
+class AMainPlayerController;
+class UVerticalBox;
+
 UCLASS()
 class THIRDPERSONPROJECT_API ULobbyHUD : public UUserWidget
 {
 	GENERATED_BODY()
+
+	ULobbyHUD(const FObjectInitializer& ObjectInitializer);
+
+public:
+	UFUNCTION()
+	void OnPlayerJoinedLobby(AMainPlayerController* player);
 
 protected:
 	UFUNCTION(BlueprintCallable, Category = "Events")
@@ -20,5 +29,10 @@ protected:
 
 	UPROPERTY(BlueprintReadWrite)
 	UEditableTextBox* NicknameEntryTextBox;
+
+	UPROPERTY(BlueprintReadWrite)
+	UVerticalBox* NicknamePopupEntryWidget;
 	
+	UPROPERTY(BlueprintReadWrite)
+	UVerticalBox* ConnectedPlayersWidget;
 };
