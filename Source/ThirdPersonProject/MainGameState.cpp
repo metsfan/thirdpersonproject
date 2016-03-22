@@ -2,8 +2,3 @@
 
 #include "ThirdPersonProject.h"
 #include "MainGameState.h"
-
-void AMainGameState::ServerSetPlayerName(const FGuid& id, const FString& name)
-{
-	auto controller = ConnectedPlayers[id];
-}

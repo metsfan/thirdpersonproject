@@ -10,5 +10,5 @@ void ULobbyHUD::OnNicknameSubmitButtonClick()
 
 	auto gameState = Cast<AMainGameState>(GetWorld()->GameState);
 	auto pc = Cast<AMainPlayerController>(GetWorld()->GetFirstPlayerController());
-	gameState->ServerSetPlayerName(pc->GetUniqueID(), nickNameText);
+	//gameState->ServerSetPlayerName(pc->GetUniqueID(), nickNameText);
 }
