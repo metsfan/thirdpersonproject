@@ -15,8 +15,8 @@ class THIRDPERSONPROJECT_API AMainGameState : public AGameState
 	GENERATED_BODY()
 
 public:
-	UPROPERTY(BlueprintReadOnly)
-	float GameStartCountdown;
+	UPROPERTY(BlueprintReadOnly, Replicated)
+	int32 GameStartCountdown;
 
 private:
 	TMap<uint32, AMainPlayerController*> ConnectedPlayers;

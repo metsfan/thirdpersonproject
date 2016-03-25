@@ -37,16 +37,12 @@ void ASpellCPP::ApplyEffects(ABaseCharacter* target)
 	this->ApplyEffects(TArrayBuilder<ABaseCharacter *>().Add(target).Build());
 }
 
-bool ASpellCPP::ApplyEffects_Validate(const TArray<ABaseCharacter *>& targets)
+void ASpellCPP::ApplyEffects(const TArray<ABaseCharacter *>& targets)
 {
-	return true;
-}
-
-void ASpellCPP::ApplyEffects_Implementation(const TArray<ABaseCharacter *>& targets)
-{
-
-	for (auto effect : Effects) {
-		effect->ApplyEffect(targets);
+	if (targets.Num() > 0) {
+		for (auto effect : Effects) {
+			effect->ApplyEffect(targets);
+		}
 	}
 }
 

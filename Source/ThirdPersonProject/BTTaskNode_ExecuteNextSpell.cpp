@@ -12,7 +12,7 @@ EBTNodeResult::Type UBTTaskNode_ExecuteNextSpell::ExecuteTask(UBehaviorTreeCompo
 {
 	Super::ExecuteTask(OwnerComp, NodeMemory);
 
-	auto spell = OwnerComp.GetBlackboardComponent()->GetValueAsClass("NextSpell");
+	auto spell = Cast<USpellData>(OwnerComp.GetBlackboardComponent()->GetValueAsObject("NextSpell"));
 	if (spell) {
 		auto owningActor = OwnerComp.GetAIOwner()->GetPawn();
 
@@ -22,7 +22,7 @@ EBTNodeResult::Type UBTTaskNode_ExecuteNextSpell::ExecuteTask(UBehaviorTreeCompo
 
 		FTransform* transform = new FTransform(FVector(75, 0, 0));
 
-		auto actor = Cast<ASpellCPP>(GetWorld()->SpawnActor(spell, transform, spawnParams));
+		auto actor = Cast<ASpellCPP>(GetWorld()->SpawnActor(spell->Class, transform, spawnParams));
 		actor->AttachRootComponentToActor(owningActor);
 		actor->Finish();
 	}

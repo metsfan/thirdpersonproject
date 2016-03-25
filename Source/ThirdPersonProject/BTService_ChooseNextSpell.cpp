@@ -12,5 +12,7 @@ void UBTService_ChooseNextSpell::TickNode(UBehaviorTreeComponent& OwnerComp, uin
 	auto controller = Cast<ABaseAIController>(OwnerComp.GetAIOwner());
 	auto blackboard = OwnerComp.GetBlackboardComponent();
 
-	blackboard->SetValueAsClass("NextSpell", controller->GetNextSpell());
+	auto spellClass = controller->GetNextSpell();
+	auto spellData = NewObject<USpellData>(GetTransientPackage(), spellClass);
+	blackboard->SetValueAsObject("NextSpell", spellData);
 }

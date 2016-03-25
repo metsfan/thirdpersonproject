@@ -31,9 +31,9 @@ void ABaseAIController::Tick(float deltaSeconds)
 	}
 }
 
-TSubclassOf<ASpellCPP> ABaseAIController::GetNextSpell()
+TSubclassOf<USpellData> ABaseAIController::GetNextSpell_Implementation()
 {
-	return FireballBPClass->Class;
+	return NULL;
 }
 
 

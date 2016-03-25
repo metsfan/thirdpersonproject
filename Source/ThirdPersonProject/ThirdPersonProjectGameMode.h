@@ -19,10 +19,13 @@ public:
 private:
 	TArray<ASpawnPoint *> SpawnPoints;
 	FTimerHandle SpawnTimer;
+	FTimerHandle GameStartTimer;
 
 	void UpdateSpawnPoints();
 
 	void SpawnEnemies();
+
+	void BeginSpawningEnemies();
 };
 
 

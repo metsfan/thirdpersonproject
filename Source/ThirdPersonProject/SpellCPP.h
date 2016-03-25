@@ -4,6 +4,7 @@
 
 #include "GameFramework/Actor.h"
 #include "SpellEffect.h"
+#include "SpellData.h"
 
 #include "SpellCPP.generated.h"
 
@@ -24,26 +25,19 @@ public:
 	// Called every frame
 	virtual void Tick( float DeltaSeconds ) override;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		float Damage;
-
 	UPROPERTY(BlueprintReadWrite)
 		TArray<USpellEffect *> Effects;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+		USpellData* Data;
 
 	void SetDamageScaleModifier(float modifier);
 
 	virtual void Finish();
 
 protected:
-	UPROPERTY(BlueprintReadWrite)
-		float Cooldown;
-
-	UPROPERTY(BlueprintReadWrite)
-		float MinimumRange;
 
 	virtual void ApplyEffects(ABaseCharacter* target);
-
-	UFUNCTION(Server, Reliable, WithValidation)
 	virtual void ApplyEffects(const TArray<ABaseCharacter *>& targets);
 
 	UFUNCTION(Server, Reliable, WithValidation)

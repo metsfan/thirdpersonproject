@@ -37,22 +37,28 @@ public:
 	UPROPERTY(BlueprintReadOnly, Category = Default)
 		float HealthPercent;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Stats)
+		float HealthRegenRate;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Stats)
+		float HealthCooloff;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Character)
 		FString Name;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Stats)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Stats, Replicated)
 		float Energy;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Stats)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Stats, Replicated)
 		float MaxEnergy;
 
 	UPROPERTY(BlueprintReadOnly, Category = Default)
 		float EnergyPercent;
 
-	UPROPERTY(BlueprintReadWrite, Category = Stats)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Stats)
 		float EnergyRegenRate;
 
-	UPROPERTY(BlueprintReadWrite, Category = Stats)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Stats)
 		float EnergyCooloff;
 
 	UPROPERTY(BlueprintReadWrite, Category = Controllers)
@@ -65,4 +71,17 @@ public:
 	virtual void AddHealth(int32 delta);
 	virtual bool AddHealth_Validate(int32 delta);
 	virtual void AddHealth_Implementation(int32 delta);
+
+	UFUNCTION(Server, Reliable, WithValidation)
+	virtual void AddEnergy(int32 delta);
+
+protected:
+	float HealthCooloffTime = 0;
+	float EnergyCooloffTime = 0;
+
+	UFUNCTION(Server, Reliable, WithValidation)
+	void ResetHealthTimer();
+
+	UFUNCTION(Server, Reliable, WithValidation)
+	void ResetEnergyTimer();
 };

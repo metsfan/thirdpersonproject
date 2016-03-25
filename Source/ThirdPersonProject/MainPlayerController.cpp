@@ -44,39 +44,12 @@ void AMainPlayerController::SetPawn(APawn* InPawn)
 	auto Player = Cast<ABaseCharacter>(InPawn);
 	auto PlayerState = Cast<AMyPlayerState>(this->PlayerState);
 	if (Player && PlayerState) {
-		if (!PlayerState->PlayerName.IsEmpty()) {
-			Player->Name = PlayerState->PlayerName;
-		}
-
-		PlayerState->Health = Player->Health;
-		PlayerState->MaxHealth = Player->MaxHealth;
-		PlayerState->Name = Player->Name;
 	}
 }
 
 void AMainPlayerController::Tick(float deltaSeconds)
 {
 	Super::Tick(deltaSeconds);
-
-	auto PlayerState = Cast<AMyPlayerState>(this->PlayerState);
-	/*if (PlayerState) {
-		
-	}*/
-	auto Player = Cast<ABaseCharacter>(GetPawn());
-
-	if (Player && this->PlayerState) {
-		if (HasAuthority()) {
-			//Player->AddHealth(-100);
-			PlayerState->Health = Player->Health;
-		}
-		else
-		{
-			Player->Health = PlayerState->Health;
-		}
-		
-		//
-		//Player->MaxHealth = PlayerState->MaxHealth;
-	}
 }
 
 bool AMainPlayerController::SetNickname_Validate(const FString& newNickname)

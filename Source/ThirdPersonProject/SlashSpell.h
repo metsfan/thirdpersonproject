@@ -12,8 +12,8 @@ UCLASS()
 class THIRDPERSONPROJECT_API ASlashSpell : public AAreaEffectSpell
 {
 	GENERATED_BODY()
-	
-	
-	
-	
+
+	ASlashSpell();
+
+	virtual void BeginPlay() override;
 };

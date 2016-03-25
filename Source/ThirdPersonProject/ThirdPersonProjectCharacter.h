@@ -127,7 +127,6 @@ public:
 
 
 private:
-	float EnergyCooloffTime = 0;
 	float EnergyTickTime = 0;
 
 	void OnLeftMouseButtonPressed();

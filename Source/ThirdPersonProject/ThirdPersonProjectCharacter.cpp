@@ -82,12 +82,7 @@ void AThirdPersonProjectCharacter::Tick(float deltaSeconds)
 {
 	Super::Tick(deltaSeconds);
 
-	EnergyCooloffTime += deltaSeconds;
-
-	if (EnergyCooloffTime >= EnergyCooloff && Energy < MaxEnergy) {
-		Energy += EnergyRegenRate * deltaSeconds;
-		Energy = FMath::Min(Energy, MaxEnergy);
-	}
+	//UE_LOG(MyLog, Log, TEXT("Health Cooloff Time: %f"), HealthCooloffTime);
 
 	if (Controller) {
 		//Controller->SetControlRotation(this->GetActorRotation());
@@ -192,10 +187,9 @@ void AThirdPersonProjectCharacter::Jump()
 	if (Energy >= 20) {
 		Super::Jump();
 
-		Energy -= 20;
+		this->AddEnergy(-20);
 
-		EnergyCooloffTime = 0;
-		EnergyTickTime = 0;
+		this->ResetEnergyTimer();
 	}
 }
 

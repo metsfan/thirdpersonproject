@@ -3,7 +3,7 @@
 #pragma once
 
 #include "AIController.h"
-#include "SpellCPP.h"
+#include "SpellData.h"
 #include "BaseAIController.generated.h"
 
 /**
@@ -19,6 +19,8 @@ class THIRDPERSONPROJECT_API ABaseAIController : public AAIController
 	virtual void Tick(float deltaSeconds) override;
 
 public:
-	virtual TSubclassOf<ASpellCPP> GetNextSpell();
+	UFUNCTION(BlueprintNativeEvent)
+	TSubclassOf<USpellData> GetNextSpell();
 	
+	virtual TSubclassOf<USpellData> GetNextSpell_Implementation();
 };

@@ -14,6 +14,9 @@ ABaseCharacter::ABaseCharacter()
 	EnergyRegenRate = 25.0;
 	EnergyCooloff = 1.0;
 
+	HealthRegenRate = 100.0;
+	HealthCooloff = 1.0;
+
 	bReplicates = true;
 	bReplicateMovement = true;
 }
@@ -30,6 +33,22 @@ void ABaseCharacter::BeginPlay()
 void ABaseCharacter::Tick( float DeltaTime )
 {
 	Super::Tick( DeltaTime );
+
+	if (HasAuthority()) {
+		EnergyCooloffTime += DeltaTime;
+
+		if (EnergyCooloffTime >= EnergyCooloff && Energy < MaxEnergy) {
+			Energy += EnergyRegenRate * DeltaTime;
+			Energy = FMath::Min(Energy, MaxEnergy);
+		}
+
+		HealthCooloffTime += DeltaTime;
+
+		if (HealthCooloffTime >= HealthCooloff && Health < MaxHealth) {
+			Health += HealthRegenRate * DeltaTime;
+			Health = FMath::Min(Health, MaxHealth);
+		}
+	}
 
 	if (MaxHealth > 0) {
 		HealthPercent = (float)Health / (float)MaxHealth;
@@ -62,12 +81,46 @@ void ABaseCharacter::AddHealth_Implementation(int32 delta)
 {
 	Health += delta;
 
+	if (delta < 0) {
+		this->ResetHealthTimer();
+	}
+
 	UE_LOG(MyLog, Log, TEXT("A character took some damage: %d"), delta);
 
 	if (Health <= 0) {
 		// Actor is dead, kill it
 		this->Destroy();
-	}
+	} 
+}
+
+bool ABaseCharacter::AddEnergy_Validate(int32 delta)
+{
+	return true;
+}
+
+void ABaseCharacter::AddEnergy_Implementation(int32 delta)
+{
+	Energy += delta;
+}
+
+bool ABaseCharacter::ResetHealthTimer_Validate()
+{
+	return true;
+}
+
+void ABaseCharacter::ResetHealthTimer_Implementation()
+{
+	HealthCooloffTime = 0;
+}
+
+bool ABaseCharacter::ResetEnergyTimer_Validate()
+{
+	return true;
+}
+
+void ABaseCharacter::ResetEnergyTimer_Implementation()
+{
+	EnergyCooloffTime = 0;
 }
 
 void ABaseCharacter::GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLifetimeProps) const
@@ -76,6 +129,8 @@ void ABaseCharacter::GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & Ou
 
 	DOREPLIFETIME(ABaseCharacter, Health);
 	DOREPLIFETIME(ABaseCharacter, MaxHealth);
+	DOREPLIFETIME(ABaseCharacter, Energy);
+	DOREPLIFETIME(ABaseCharacter, MaxEnergy);
 	DOREPLIFETIME(ABaseCharacter, CurrentRotation);
 }
 

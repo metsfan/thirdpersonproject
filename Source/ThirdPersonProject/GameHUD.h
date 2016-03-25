@@ -16,6 +16,10 @@ class THIRDPERSONPROJECT_API UGameHUD : public UUserWidget
 
 	virtual void NativeConstruct() override;
 
+protected:
+	UFUNCTION(BlueprintCallable, Category=Functions)
+		FText GetCountdownTimerText();
+
 public:
 	UPROPERTY(BlueprintReadWrite)
 	UPlayerFrame* PlayerFrameWidget;

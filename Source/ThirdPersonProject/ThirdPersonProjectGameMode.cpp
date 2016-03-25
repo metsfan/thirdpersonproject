@@ -59,12 +59,19 @@ void AThirdPersonProjectGameMode::BeginPlay()
 
 	this->UpdateSpawnPoints();
 
+	auto gameState = this->GetGameState<AMainGameState>();
+	gameState->GameStartCountdown = 5;
+
 	FTimerDelegate TimerCallback;
-	TimerCallback.BindLambda([this] {
-		this->SpawnEnemies();
+	TimerCallback.BindLambda([this, gameState] {
+		gameState->GameStartCountdown -= 1;
+
+		if (gameState->GameStartCountdown == 0) {
+			this->BeginSpawningEnemies();
+		}
 	});
 
-	GetWorldTimerManager().SetTimer(SpawnTimer, TimerCallback, kSpawnTimerInterval, true, 1.0);
+	GetWorldTimerManager().SetTimer(GameStartTimer, TimerCallback, 1.0, true, 1.0);
 }
 
 void AThirdPersonProjectGameMode::UpdateSpawnPoints()
@@ -73,6 +80,16 @@ void AThirdPersonProjectGameMode::UpdateSpawnPoints()
 	{
 		SpawnPoints.Add(*ActorItr);
 	}
+}
+
+void AThirdPersonProjectGameMode::BeginSpawningEnemies()
+{
+	FTimerDelegate TimerCallback;
+	TimerCallback.BindLambda([this] {
+		this->SpawnEnemies();
+	});
+
+	GetWorldTimerManager().SetTimer(SpawnTimer, TimerCallback, kSpawnTimerInterval, true, 0.0);
 }
 
 void AThirdPersonProjectGameMode::SpawnEnemies()
