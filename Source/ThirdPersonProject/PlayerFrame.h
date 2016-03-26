@@ -19,6 +19,6 @@ class THIRDPERSONPROJECT_API UPlayerFrame : public UUserWidget
 
 public:
 	UPROPERTY(BlueprintReadWrite)
-		AThirdPersonProjectCharacter* Player;
+		AMyPlayerState* Player;
 	
 };

@@ -23,5 +23,8 @@ protected:
 public:
 	UPROPERTY(BlueprintReadWrite)
 	UPlayerFrame* PlayerFrameWidget;
+
+	UPROPERTY(BlueprintReadWrite)
+	UUserWidget* GameOverHUDWidget;
 	
 };

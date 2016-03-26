@@ -38,9 +38,6 @@ protected:
 	void OnAgroRadiusCollision(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, 
 		int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
-	UPROPERTY(BlueprintReadWrite)
-	UGameHUD* PlayerHUD;
-
 public:
 	AThirdPersonProjectCharacter();
 

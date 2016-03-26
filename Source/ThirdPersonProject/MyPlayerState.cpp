@@ -12,16 +12,23 @@ AMyPlayerState::AMyPlayerState(): Super()
 
 void AMyPlayerState::Update(ABaseCharacter* Character)
 {
-	Health = Character->Health;
-	MaxHealth = Character->MaxHealth;
-	HealthPercent = Character->HealthPercent;
+	if (Character) {
+		Health = Character->Health;
+		MaxHealth = Character->MaxHealth;
+		HealthPercent = Character->HealthPercent;
 
-	Energy = Character->Energy;
-	MaxEnergy = Character->MaxEnergy;
-	EnergyPercent = Character->EnergyPercent;
+		Energy = Character->Energy;
+		MaxEnergy = Character->MaxEnergy;
+		EnergyPercent = Character->EnergyPercent;
 
-	if (Name != Character->Name) {
-		Name = Character->Name;
+		if (Name != Character->Name) {
+			Name = Character->Name;
+		}
+	}
+	else {
+		Health = 0;
+		MaxHealth = 0;
+		HealthPercent = 0;
 	}
 }
 

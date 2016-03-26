@@ -69,6 +69,9 @@ void AThirdPersonProjectGameMode::BeginPlay()
 		if (gameState->GameStartCountdown == 0) {
 			this->BeginSpawningEnemies();
 		}
+		else if (gameState->GameStartCountdown < 0) {
+			GetWorldTimerManager().ClearTimer(GameStartTimer);
+		}
 	});
 
 	GetWorldTimerManager().SetTimer(GameStartTimer, TimerCallback, 1.0, true, 1.0);

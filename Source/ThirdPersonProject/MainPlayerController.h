@@ -7,6 +7,8 @@
 #include "MainPlayerController.generated.h"
 
 class ULobbyHUD;
+class UGameHUD;
+class AThirdPersonProjectCharacter;
 
 UCLASS(Blueprintable)
 class THIRDPERSONPROJECT_API AMainPlayerController : public APlayerController
@@ -36,11 +38,18 @@ public:
 	UFUNCTION(Server, Reliable, WithValidation, BlueprintCallable, Category = "Default")
 	void Server_NotifyReady(bool pReady);
 
+	void OnPlayerDied(AThirdPersonProjectCharacter* Character);
+
+	virtual void InitPlayerState() override;
+
 protected:
 	virtual void SetupInputComponent() override;
 
 	UPROPERTY(BlueprintReadWrite)
 	ULobbyHUD* LobbyHUDWidget;
+
+	UPROPERTY(BlueprintReadWrite)
+	UGameHUD* PlayerHUD;
 
 private:
 	UFUNCTION()

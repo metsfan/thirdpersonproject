@@ -81,15 +81,6 @@ void AThirdPersonProjectCharacter::BeginPlay() {
 void AThirdPersonProjectCharacter::Tick(float deltaSeconds)
 {
 	Super::Tick(deltaSeconds);
-
-	//UE_LOG(MyLog, Log, TEXT("Health Cooloff Time: %f"), HealthCooloffTime);
-
-	if (Controller) {
-		//Controller->SetControlRotation(this->GetActorRotation());
-
-		//auto playerState = Cast<AMyPlayerState>(this->Controller->PlayerState);
-		//playerState->Update(Cast<ABaseCharacter>(this));
-	}
 }
 
 bool AThirdPersonProjectCharacter::ExecuteSpell_Validate(UClass* action)

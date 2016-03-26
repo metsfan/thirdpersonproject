@@ -67,6 +67,9 @@ public:
 	UPROPERTY(Replicated)
 		FRotator CurrentRotation;
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = Character)
+		float DespawnTime;
+
 	UFUNCTION(Server, Reliable, WithValidation)
 	virtual void AddHealth(int32 delta);
 	virtual bool AddHealth_Validate(int32 delta);
@@ -84,4 +87,7 @@ protected:
 
 	UFUNCTION(Server, Reliable, WithValidation)
 	void ResetEnergyTimer();
+
+private:
+	float DeadTime;
 };

@@ -4,12 +4,11 @@
 #include "ThirdPersonProjectCharacter.h"
 #include "GameHUD.h"
 #include "MainGameState.h"
+#include "MyPlayerState.h"
 
 void UGameHUD::NativeConstruct()
 {
 	Super::Construct();
-
-	PlayerFrameWidget->Player = Cast<AThirdPersonProjectCharacter>(GetWorld()->GetFirstPlayerController()->GetPawn());
 }
 
 FText UGameHUD::GetCountdownTimerText()

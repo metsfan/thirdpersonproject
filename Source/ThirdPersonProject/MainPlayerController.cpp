@@ -7,6 +7,7 @@
 #include "MyPlayerState.h"
 #include "MainMenuGameMode.h"
 #include "LobbyHUD.h"
+#include "GameHUD.h"
 #include "MainMenuGameState.h"
 #include "UnrealNetwork.h"
 
@@ -37,19 +38,39 @@ void AMainPlayerController::SetupInputComponent()
 	
 }
 
+void AMainPlayerController::InitPlayerState()
+{
+	Super::InitPlayerState();
+
+	if (Role == ROLE_AutonomousProxy) {
+		
+	}
+}
+
 void AMainPlayerController::SetPawn(APawn* InPawn)
 {
 	Super::SetPawn(InPawn);
 
-	auto Player = Cast<ABaseCharacter>(InPawn);
-	auto PlayerState = Cast<AMyPlayerState>(this->PlayerState);
-	if (Player && PlayerState) {
-	}
+}
+
+void AMainPlayerController::OnPlayerDied(AThirdPersonProjectCharacter* Character)
+{
+	PlayerHUD->GameOverHUDWidget->SetVisibility(ESlateVisibility::Visible);
 }
 
 void AMainPlayerController::Tick(float deltaSeconds)
 {
 	Super::Tick(deltaSeconds);
+
+	auto Player = Cast<ABaseCharacter>(this->GetPawn());
+	auto PlayerState = Cast<AMyPlayerState>(this->PlayerState);
+	if (PlayerState) {
+		if (PlayerHUD != NULL && PlayerHUD->PlayerFrameWidget->Player == NULL) {
+			PlayerHUD->PlayerFrameWidget->Player = Cast<AMyPlayerState>(this->PlayerState);
+		}
+
+		PlayerState->Update(Player);
+	}
 }
 
 bool AMainPlayerController::SetNickname_Validate(const FString& newNickname)

@@ -19,6 +19,9 @@ ABaseCharacter::ABaseCharacter()
 
 	bReplicates = true;
 	bReplicateMovement = true;
+
+	DespawnDelay = 0;
+	DeadTime = 0;
 }
 
 // Called when the game starts or when spawned
@@ -54,6 +57,15 @@ void ABaseCharacter::Tick( float DeltaTime )
 		HealthPercent = (float)Health / (float)MaxHealth;
 	}
 
+	if (HealthPercent <= 0) {
+		DeadTime += DeltaTime;
+
+		if (DeadTime >= DespawnTime) {
+			// Actor is dead, kill it
+			this->Destroy();
+		}
+	}
+
 	if (MaxEnergy > 0) {
 		EnergyPercent = (float)Energy / (float)MaxEnergy;
 	}
@@ -86,11 +98,6 @@ void ABaseCharacter::AddHealth_Implementation(int32 delta)
 	}
 
 	UE_LOG(MyLog, Log, TEXT("A character took some damage: %d"), delta);
-
-	if (Health <= 0) {
-		// Actor is dead, kill it
-		this->Destroy();
-	} 
 }
 
 bool ABaseCharacter::AddEnergy_Validate(int32 delta)
