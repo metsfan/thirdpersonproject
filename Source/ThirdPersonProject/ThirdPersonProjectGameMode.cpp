@@ -13,8 +13,8 @@
 
 static const float kSpawnTimerInterval = 5.0f;
 
-static ConstructorHelpers::FClassFinder<ACharacter> *GenericEnemyBPClass = NULL;
-static ConstructorHelpers::FClassFinder<AAIController> *GenericEnemyAIControllerBPClass = NULL;
+static ConstructorHelpers::FClassFinder<ACharacter> *MeleeEnemyBPClass = NULL;
+static ConstructorHelpers::FClassFinder<ACharacter> *RangedEnemyBPClass = NULL;
 
 AThirdPersonProjectGameMode::AThirdPersonProjectGameMode() :
 	AGameMode()
@@ -22,12 +22,12 @@ AThirdPersonProjectGameMode::AThirdPersonProjectGameMode() :
 	// set default pawn class to our Blueprinted character
 	static ConstructorHelpers::FClassFinder<APawn> PlayerPawnBPClass(TEXT("/Game/ThirdPersonCPP/Blueprints/ThirdPersonCharacter"));
 
-	if (!GenericEnemyBPClass) {
-		GenericEnemyBPClass = new ConstructorHelpers::FClassFinder<ACharacter>(TEXT("/Game/BP_GenericEnemy"));
+	if (!MeleeEnemyBPClass) {
+		MeleeEnemyBPClass = new ConstructorHelpers::FClassFinder<ACharacter>(TEXT("/Game/BP_MeleeEnemy"));
 	}
 
-	if (!GenericEnemyAIControllerBPClass) {
-		GenericEnemyAIControllerBPClass = new ConstructorHelpers::FClassFinder<AAIController>(TEXT("/Game/GenericEnemyAIController"));
+	if (!RangedEnemyBPClass) {
+		RangedEnemyBPClass = new ConstructorHelpers::FClassFinder<ACharacter>(TEXT("/Game/BP_RangedEnemy"));
 	}
 
 	if (PlayerPawnBPClass.Class != NULL)
@@ -60,7 +60,7 @@ void AThirdPersonProjectGameMode::BeginPlay()
 	this->UpdateSpawnPoints();
 
 	auto gameState = this->GetGameState<AMainGameState>();
-	gameState->GameStartCountdown = 5;
+	gameState->GameStartCountdown = 1;
 
 	FTimerDelegate TimerCallback;
 	TimerCallback.BindLambda([this, gameState] {
@@ -97,13 +97,18 @@ void AThirdPersonProjectGameMode::SpawnEnemies()
 	auto spawnPoint = SpawnPoints[FMath::RandRange(0, SpawnPoints.Num() - 1)];
 	auto spawnLocation = spawnPoint->GetActorLocation();
 
-	int numSpawns = FMath::RandRange(1, 3);
+	int numSpawns = FMath::RandRange(2, 6);
 
 	for (int i = 0; i < numSpawns; i++) {
 		auto staggeredLocation = spawnLocation + FVector(i * 10, 0, 0);
 		auto transform = FTransform(staggeredLocation);
 
-		auto actor = UAIBlueprintHelperLibrary::SpawnAIFromClass(this, GenericEnemyBPClass->Class, NULL, staggeredLocation);
+		if (i % 2 == 0) {
+			UAIBlueprintHelperLibrary::SpawnAIFromClass(this, MeleeEnemyBPClass->Class, NULL, staggeredLocation);
+		}
+		else {
+			UAIBlueprintHelperLibrary::SpawnAIFromClass(this, RangedEnemyBPClass->Class, NULL, staggeredLocation);
+		}
 		//actor->AIControllerClass = NewObject<AController>(GetLevel(), GenericEnemyAIControllerBPClass->Class);
 	}
 }
