@@ -51,15 +51,31 @@ void AMainPlayerController::SetPawn(APawn* InPawn)
 {
 	Super::SetPawn(InPawn);
 
+	if (InPawn) {
+		this->SetMouseCursorEnabled(false);
+	}
 }
 
 void AMainPlayerController::OnPlayerDied(AThirdPersonProjectCharacter* Character)
 {
 	this->UnPossess();
 
+	this->ClientShowGameOverHUD();
+}
+
+void AMainPlayerController::ClientShowGameOverHUD_Implementation()
+{
 	if (PlayerHUD) {
 		PlayerHUD->GameOverHUDWidget->SetVisibility(ESlateVisibility::Visible);
+		this->SetMouseCursorEnabled(true);
 	}
+}
+
+void AMainPlayerController::SetMouseCursorEnabled(bool enabled)
+{
+	this->bShowMouseCursor = enabled;
+	this->bEnableClickEvents = enabled;
+	this->bEnableMouseOverEvents = enabled;
 }
 
 void AMainPlayerController::Tick(float deltaSeconds)

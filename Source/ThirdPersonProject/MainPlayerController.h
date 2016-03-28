@@ -42,6 +42,8 @@ public:
 
 	virtual void InitPlayerState() override;
 
+	void SetMouseCursorEnabled(bool enabled);
+
 protected:
 	virtual void SetupInputComponent() override;
 
@@ -54,4 +56,8 @@ protected:
 private:
 	UFUNCTION()
 	void OnRep_Nickname();
+
+	UFUNCTION(Client, Reliable)
+	void ClientShowGameOverHUD();
+
 };
