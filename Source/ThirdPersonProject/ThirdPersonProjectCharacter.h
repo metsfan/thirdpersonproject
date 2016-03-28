@@ -58,7 +58,7 @@ public:
 	virtual void BeginPlay() override;
 	virtual void Tick(float deltaSeconds) override;
 
-	
+	void AddHealth_Implementation(int32 delta) override;
 
 protected:
 

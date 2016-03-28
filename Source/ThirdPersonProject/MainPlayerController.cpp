@@ -55,7 +55,11 @@ void AMainPlayerController::SetPawn(APawn* InPawn)
 
 void AMainPlayerController::OnPlayerDied(AThirdPersonProjectCharacter* Character)
 {
-	PlayerHUD->GameOverHUDWidget->SetVisibility(ESlateVisibility::Visible);
+	this->UnPossess();
+
+	if (PlayerHUD) {
+		PlayerHUD->GameOverHUDWidget->SetVisibility(ESlateVisibility::Visible);
+	}
 }
 
 void AMainPlayerController::Tick(float deltaSeconds)

@@ -43,4 +43,6 @@ public:
 		FString Name;
 	
 	void Update(ABaseCharacter* Character);
+
+	bool IsDead() { return Health == 0;  }
 };

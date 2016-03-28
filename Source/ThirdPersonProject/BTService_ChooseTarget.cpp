@@ -27,15 +27,17 @@ void UBTService_ChooseTarget::TickNode(UBehaviorTreeComponent& OwnerComp, uint8*
 		AThirdPersonProjectCharacter* MinDistancePlayer = NULL;
 
 		for (auto player : PlayerActors) {
-			if (MinDistancePlayer) {
-				double distance = player->GetDistanceTo(owningActor);
-				if (distance < MinDistance) {
-					MinDistancePlayer = player;
-					MinDistance = distance;
+			if (player->IsAlive()) {
+				if (MinDistancePlayer) {
+					double distance = player->GetDistanceTo(owningActor);
+					if (distance < MinDistance) {
+						MinDistancePlayer = player;
+						MinDistance = distance;
+					}
 				}
-			}
-			else {
-				MinDistancePlayer = player;
+				else {
+					MinDistancePlayer = player;
+				}
 			}
 		}
 

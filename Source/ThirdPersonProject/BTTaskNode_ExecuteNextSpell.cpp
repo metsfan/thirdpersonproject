@@ -11,6 +11,10 @@
 EBTNodeResult::Type UBTTaskNode_ExecuteNextSpell::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8 * NodeMemory)
 {
 	Super::ExecuteTask(OwnerComp, NodeMemory);
+	auto target = Cast<ABaseCharacter>(OwnerComp.GetBlackboardComponent()->GetValueAsObject("CurrentTarget"));
+	if (!target->IsAlive()) {
+		return EBTNodeResult::Type::Failed;
+	}
 
 	auto spell = Cast<USpellData>(OwnerComp.GetBlackboardComponent()->GetValueAsObject("NextSpell"));
 	if (spell) {

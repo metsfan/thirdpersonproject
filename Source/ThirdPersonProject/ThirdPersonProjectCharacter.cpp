@@ -5,6 +5,7 @@
 #include "ThirdPersonProjectCharacter.h"
 #include "MyPlayerState.h"
 #include "ThirdPersonProjectGameMode.h"
+#include "MainPlayerController.h"
 
 //////////////////////////////////////////////////////////////////////////
 // AThirdPersonProjectCharacter
@@ -56,6 +57,7 @@ AThirdPersonProjectCharacter::AThirdPersonProjectCharacter():
 	MaxHealth = 10000;
 	Name = "Metsfan";
 	ActiveSpell = NULL;
+	DespawnTime = INFINITY;
 }
 
 void AThirdPersonProjectCharacter::OnAgroRadiusCollision(class AActor* OtherActor, class UPrimitiveComponent* OtherComp,
@@ -224,5 +226,17 @@ void AThirdPersonProjectCharacter::MoveRight(float Value)
 		const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
 		// add movement in that direction
 		AddMovementInput(Direction, Value);
+	}
+}
+
+void AThirdPersonProjectCharacter::AddHealth_Implementation(int32 delta)
+{
+	Super::AddHealth_Implementation(delta);
+
+	if (Health <= 0) {
+		auto controller = Cast<AMainPlayerController>(this->Controller);
+		if (controller) {
+			controller->OnPlayerDied(this);
+		}
 	}
 }

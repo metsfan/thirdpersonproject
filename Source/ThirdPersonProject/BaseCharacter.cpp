@@ -20,7 +20,7 @@ ABaseCharacter::ABaseCharacter()
 	bReplicates = true;
 	bReplicateMovement = true;
 
-	DespawnDelay = 0;
+	DespawnTime = 0;
 	DeadTime = 0;
 }
 
@@ -37,19 +37,21 @@ void ABaseCharacter::Tick( float DeltaTime )
 {
 	Super::Tick( DeltaTime );
 
-	if (HasAuthority()) {
-		EnergyCooloffTime += DeltaTime;
+	if (this->IsAlive()) {
+		if (HasAuthority()) {
+			EnergyCooloffTime += DeltaTime;
 
-		if (EnergyCooloffTime >= EnergyCooloff && Energy < MaxEnergy) {
-			Energy += EnergyRegenRate * DeltaTime;
-			Energy = FMath::Min(Energy, MaxEnergy);
-		}
+			if (EnergyCooloffTime >= EnergyCooloff && Energy < MaxEnergy) {
+				Energy += EnergyRegenRate * DeltaTime;
+				Energy = FMath::Min(Energy, MaxEnergy);
+			}
 
-		HealthCooloffTime += DeltaTime;
+			HealthCooloffTime += DeltaTime;
 
-		if (HealthCooloffTime >= HealthCooloff && Health < MaxHealth) {
-			Health += HealthRegenRate * DeltaTime;
-			Health = FMath::Min(Health, MaxHealth);
+			if (HealthCooloffTime >= HealthCooloff && Health < MaxHealth) {
+				Health += HealthRegenRate * DeltaTime;
+				Health = FMath::Min(Health, MaxHealth);
+			}
 		}
 	}
 
@@ -91,13 +93,18 @@ bool ABaseCharacter::AddHealth_Validate(int32 delta)
 
 void ABaseCharacter::AddHealth_Implementation(int32 delta)
 {
-	Health += delta;
+	Health = FMath::Clamp<int32>(Health + delta, 0, MaxHealth);
 
 	if (delta < 0) {
 		this->ResetHealthTimer();
 	}
 
 	UE_LOG(MyLog, Log, TEXT("A character took some damage: %d"), delta);
+}
+
+bool ABaseCharacter::IsAlive()
+{
+	return Health > 0;
 }
 
 bool ABaseCharacter::AddEnergy_Validate(int32 delta)

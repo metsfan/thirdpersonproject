@@ -78,6 +78,9 @@ public:
 	UFUNCTION(Server, Reliable, WithValidation)
 	virtual void AddEnergy(int32 delta);
 
+	UFUNCTION(BlueprintCallable, Category = Character)
+	virtual bool IsAlive();
+
 protected:
 	float HealthCooloffTime = 0;
 	float EnergyCooloffTime = 0;
