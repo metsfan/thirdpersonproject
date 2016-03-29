@@ -53,20 +53,19 @@ void AThirdPersonProjectGameMode::InitGame(const FString& MapName, const FString
 
 }
 
-void AThirdPersonProjectGameMode::BeginPlay()
+void AThirdPersonProjectGameMode::StartPlay()
 {
-	Super::BeginPlay();
-
-	this->UpdateSpawnPoints();
+	Super::StartPlay();
 
 	auto gameState = this->GetGameState<AMainGameState>();
-	gameState->GameStartCountdown = 1;
+	gameState->GameStartCountdown = 5;
 
 	FTimerDelegate TimerCallback;
 	TimerCallback.BindLambda([this, gameState] {
 		gameState->GameStartCountdown -= 1;
 
 		if (gameState->GameStartCountdown == 0) {
+			this->UpdateSpawnPoints();
 			this->BeginSpawningEnemies();
 		}
 		else if (gameState->GameStartCountdown < 0) {
@@ -77,8 +76,22 @@ void AThirdPersonProjectGameMode::BeginPlay()
 	GetWorldTimerManager().SetTimer(GameStartTimer, TimerCallback, 1.0, true, 1.0);
 }
 
+void AThirdPersonProjectGameMode::StartMatch()
+{
+	Super::StartMatch();
+}
+
+void AThirdPersonProjectGameMode::EndMatch()
+{
+	Super::EndMatch();
+
+	GetWorldTimerManager().ClearTimer(SpawnTimer);
+}
+
 void AThirdPersonProjectGameMode::UpdateSpawnPoints()
 {
+	SpawnPoints.Empty();
+
 	for(TActorIterator<ASpawnPoint> ActorItr(GetWorld()); ActorItr; ++ActorItr)
 	{
 		SpawnPoints.Add(*ActorItr);
@@ -98,20 +111,22 @@ void AThirdPersonProjectGameMode::BeginSpawningEnemies()
 void AThirdPersonProjectGameMode::SpawnEnemies()
 {
 	auto spawnPoint = SpawnPoints[FMath::RandRange(0, SpawnPoints.Num() - 1)];
-	auto spawnLocation = spawnPoint->GetActorLocation();
+	if (spawnPoint) {
+		auto spawnLocation = spawnPoint->GetActorLocation();
 
-	int numSpawns = FMath::RandRange(2, 6);
+		int numSpawns = FMath::RandRange(2, 6);
 
-	for (int i = 0; i < numSpawns; i++) {
-		auto staggeredLocation = spawnLocation + FVector(i * 10, 0, 0);
-		auto transform = FTransform(staggeredLocation);
+		for (int i = 0; i < numSpawns; i++) {
+			auto staggeredLocation = spawnLocation + FVector(i * 10, 0, 0);
+			auto transform = FTransform(staggeredLocation);
 
-		if (i % 2 == 0) {
-			UAIBlueprintHelperLibrary::SpawnAIFromClass(this, MeleeEnemyBPClass->Class, NULL, staggeredLocation);
+			if (i % 2 == 0) {
+				UAIBlueprintHelperLibrary::SpawnAIFromClass(this, MeleeEnemyBPClass->Class, NULL, staggeredLocation);
+			}
+			else {
+				UAIBlueprintHelperLibrary::SpawnAIFromClass(this, RangedEnemyBPClass->Class, NULL, staggeredLocation);
+			}
+			//actor->AIControllerClass = NewObject<AController>(GetLevel(), GenericEnemyAIControllerBPClass->Class);
 		}
-		else {
-			UAIBlueprintHelperLibrary::SpawnAIFromClass(this, RangedEnemyBPClass->Class, NULL, staggeredLocation);
-		}
-		//actor->AIControllerClass = NewObject<AController>(GetLevel(), GenericEnemyAIControllerBPClass->Class);
 	}
 }

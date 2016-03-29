@@ -14,7 +14,12 @@ public:
 	~AThirdPersonProjectGameMode();
 	
 	virtual void InitGame(const FString& MapName, const FString& Options, FString& ErrorMessage) override;
-	virtual void BeginPlay() override;
+	virtual void StartPlay() override;
+
+
+protected:
+	void StartMatch() override;
+	void EndMatch() override;
 
 private:
 	TArray<ASpawnPoint *> SpawnPoints;

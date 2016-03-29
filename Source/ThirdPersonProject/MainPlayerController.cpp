@@ -61,6 +61,8 @@ void AMainPlayerController::OnPlayerDied(AThirdPersonProjectCharacter* Character
 	this->UnPossess();
 
 	this->ClientShowGameOverHUD();
+
+	GetWorld()->GetAuthGameMode()->EndMatch();
 }
 
 void AMainPlayerController::ClientShowGameOverHUD_Implementation()
