@@ -47,12 +47,23 @@ void AMainPlayerController::InitPlayerState()
 	}
 }
 
+void AMainPlayerController::OnRep_PlayerState()
+{
+	Super::OnRep_PlayerState();
+
+	auto gameState = this->GetWorld()->GetGameState();
+	
+
+
+	//PlayerHUD->OnPlayerJoined(Cast<AMyPlayerState>(this->PlayerState));
+}
+
 void AMainPlayerController::SetPawn(APawn* InPawn)
 {
 	Super::SetPawn(InPawn);
 
 	if (InPawn) {
-		this->SetMouseCursorEnabled(false);
+		this->ClientSetMouseCursorEnabled(false);
 	}
 }
 
@@ -60,20 +71,22 @@ void AMainPlayerController::OnPlayerDied(AThirdPersonProjectCharacter* Character
 {
 	this->UnPossess();
 
-	this->ClientShowGameOverHUD();
+	//GetWorld()->GetAuthGameMode()->EndMatchIfAllDead();
 
-	GetWorld()->GetAuthGameMode()->EndMatch();
+
+	//this->ClientShowGameOverHUD();
+	this->ClientOnPlayerDied();
 }
 
-void AMainPlayerController::ClientShowGameOverHUD_Implementation()
+void AMainPlayerController::ClientOnPlayerDied_Implementation()
 {
 	if (PlayerHUD) {
-		PlayerHUD->GameOverHUDWidget->SetVisibility(ESlateVisibility::Visible);
-		this->SetMouseCursorEnabled(true);
+		PlayerHUD->OnPlayerDied();
+		this->ClientSetMouseCursorEnabled(true);
 	}
 }
 
-void AMainPlayerController::SetMouseCursorEnabled(bool enabled)
+void AMainPlayerController::ClientSetMouseCursorEnabled_Implementation(bool enabled)
 {
 	this->bShowMouseCursor = enabled;
 	this->bEnableClickEvents = enabled;
@@ -145,4 +158,9 @@ void AMainPlayerController::Server_NotifyReady_Implementation(bool pReady)
 
 	auto gameMode = Cast<AMainMenuGameMode>(GetWorld()->GetAuthGameMode());
 	gameMode->CheckIfGameReady();
+}
+
+void AMainPlayerController::OnPostLogin()
+{
+	
 }

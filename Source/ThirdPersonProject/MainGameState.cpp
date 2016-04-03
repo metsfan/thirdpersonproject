@@ -10,3 +10,22 @@ void AMainGameState::GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & Ou
 
 	DOREPLIFETIME(AMainGameState, GameStartCountdown);
 }
+
+void AMainGameState::AddPlayerState(APlayerState* Player)
+{
+	Super::AddPlayerState(Player);
+
+	if (Player->PlayerId > 0) {
+		auto myPlayer = Cast<AMyPlayerState>(Player);
+		ConnectedPlayers.Emplace(Player->PlayerId, myPlayer);
+
+		OnPlayerAdded.Broadcast(myPlayer);
+	}
+}
+
+void AMainGameState::RemovePlayerState(APlayerState* Player)
+{
+	Super::RemovePlayerState(Player);
+
+	OnPlayerRemoved.Broadcast(Cast<AMyPlayerState>(Player));
+}

@@ -42,7 +42,10 @@ public:
 
 	virtual void InitPlayerState() override;
 
-	void SetMouseCursorEnabled(bool enabled);
+	UFUNCTION(Client, Reliable)
+	void ClientSetMouseCursorEnabled(bool enabled);
+
+	virtual void OnRep_PlayerState();
 
 protected:
 	virtual void SetupInputComponent() override;
@@ -53,11 +56,14 @@ protected:
 	UPROPERTY(BlueprintReadWrite)
 	UGameHUD* PlayerHUD;
 
+	UFUNCTION(BlueprintCallable, Category = "Default")
+	void OnPostLogin();
+
 private:
 	UFUNCTION()
 	void OnRep_Nickname();
 
 	UFUNCTION(Client, Reliable)
-	void ClientShowGameOverHUD();
+	void ClientOnPlayerDied();
 
 };
