@@ -5,7 +5,7 @@
 #include "UnrealNetwork.h"
 #include "MyPlayerState.h"
 
-AMyPlayerState::AMyPlayerState(): Super()
+AMyPlayerState::AMyPlayerState(): Super(), ReadyToRestart(false)
 {
 	this->bReplicates = true;
 }
@@ -21,15 +21,26 @@ void AMyPlayerState::Update(ABaseCharacter* Character)
 		MaxEnergy = Character->MaxEnergy;
 		EnergyPercent = Character->EnergyPercent;
 
-		if (Name != Character->Name) {
+		/*if (Name != Character->Name) {
 			Name = Character->Name;
-		}
+		}*/
+		Name = FText::AsNumber(PlayerId).ToString();
 	}
 	else {
 		Health = 0;
 		MaxHealth = 0;
 		HealthPercent = 0;
 	}
+}
+
+bool AMyPlayerState::SetPlayerReady_Validate(bool ready)
+{
+	return true;
+}
+
+void AMyPlayerState::SetPlayerReady_Implementation(bool ready)
+{
+	ReadyToRestart = true;
 }
 
 void AMyPlayerState::GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLifetimeProps) const
@@ -43,6 +54,7 @@ void AMyPlayerState::GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & Ou
 	DOREPLIFETIME(AMyPlayerState, MaxEnergy);
 	DOREPLIFETIME(AMyPlayerState, EnergyPercent);
 	DOREPLIFETIME(AMyPlayerState, Name);
+	DOREPLIFETIME(AMyPlayerState, ReadyToRestart);
 }
 
 

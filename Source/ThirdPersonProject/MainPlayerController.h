@@ -4,6 +4,7 @@
 
 #include "GameFramework/PlayerController.h"
 #include "ActionEvent.h"
+#include "MyPlayerState.h"
 #include "MainPlayerController.generated.h"
 
 class ULobbyHUD;
@@ -38,7 +39,8 @@ public:
 	UFUNCTION(Server, Reliable, WithValidation, BlueprintCallable, Category = "Default")
 	void Server_NotifyReady(bool pReady);
 
-	void OnPlayerDied(AThirdPersonProjectCharacter* Character);
+	UFUNCTION(Client, Reliable)
+	void OnPlayerDied(AMyPlayerState* DeadPlayer);
 
 	virtual void InitPlayerState() override;
 
@@ -46,6 +48,11 @@ public:
 	void ClientSetMouseCursorEnabled(bool enabled);
 
 	virtual void OnRep_PlayerState();
+
+	UFUNCTION()
+	void OnPlayerAdded(AMyPlayerState* NewPlayer);
+
+	bool IsAlive();
 
 protected:
 	virtual void SetupInputComponent() override;
@@ -66,4 +73,9 @@ private:
 	UFUNCTION(Client, Reliable)
 	void ClientOnPlayerDied();
 
+	UFUNCTION()
+	void OnPlayerRestartClick();
+
+	UFUNCTION(Server, Reliable, WithValidation)
+		void OnPlayerReadyToRestart();
 };

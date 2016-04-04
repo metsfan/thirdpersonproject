@@ -23,22 +23,26 @@ class THIRDPERSONPROJECT_API UGameHUD : public UUserWidget
 
 	virtual void NativeConstruct() override;
 
-	//virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
+	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
 
 	void UpdatePartyFrame();
+
+private:
+	UFUNCTION()
+	void OnRestartClick_Private();
 
 protected:
 	UFUNCTION(BlueprintCallable, Category=Functions)
 	FText GetCountdownTimerText();
 
 public:
-
-	DECLARE_MULTICAST_DELEGATE_OneParam(FRestartButtonClickSignature, UGameOverHUD*)
-	FRestartButtonClickSignature OnRestartButtonClick;
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FRestartClickSignature);
+	FRestartClickSignature OnRestartClick;
 
 	void OnLocalPlayerJoined(AMyPlayerState* player);
 	void OnRemotePlayerJoined(AMyPlayerState* player);
 	void OnPlayerDied();
+	void OnGameOver();
 	void OnPlayerReadyToRestart(AMyPlayerState* player);
 
 	UPROPERTY(BlueprintReadWrite)

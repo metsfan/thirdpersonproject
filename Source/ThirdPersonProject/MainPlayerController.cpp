@@ -10,6 +10,8 @@
 #include "GameHUD.h"
 #include "MainMenuGameState.h"
 #include "UnrealNetwork.h"
+#include "MainGameState.h"
+#include "ThirdPersonProjectGameMode.h"
 
 AMainPlayerController::AMainPlayerController(): Super()
 {
@@ -42,6 +44,7 @@ void AMainPlayerController::InitPlayerState()
 {
 	Super::InitPlayerState();
 
+	auto gameState = Cast<AMainGameState>(this->GetWorld()->GetGameState());
 	if (Role == ROLE_AutonomousProxy) {
 		
 	}
@@ -51,11 +54,26 @@ void AMainPlayerController::OnRep_PlayerState()
 {
 	Super::OnRep_PlayerState();
 
-	auto gameState = this->GetWorld()->GetGameState();
-	
+	auto gameState = Cast<AMainGameState>(this->GetWorld()->GetGameState());
+	if (gameState) {
+		gameState->OnPlayerAdded.AddDynamic(this, &AMainPlayerController::OnPlayerAdded);
 
+		this->OnPlayerAdded(Cast<AMyPlayerState>(this->PlayerState));
+	}
 
 	//PlayerHUD->OnPlayerJoined(Cast<AMyPlayerState>(this->PlayerState));
+}
+
+void AMainPlayerController::OnPlayerAdded(AMyPlayerState* NewPlayer)
+{
+	if (PlayerHUD) {
+		if (NewPlayer->PlayerId == this->PlayerState->PlayerId) {
+			PlayerHUD->OnLocalPlayerJoined(NewPlayer);
+		}
+		else {
+			PlayerHUD->OnRemotePlayerJoined(NewPlayer);
+		}
+	}
 }
 
 void AMainPlayerController::SetPawn(APawn* InPawn)
@@ -67,7 +85,7 @@ void AMainPlayerController::SetPawn(APawn* InPawn)
 	}
 }
 
-void AMainPlayerController::OnPlayerDied(AThirdPersonProjectCharacter* Character)
+void AMainPlayerController::OnPlayerDied_Implementation(AMyPlayerState* DeadPlayer)
 {
 	this->UnPossess();
 
@@ -75,7 +93,12 @@ void AMainPlayerController::OnPlayerDied(AThirdPersonProjectCharacter* Character
 
 
 	//this->ClientShowGameOverHUD();
-	this->ClientOnPlayerDied();
+	//this->ClientOnPlayerDied();
+
+	if (PlayerHUD) {
+		PlayerHUD->OnPlayerDied();
+		this->ClientSetMouseCursorEnabled(true);
+	}
 }
 
 void AMainPlayerController::ClientOnPlayerDied_Implementation()
@@ -162,5 +185,31 @@ void AMainPlayerController::Server_NotifyReady_Implementation(bool pReady)
 
 void AMainPlayerController::OnPostLogin()
 {
-	
+	if (PlayerHUD) {
+		PlayerHUD->OnRestartClick.AddDynamic(this, &AMainPlayerController::OnPlayerRestartClick);
+	}
+}
+
+void AMainPlayerController::OnPlayerRestartClick()
+{
+	this->OnPlayerReadyToRestart();
+}
+
+bool AMainPlayerController::IsAlive()
+{
+	return Cast<AMyPlayerState>(PlayerState)->IsAlive();
+}
+
+bool AMainPlayerController::OnPlayerReadyToRestart_Validate()
+{
+	return true;
+}
+
+void AMainPlayerController::OnPlayerReadyToRestart_Implementation()
+{
+	auto playerState = Cast<AMyPlayerState>(PlayerState);
+	playerState->SetPlayerReady(true);
+
+	auto gameMode = Cast<AThirdPersonProjectGameMode>(GetWorld()->GetAuthGameMode());
+	gameMode->RestartGameIfAllReady();
 }

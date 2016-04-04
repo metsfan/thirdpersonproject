@@ -41,8 +41,14 @@ public:
 
 	UPROPERTY(BlueprintReadOnly, Replicated)
 		FString Name;
+
+	UPROPERTY(BlueprintReadOnly, Replicated)
+		bool ReadyToRestart;
+
+	UFUNCTION(Server, Reliable, WithValidation)
+	void SetPlayerReady(bool ready);
 	
 	void Update(ABaseCharacter* Character);
 
-	bool IsDead() { return Health == 0;  }
+	bool IsAlive() { return Health > 0;  }
 };

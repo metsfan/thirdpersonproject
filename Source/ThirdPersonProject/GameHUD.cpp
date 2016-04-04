@@ -18,9 +18,25 @@ UGameHUD::UGameHUD(const FObjectInitializer& ObjectInitializer): Super(ObjectIni
 	}
 }
 
+void UGameHUD::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
+{
+	Super::NativeTick(MyGeometry, InDeltaTime);
+
+	GameOverHUDWidget->UpdateState();
+}
+
 void UGameHUD::NativeConstruct()
 {
 	Super::NativeConstruct();
+
+	GameOverHUDWidget->OnRestartClick.AddDynamic(this, &UGameHUD::OnRestartClick_Private);
+}
+
+void UGameHUD::OnRestartClick_Private()
+{
+	//this->GameOverHUDWidget->SetState(UGameOverState::Ready);
+
+	OnRestartClick.Broadcast();
 }
 
 FText UGameHUD::GetCountdownTimerText()
@@ -40,7 +56,12 @@ FText UGameHUD::GetCountdownTimerText()
 
 void UGameHUD::OnPlayerDied()
 {
-	GameOverHUDWidget->SetVisibility(ESlateVisibility::Visible);
+	//GameOverHUDWidget->SetState(UGameOverState::PlayerDead);
+}
+
+void UGameHUD::OnGameOver()
+{
+	//GameOverHUDWidget->SetState(UGameOverState::ReadyCheck);
 }
 
 void UGameHUD::OnLocalPlayerJoined(AMyPlayerState* player)
@@ -55,20 +76,15 @@ void UGameHUD::OnRemotePlayerJoined(AMyPlayerState* player)
 	this->UpdatePartyFrame();
 }
 
-void UGameHUD::OnPlayerReadyToRestart(AMyPlayerState* player)
-{
-	GameOverHUDWidget->OnPlayerReadyToRestart(player);
-}
-
 void UGameHUD::UpdatePartyFrame()
 {
 	auto gameState = this->GetWorld()->GetGameState<AMainGameState>();
 	if (gameState && PlayerFrameWidget->Player) {
 		auto players = gameState->PlayerArray;
-		for (auto player : gameState->ConnectedPlayers) {
-			if (player.Value->PlayerId != PlayerFrameWidget->Player->PlayerId) {
+		for (auto player : players) {
+			if (player->PlayerId != 0 && player->PlayerId != PlayerFrameWidget->Player->PlayerId) {
 				auto widget = CreateWidget<UPlayerFrame>(GetWorld()->GetGameInstance(), PlayerFrameBPClass->Class);
-				widget->Player = player.Value;
+				widget->Player = Cast<AMyPlayerState>(player);
 				PartyPanelWidget->AddChildToVerticalBox(widget);
 			}
 		}

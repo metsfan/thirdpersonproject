@@ -14,9 +14,10 @@ class UTextBlock;
 class AMyPlayerState;
 
 enum UGameOverState {
+	PlayerAlive,
 	PlayerDead,
-	GameOver,
-	ReadyCheck
+	ReadyCheck,
+	Ready
 };
 
 UCLASS()
@@ -25,11 +26,29 @@ class THIRDPERSONPROJECT_API UGameOverHUD : public UUserWidget
 	GENERATED_BODY()
 
 public:
-	void OnPlayerReadyToRestart(AMyPlayerState* player);
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FRestartClickSignature);
+	FRestartClickSignature OnRestartClick;
+
+	void OnPlayerReady(AMyPlayerState* player);
+
+	void SetState(UGameOverState newState);
 
 	UPROPERTY(BlueprintReadWrite)
 	UButton* RestartButtonWidget;
 
 	UPROPERTY(BlueprintReadWrite)
 	UTextBlock* GameOverTextWidget;
+
+	//void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
+
+	void UpdateState();
+
+protected:
+	void NativeConstruct() override;
+
+private:
+	UGameOverState State;
+
+	UFUNCTION()
+		void OnRestartClicked();
 };

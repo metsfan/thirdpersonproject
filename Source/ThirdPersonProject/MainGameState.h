@@ -20,14 +20,14 @@ public:
 	UPROPERTY(BlueprintReadOnly, Replicated)
 	int32 GameStartCountdown;
 
-	DECLARE_MULTICAST_DELEGATE_OneParam(FPlayerAddedSignature, AMyPlayerState*)
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FPlayerAddedSignature, class AMyPlayerState*, Player);
 	FPlayerAddedSignature OnPlayerAdded;
 
-	DECLARE_MULTICAST_DELEGATE_OneParam(FPlayerRemovedSignature, AMyPlayerState*)
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FPlayerRemovedSignature, class AMyPlayerState*, Player);
 	FPlayerAddedSignature OnPlayerRemoved;
 
 	virtual void AddPlayerState(APlayerState* Player);
 	virtual void RemovePlayerState(APlayerState* Player);
 
-	TMap<int32, AMyPlayerState*> ConnectedPlayers;
+	TMap<int32, AMyPlayerState*> GetConnectedPlayers();
 };

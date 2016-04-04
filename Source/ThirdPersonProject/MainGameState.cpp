@@ -17,8 +17,6 @@ void AMainGameState::AddPlayerState(APlayerState* Player)
 
 	if (Player->PlayerId > 0) {
 		auto myPlayer = Cast<AMyPlayerState>(Player);
-		ConnectedPlayers.Emplace(Player->PlayerId, myPlayer);
-
 		OnPlayerAdded.Broadcast(myPlayer);
 	}
 }
@@ -28,4 +26,16 @@ void AMainGameState::RemovePlayerState(APlayerState* Player)
 	Super::RemovePlayerState(Player);
 
 	OnPlayerRemoved.Broadcast(Cast<AMyPlayerState>(Player));
+}
+
+TMap<int32, AMyPlayerState*> AMainGameState::GetConnectedPlayers()
+{
+	TMap<int32, AMyPlayerState*> out;
+	for (auto player : PlayerArray) {
+		if (player->PlayerId > 0) {
+			out.Emplace(player->PlayerId, Cast<AMyPlayerState>(player));
+		}
+	}
+
+	return out;
 }

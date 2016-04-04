@@ -236,7 +236,7 @@ void AThirdPersonProjectCharacter::AddHealth_Implementation(int32 delta)
 	if (Health <= 0) {
 		auto controller = Cast<AMainPlayerController>(this->Controller);
 		if (controller) {
-			controller->OnPlayerDied(this);
+			controller->OnPlayerDied(Cast<AMyPlayerState>(PlayerState));
 		}
 	}
 }
