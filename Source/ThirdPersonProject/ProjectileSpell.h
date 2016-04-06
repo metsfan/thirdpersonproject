@@ -29,6 +29,10 @@ public:
 
 	void StopCollision();
 
+	void SetTargetLocation(const FVector& Location) {
+		this->TargetLocation = Location;
+	}
+
 protected:
 	
 	virtual void OnCollision(class AActor* OtherActor);
@@ -42,5 +46,7 @@ private:
 
 	UFUNCTION()
 		void OnGeometryComponentBeginOverlap(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bSweepTest, const FHitResult& Hit);
+
+	FVector TargetLocation;
 
 };

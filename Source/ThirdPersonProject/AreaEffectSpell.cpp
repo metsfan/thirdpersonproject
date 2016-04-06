@@ -34,7 +34,7 @@ void AAreaEffectSpell::OnAreaBeginOverlap(class AActor* OtherActor, class UPrimi
 {
 	if (Role == ROLE_Authority) {
 		auto character = Cast<ABaseCharacter>(OtherActor);
-		if (character && character != this->GetOwner()) {
+		if (character && this->IsValidTarget(character)) {
 			this->ApplyEffects(character);
 		}
 	}

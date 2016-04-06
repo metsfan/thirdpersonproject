@@ -10,6 +10,13 @@
 
 class AThirdPersonProjectCharacter;
 
+UENUM()
+enum class FTargetType : uint8 {
+	EnemyOnly,
+	FriendlyOnly,
+	EnemyAndFriendly
+};
+
 UCLASS()
 class THIRDPERSONPROJECT_API ASpellCPP : public AActor
 {
@@ -31,6 +38,9 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 		USpellData* Data;
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+		FTargetType TargetType;
+
 	void SetDamageScaleModifier(float modifier);
 
 	virtual void Finish();
@@ -45,5 +55,6 @@ protected:
 	virtual bool ServerFinish_Validate();
 	virtual void ServerFinish_Implementation();
 	
+	bool IsValidTarget(AActor* target);
 	
 };

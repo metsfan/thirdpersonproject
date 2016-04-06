@@ -70,6 +70,9 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = Character)
 		float DespawnTime;
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = Character)
+		int32 TeamID;
+
 	UFUNCTION(Server, Reliable, WithValidation)
 	virtual void AddHealth(int32 delta);
 	virtual bool AddHealth_Validate(int32 delta);

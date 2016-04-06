@@ -5,6 +5,7 @@
 #include "UnrealNetwork.h"
 #include "ThirdPersonProjectCharacter.h"
 #include "BaseCharacter.h"
+#include "Kismet/KismetMathLibrary.h"
 
 void AProjectileSpell::BeginPlay()
 {
@@ -32,8 +33,8 @@ void AProjectileSpell::OnGeometryComponentBeginOverlap(class AActor* OtherActor,
 void AProjectileSpell::OnCollision(class AActor* OtherActor)
 {
 	if (Role == ROLE_Authority) {
-		auto character = dynamic_cast<ABaseCharacter *>(OtherActor);
-		if (character) {
+		auto character = Cast<ABaseCharacter>(OtherActor);
+		if (character && this->IsValidTarget(OtherActor)) {
 			this->ApplyEffects(character);
 		}
 	}
@@ -43,7 +44,16 @@ void AProjectileSpell::UpdateProjectileVelocity()
 {
 	auto character = Cast<ABaseCharacter>(this->GetInstigator());
 	if (character->Controller) {
-		auto rotator = character->Controller->GetControlRotation().Vector();
+		FVector rotator;
+		if (TargetLocation == FVector(0)) {
+			rotator = character->Controller->GetControlRotation().Vector();
+			MovementComponent->Velocity = rotator * MovementComponent->InitialSpeed;
+		}
+		else {
+			auto position = character->GetActorLocation();
+			rotator = UKismetMathLibrary::FindLookAtRotation(position, TargetLocation).Vector();
+		}
+
 		MovementComponent->Velocity = rotator * MovementComponent->InitialSpeed;
 	}
 }

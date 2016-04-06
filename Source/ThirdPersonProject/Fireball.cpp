@@ -111,16 +111,18 @@ void AFireball::OnCollision(class AActor* OtherActor)
 {
 	Super::OnCollision(OtherActor);
 
-	StopCollision();
+	if (this->IsValidTarget(OtherActor)) {
+		StopCollision();
 
-	
-	//GetWorldTimerManager().SetTimer(ExplosionTimer, TimerCallback, 1.0, false, 1.0);
 
-	this->ShowExplosionEffect();
+		//GetWorldTimerManager().SetTimer(ExplosionTimer, TimerCallback, 1.0, false, 1.0);
 
-	this->Destroy();
+		this->ShowExplosionEffect();
 
-	GetWorldTimerManager().ClearTimer(ExplosionTimer);
+		this->Destroy();
+
+		GetWorldTimerManager().ClearTimer(ExplosionTimer);
+	}
 	//UE_LOG(MyLog, Log, TEXT("Showing Fireball animation on machine with role: %d"), (int32) Role.GetValue());
 }
 

@@ -142,7 +142,6 @@ void AThirdPersonProjectGameMode::RestartGameIfAllReady()
 
 	if (allReady) {
 		GetWorldTimerManager().ClearTimer(SpawnTimer);
-		//this->RestartGame();
-		GetWorld()->ServerTravel(TEXT("/Game/ThirdPersonCPP/Maps/ThirdPersonExampleMap?listen"), true);
+		GetWorld()->ServerTravel("?listen");
 	}
 }

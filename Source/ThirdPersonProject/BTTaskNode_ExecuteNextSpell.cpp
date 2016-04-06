@@ -7,6 +7,7 @@
 #include "BaseAIController.h"
 #include "BaseCharacter.h"
 #include "SpellCPP.h"
+#include "ProjectileSpell.h"
 
 EBTNodeResult::Type UBTTaskNode_ExecuteNextSpell::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8 * NodeMemory)
 {
@@ -27,6 +28,10 @@ EBTNodeResult::Type UBTTaskNode_ExecuteNextSpell::ExecuteTask(UBehaviorTreeCompo
 		FTransform* transform = new FTransform(FVector(75, 0, 0));
 
 		auto actor = Cast<ASpellCPP>(GetWorld()->SpawnActor(spell->Class, transform, spawnParams));
+		if (actor->IsA(AProjectileSpell::StaticClass())) {
+			auto projectile = Cast<AProjectileSpell>(actor);
+			projectile->SetTargetLocation(target->GetActorLocation());
+		}
 		actor->AttachRootComponentToActor(owningActor);
 		actor->Finish();
 	}

@@ -14,7 +14,7 @@ bool UBTDecorator_CanUseNextSpell::CalculateRawConditionValue(UBehaviorTreeCompo
 	if (spell) {
 		auto currentTarget = Cast<ACharacter>(blackboard->GetValueAsObject("CurrentTarget"));
 
-		double distance = owningActor->GetDistanceTo(currentTarget);
+		double distance = FVector::Dist(currentTarget->GetActorLocation(), owningActor->GetActorLocation());
 
 		//UE_LOG(MyLog, Log, TEXT("Distance: %f, Spell Range: %d"), distance, spell->MaxRange);
 

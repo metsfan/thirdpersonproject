@@ -6,7 +6,7 @@
 #include "DirectDamageSpellEffect.h"
 
 // Sets default values
-ASpellCPP::ASpellCPP()
+ASpellCPP::ASpellCPP() : Super(), TargetType(FTargetType::EnemyOnly)
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
@@ -70,5 +70,38 @@ void ASpellCPP::Finish()
 	if (!HasAuthority()) {
 		this->ServerFinish();
 	}
+}
+
+bool ASpellCPP::IsValidTarget(AActor* target)
+{
+	if (!target) {
+		return false;
+	}
+
+	if (target->IsA(ABaseCharacter::StaticClass())) {
+		auto targetCharacter = Cast<ABaseCharacter>(target);
+		auto ownerCharacter = Cast<ABaseCharacter>(this->GetOwner());
+		if (ownerCharacter) {
+			if (ownerCharacter == target) {
+				return false;
+			}
+
+			switch (TargetType) {
+			case FTargetType::EnemyOnly:
+				return ownerCharacter->TeamID != targetCharacter->TeamID;
+			case FTargetType::FriendlyOnly:
+				return ownerCharacter->TeamID == targetCharacter->TeamID;
+			case FTargetType::EnemyAndFriendly:
+				return true;
+			}
+		}
+		else {
+			// If this spell is not owned by a character, then it is owned by the level, in which case we only want it to affect players.
+			return targetCharacter->IsPlayerControlled();
+		}
+	}
+
+	// We'll collide with anything that isn't a character, probably environment geometry
+	return true;
 }
 
