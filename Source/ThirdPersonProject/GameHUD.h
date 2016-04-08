@@ -6,6 +6,7 @@
 #include "PlayerFrame.h"
 #include "GameOverHUD.h"
 #include "Components/VerticalBox.h"
+#include "Components/Image.h"
 #include "GameHUD.generated.h"
 
 /**
@@ -31,11 +32,10 @@ private:
 	UFUNCTION()
 	void OnRestartClick_Private();
 
-protected:
-	UFUNCTION(BlueprintCallable, Category=Functions)
+public:
+	UFUNCTION(BlueprintCallable, Category = TextBinding)
 	FText GetCountdownTimerText();
 
-public:
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FRestartClickSignature);
 	FRestartClickSignature OnRestartClick;
 
@@ -45,6 +45,8 @@ public:
 	void OnGameOver();
 	void OnPlayerReadyToRestart(AMyPlayerState* player);
 
+	FVector2D GetCrosshairPosition();
+
 	UPROPERTY(BlueprintReadWrite)
 	UPlayerFrame* PlayerFrameWidget;
 
@@ -53,4 +55,7 @@ public:
 	
 	UPROPERTY(BlueprintReadWrite)
 	UVerticalBox* PartyPanelWidget;
+
+	UPROPERTY(BlueprintReadWrite)
+	UImage* CrosshairWidget;
 };

@@ -8,6 +8,8 @@
 #include "MyPlayerState.h"
 #include "PlayerFrame.h"
 #include "MainGameState.h"
+#include "WidgetHelper.h"
+#include "Components/CanvasPanelSlot.h"
 
 static ConstructorHelpers::FClassFinder<UPlayerFrame> *PlayerFrameBPClass = NULL;
 
@@ -89,6 +91,12 @@ void UGameHUD::UpdatePartyFrame()
 			}
 		}
 	}
+}
+
+FVector2D UGameHUD::GetCrosshairPosition()
+{
+	auto canvasSlot = Cast<UCanvasPanelSlot>(CrosshairWidget->Slot);
+	return FWidgetHelper::GetAbsolutePositionForCanvasSlot(this, canvasSlot);
 }
 
 

@@ -123,8 +123,14 @@ void AMainPlayerController::Tick(float deltaSeconds)
 	auto Player = Cast<ABaseCharacter>(this->GetPawn());
 	auto PlayerState = Cast<AMyPlayerState>(this->PlayerState);
 	if (PlayerState) {
-		if (PlayerHUD != NULL && PlayerHUD->PlayerFrameWidget->Player == NULL) {
-			PlayerHUD->PlayerFrameWidget->Player = Cast<AMyPlayerState>(this->PlayerState);
+		if (PlayerHUD != NULL) {
+			if (PlayerHUD->PlayerFrameWidget->Player == NULL) {
+				PlayerHUD->PlayerFrameWidget->Player = Cast<AMyPlayerState>(this->PlayerState);
+			}
+			
+			if (CrosshairPosition == FVector2D(0, 0)) {
+				CrosshairPosition = PlayerHUD->GetCrosshairPosition();
+			}			
 		}
 
 		PlayerState->Update(Player);

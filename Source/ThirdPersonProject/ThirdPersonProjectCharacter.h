@@ -105,7 +105,7 @@ protected:
 	// End of APawn interface
 
 	UFUNCTION(BlueprintCallable, Category = "Default", Server, Reliable, WithValidation)
-	void ExecuteSpell(UClass* action);
+	void ExecuteSpell(UClass* action, const FVector& crosshairPosition);
 
 public:
 	/** Returns CameraBoom subobject **/

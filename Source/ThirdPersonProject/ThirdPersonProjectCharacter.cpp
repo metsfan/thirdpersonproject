@@ -6,6 +6,8 @@
 #include "MyPlayerState.h"
 #include "ThirdPersonProjectGameMode.h"
 #include "MainPlayerController.h"
+#include "ProjectileSpell.h"
+#include "Kismet/KismetMathLibrary.h"
 
 //////////////////////////////////////////////////////////////////////////
 // AThirdPersonProjectCharacter
@@ -85,12 +87,12 @@ void AThirdPersonProjectCharacter::Tick(float deltaSeconds)
 	Super::Tick(deltaSeconds);
 }
 
-bool AThirdPersonProjectCharacter::ExecuteSpell_Validate(UClass* action)
+bool AThirdPersonProjectCharacter::ExecuteSpell_Validate(UClass* action, const FVector& crosshairPosition)
 {
 	return action != NULL;
 }
 
-void AThirdPersonProjectCharacter::ExecuteSpell_Implementation(UClass* action)
+void AThirdPersonProjectCharacter::ExecuteSpell_Implementation(UClass* action, const FVector& crosshairPosition)
 {
 	if (action) {
 		FActorSpawnParameters spawnParams;
@@ -101,6 +103,11 @@ void AThirdPersonProjectCharacter::ExecuteSpell_Implementation(UClass* action)
 		auto actor = GetWorld()->SpawnActor(action, transform, spawnParams);
 		actor->Instigator = this;
 		actor->AttachRootComponentToActor(this);
+
+		if (actor->IsA(AProjectileSpell::StaticClass())) {
+			auto projectile = Cast<AProjectileSpell>(actor);
+			projectile->SetTargetLocation(crosshairPosition);
+		}
 
 		ActiveSpell = Cast<ASpellCPP>(actor);
 	}
@@ -136,7 +143,22 @@ void AThirdPersonProjectCharacter::SetupPlayerInputComponent(class UInputCompone
 void AThirdPersonProjectCharacter::OnLeftMouseButtonPressed()
 {
 	if (MainAction) {
-		this->ExecuteSpell(MainAction);
+		auto controller = Cast<AMainPlayerController>(Controller);
+		const FVector2D ViewportCenter = controller->GetCrosshairPosition();
+
+		FVector WorldPosition, WorldDirection;
+		UGameplayStatics::DeprojectScreenToWorld(controller, ViewportCenter, WorldPosition, WorldDirection);
+
+		FVector WorldPositionNear = WorldPosition + (WorldDirection * 200);
+		FVector WorldPositionFar = WorldPosition + (WorldDirection * 20000);
+
+		FHitResult hit;
+		FCollisionQueryParams params;
+		params.AddIgnoredActor(this);
+
+		GetWorld()->LineTraceSingle(hit, WorldPositionNear, WorldPositionFar, ECollisionChannel::ECC_Visibility, params);
+
+		this->ExecuteSpell(MainAction, hit.Location);
 	}
 }
 

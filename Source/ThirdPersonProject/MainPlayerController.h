@@ -54,6 +54,10 @@ public:
 
 	bool IsAlive();
 
+	UGameHUD* GetPlayerHUD() { return PlayerHUD; }
+
+	FVector2D GetCrosshairPosition() { return CrosshairPosition;  }
+
 protected:
 	virtual void SetupInputComponent() override;
 
@@ -78,4 +82,6 @@ private:
 
 	UFUNCTION(Server, Reliable, WithValidation)
 		void OnPlayerReadyToRestart();
+
+	FVector2D CrosshairPosition;
 };

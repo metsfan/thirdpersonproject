@@ -45,13 +45,17 @@ void AProjectileSpell::UpdateProjectileVelocity()
 	auto character = Cast<ABaseCharacter>(this->GetInstigator());
 	if (character->Controller) {
 		FVector rotator;
-		if (TargetLocation == FVector(0)) {
-			rotator = character->Controller->GetControlRotation().Vector();
-			MovementComponent->Velocity = rotator * MovementComponent->InitialSpeed;
-		}
-		else {
+		FVector characterRotation = character->Controller->GetControlRotation().Vector();
+
+		if (TargetDirection != FVector(0)) {
+			rotator = TargetDirection;
+		} 
+		else if (TargetLocation != FVector(0)) {
 			auto position = character->GetActorLocation();
 			rotator = UKismetMathLibrary::FindLookAtRotation(position, TargetLocation).Vector();
+		}
+		else {
+			rotator = characterRotation;
 		}
 
 		MovementComponent->Velocity = rotator * MovementComponent->InitialSpeed;

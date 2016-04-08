@@ -33,6 +33,10 @@ public:
 		this->TargetLocation = Location;
 	}
 
+	void SetTargetDirection(const FVector& Direction) {
+		this->TargetDirection = Direction;
+	}
+
 protected:
 	
 	virtual void OnCollision(class AActor* OtherActor);
@@ -48,5 +52,6 @@ private:
 		void OnGeometryComponentBeginOverlap(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bSweepTest, const FHitResult& Hit);
 
 	FVector TargetLocation;
+	FVector TargetDirection;
 
 };
