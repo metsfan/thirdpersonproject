@@ -85,6 +85,22 @@ void AThirdPersonProjectCharacter::BeginPlay() {
 void AThirdPersonProjectCharacter::Tick(float deltaSeconds)
 {
 	Super::Tick(deltaSeconds);
+
+	if (HasAuthority()) {
+		if (Sprinting) {
+			if (Energy > 0) {
+				this->AddEnergy(-0.25);
+				this->GetCharacterMovement()->MaxWalkSpeed = SprintSpeed;
+				this->ResetEnergyTimer();
+			}
+			else {
+				Sprinting = false;
+			}
+		}
+		else {
+			this->GetCharacterMovement()->MaxWalkSpeed = RunSpeed;
+		}
+	}
 }
 
 bool AThirdPersonProjectCharacter::ExecuteSpell_Validate(UClass* action, const FVector& crosshairPosition)
@@ -138,7 +154,11 @@ void AThirdPersonProjectCharacter::SetupPlayerInputComponent(class UInputCompone
 
 	InputComponent->BindAction("MainAction", IE_Pressed, this, &AThirdPersonProjectCharacter::OnLeftMouseButtonPressed);
 	InputComponent->BindAction("MainAction", IE_Released, this, &AThirdPersonProjectCharacter::OnLeftMouseButtonReleased);
+
+	InputComponent->BindAction("Sprint", IE_Pressed, this, &AThirdPersonProjectCharacter::BeginSprint);
+	InputComponent->BindAction("Sprint", IE_Released, this, &AThirdPersonProjectCharacter::EndSprint);
 }
+
 
 void AThirdPersonProjectCharacter::OnLeftMouseButtonPressed()
 {
@@ -186,6 +206,30 @@ void AThirdPersonProjectCharacter::MouseTilt(float Pitch)
 {
 	// calculate delta for this frame from the rate information
 	AddControllerPitchInput(Pitch);
+}
+
+void AThirdPersonProjectCharacter::BeginSprint()
+{
+	if (this->Energy > 0) {
+		this->SetSprinting(true);
+
+		this->ResetEnergyTimer();
+	}
+}
+
+void AThirdPersonProjectCharacter::EndSprint()
+{
+	this->SetSprinting(false);
+}
+
+bool AThirdPersonProjectCharacter::SetSprinting_Validate(bool newSprinting)
+{
+	return true;
+}
+
+void AThirdPersonProjectCharacter::SetSprinting_Implementation(bool newSprinting)
+{
+	Sprinting = newSprinting;
 }
 
 void AThirdPersonProjectCharacter::TouchStarted(ETouchIndex::Type FingerIndex, FVector Location)

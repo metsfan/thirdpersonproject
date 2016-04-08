@@ -79,10 +79,16 @@ public:
 	virtual void AddHealth_Implementation(int32 delta);
 
 	UFUNCTION(Server, Reliable, WithValidation)
-	virtual void AddEnergy(int32 delta);
+	virtual void AddEnergy(float delta);
 
 	UFUNCTION(BlueprintCallable, Category = Character)
 	virtual bool IsAlive();
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+		float RunSpeed;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+		float SprintSpeed;
 
 protected:
 	float HealthCooloffTime = 0;

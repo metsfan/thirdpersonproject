@@ -107,12 +107,12 @@ bool ABaseCharacter::IsAlive()
 	return Health > 0;
 }
 
-bool ABaseCharacter::AddEnergy_Validate(int32 delta)
+bool ABaseCharacter::AddEnergy_Validate(float delta)
 {
 	return true;
 }
 
-void ABaseCharacter::AddEnergy_Implementation(int32 delta)
+void ABaseCharacter::AddEnergy_Implementation(float delta)
 {
 	Energy += delta;
 }

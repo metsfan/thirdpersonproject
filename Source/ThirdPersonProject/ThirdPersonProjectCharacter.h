@@ -68,6 +68,9 @@ protected:
 	/** Called for side to side input */
 	void MoveRight(float Value);
 
+	void BeginSprint();
+
+	void EndSprint();
 	/** 
 	 * Called via input to turn at a given rate. 
 	 * @param Rate	This is a normalized rate, i.e. 1.0 means 100% of desired turn rate
@@ -99,6 +102,9 @@ protected:
 
 	bool CanJumpInternal_Implementation() const override;
 
+	UPROPERTY(BlueprintReadWrite)
+		bool Sprinting;
+
 protected:
 	// APawn interface
 	virtual void SetupPlayerInputComponent(class UInputComponent* InputComponent) override;
@@ -122,13 +128,14 @@ public:
 	UPROPERTY(BlueprintAssignable)
 		FOnMouseEvent OnMouseEvent;
 
+	UFUNCTION(Server, Reliable, WithValidation)
+	void SetSprinting(bool newSprinting);
 
 private:
 	float EnergyTickTime = 0;
 
 	void OnLeftMouseButtonPressed();
 	void OnLeftMouseButtonReleased();
-
 	
 };
 
