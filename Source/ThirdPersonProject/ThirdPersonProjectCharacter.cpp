@@ -8,6 +8,7 @@
 #include "MainPlayerController.h"
 #include "ProjectileSpell.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "SpellCPP.h"
 
 //////////////////////////////////////////////////////////////////////////
 // AThirdPersonProjectCharacter
@@ -80,6 +81,8 @@ void AThirdPersonProjectCharacter::BeginPlay() {
 	Super::BeginPlay();
 
 	AgroRadiusSphere->SetSphereRadius(AgroRadius);
+
+	SpellData.Emplace(FSpellAction::MainAction, NewObject<USpellData>(this, MainAction));
 }
 
 void AThirdPersonProjectCharacter::Tick(float deltaSeconds)
@@ -103,22 +106,24 @@ void AThirdPersonProjectCharacter::Tick(float deltaSeconds)
 	}
 }
 
-bool AThirdPersonProjectCharacter::ExecuteSpell_Validate(UClass* action, const FVector& crosshairPosition)
+bool AThirdPersonProjectCharacter::ExecuteSpell_Validate(FSpellAction action, const FVector& crosshairPosition)
 {
-	return action != NULL;
+	return SpellData.Contains(action);
 }
 
-void AThirdPersonProjectCharacter::ExecuteSpell_Implementation(UClass* action, const FVector& crosshairPosition)
+void AThirdPersonProjectCharacter::ExecuteSpell_Implementation(FSpellAction action, const FVector& crosshairPosition)
 {
-	if (action) {
+	if (SpellData.Contains(action)) {
+		auto ActionData = SpellData[action];
 		FActorSpawnParameters spawnParams;
 		spawnParams.Owner = this;
 
 		FTransform* transform = new FTransform(FVector(75, 0, 0));
 
-		auto actor = GetWorld()->SpawnActor(action, transform, spawnParams);
+		auto actor = Cast<ASpellCPP>(GetWorld()->SpawnActor(ActionData->Class, transform, spawnParams));
 		actor->Instigator = this;
 		actor->AttachRootComponentToActor(this);
+		actor->Data = ActionData;
 
 		if (actor->IsA(AProjectileSpell::StaticClass())) {
 			auto projectile = Cast<AProjectileSpell>(actor);
@@ -176,9 +181,9 @@ void AThirdPersonProjectCharacter::OnLeftMouseButtonPressed()
 		FCollisionQueryParams params;
 		params.AddIgnoredActor(this);
 
-		GetWorld()->LineTraceSingle(hit, WorldPositionNear, WorldPositionFar, ECollisionChannel::ECC_Visibility, params);
+		GetWorld()->LineTraceSingleByChannel(hit, WorldPositionNear, WorldPositionFar, ECollisionChannel::ECC_Visibility, params);
 
-		this->ExecuteSpell(MainAction, hit.Location);
+		this->ExecuteSpell(FSpellAction::MainAction, hit.Location);
 	}
 }
 

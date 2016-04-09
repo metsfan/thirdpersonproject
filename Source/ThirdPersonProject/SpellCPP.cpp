@@ -4,9 +4,10 @@
 #include "SpellCPP.h"
 #include "ThirdPersonProjectCharacter.h"
 #include "DirectDamageSpellEffect.h"
+#include "UnrealNetwork.h"
 
 // Sets default values
-ASpellCPP::ASpellCPP() : Super(), TargetType(FTargetType::EnemyOnly)
+ASpellCPP::ASpellCPP() : Super()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
@@ -74,7 +75,7 @@ void ASpellCPP::Finish()
 
 bool ASpellCPP::IsValidTarget(AActor* target)
 {
-	if (!target) {
+	if (!target || !Data) {
 		return false;
 	}
 
@@ -86,13 +87,11 @@ bool ASpellCPP::IsValidTarget(AActor* target)
 				return false;
 			}
 
-			switch (TargetType) {
-			case FTargetType::EnemyOnly:
-				return ownerCharacter->TeamID != targetCharacter->TeamID;
-			case FTargetType::FriendlyOnly:
-				return ownerCharacter->TeamID == targetCharacter->TeamID;
-			case FTargetType::EnemyAndFriendly:
-				return true;
+			if (ownerCharacter->TeamID != targetCharacter->TeamID) {
+				return Data->TargetType == FTargetType::Enemy || Data->TargetType == FTargetType::All;
+			}
+			else {
+				return Data->TargetType == FTargetType::Friendly || Data->TargetType == FTargetType::All;
 			}
 		}
 		else {
@@ -105,3 +104,9 @@ bool ASpellCPP::IsValidTarget(AActor* target)
 	return true;
 }
 
+void ASpellCPP::GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(ASpellCPP, Data);
+}

@@ -39,9 +39,13 @@ public:
 
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const;
 
+	virtual void OnSpellEffectsApplied(ASpellCPP* Spell) override;
+
 private:
 	UCanvasPanelSlot* CanvasSlot;
 
 	UPROPERTY(Replicated)
 	float HealthFrameVisibleTime = 0;
+
+	TSet<int32> DamagingPlayers;
 };

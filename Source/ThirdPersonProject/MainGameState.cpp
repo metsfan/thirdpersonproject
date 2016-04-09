@@ -19,6 +19,8 @@ void AMainGameState::AddPlayerState(APlayerState* Player)
 		auto myPlayer = Cast<AMyPlayerState>(Player);
 		OnPlayerAdded.Broadcast(myPlayer);
 	}
+
+	ConnectedPlayers.Empty();
 }
 
 void AMainGameState::RemovePlayerState(APlayerState* Player)
@@ -26,16 +28,36 @@ void AMainGameState::RemovePlayerState(APlayerState* Player)
 	Super::RemovePlayerState(Player);
 
 	OnPlayerRemoved.Broadcast(Cast<AMyPlayerState>(Player));
+
+	ConnectedPlayers.Empty();
 }
 
-TMap<int32, AMyPlayerState*> AMainGameState::GetConnectedPlayers()
+const TMap<int32, AMyPlayerState*>& AMainGameState::GetConnectedPlayers()
 {
-	TMap<int32, AMyPlayerState*> out;
-	for (auto player : PlayerArray) {
-		if (player->PlayerId > 0) {
-			out.Emplace(player->PlayerId, Cast<AMyPlayerState>(player));
+	if (ConnectedPlayers.Num() == 0) {
+		for (auto player : PlayerArray) {
+			if (player->PlayerId > 0) {
+				ConnectedPlayers.Emplace(player->PlayerId, Cast<AMyPlayerState>(player));
+			}
 		}
 	}
 
-	return out;
+	return ConnectedPlayers;
+}
+
+
+void AMainGameState::TrackKill(int32 PlayerId)
+{
+	auto Players = this->GetConnectedPlayers();
+	if (Players.Contains(PlayerId)) {
+		Players[PlayerId]->Kills += 1;
+	}
+}
+
+void AMainGameState::TrackAssist(int32 PlayerId)
+{
+	auto Players = this->GetConnectedPlayers();
+	if (Players.Contains(PlayerId)) {
+		Players[PlayerId]->Assists += 1;
+	}
 }

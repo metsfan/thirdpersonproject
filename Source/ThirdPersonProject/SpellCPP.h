@@ -10,13 +10,6 @@
 
 class AThirdPersonProjectCharacter;
 
-UENUM()
-enum class FTargetType : uint8 {
-	EnemyOnly,
-	FriendlyOnly,
-	EnemyAndFriendly
-};
-
 UCLASS()
 class THIRDPERSONPROJECT_API ASpellCPP : public AActor
 {
@@ -35,11 +28,8 @@ public:
 	UPROPERTY(BlueprintReadWrite)
 		TArray<USpellEffect *> Effects;
 
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Replicated)
 		USpellData* Data;
-
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-		FTargetType TargetType;
 
 	void SetDamageScaleModifier(float modifier);
 

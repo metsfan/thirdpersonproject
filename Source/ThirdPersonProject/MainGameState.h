@@ -29,5 +29,11 @@ public:
 	virtual void AddPlayerState(APlayerState* Player);
 	virtual void RemovePlayerState(APlayerState* Player);
 
-	TMap<int32, AMyPlayerState*> GetConnectedPlayers();
+	const TMap<int32, AMyPlayerState*>& GetConnectedPlayers();
+
+	void TrackKill(int32 PlayerId);
+	void TrackAssist(int32 PlayerId);
+
+private:
+	TMap<int32, AMyPlayerState*> ConnectedPlayers;
 };

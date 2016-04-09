@@ -6,6 +6,8 @@
 #include "BaseMovementController.h"
 #include "BaseCharacter.generated.h"
 
+class ASpellCPP;
+
 UCLASS()
 class THIRDPERSONPROJECT_API ABaseCharacter : public ACharacter
 {
@@ -89,6 +91,8 @@ public:
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 		float SprintSpeed;
+
+	virtual void OnSpellEffectsApplied(ASpellCPP* Spell);
 
 protected:
 	float HealthCooloffTime = 0;

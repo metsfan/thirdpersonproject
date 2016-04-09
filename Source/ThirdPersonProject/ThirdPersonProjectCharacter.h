@@ -5,8 +5,17 @@
 #include "ActionEvent.h"
 #include "SpellCPP.h"
 #include "GameHUD.h"
+#include "Templates/UniquePtr.h"
 
 #include "ThirdPersonProjectCharacter.generated.h"
+
+UENUM()
+enum class FSpellAction : uint8 {
+	MainAction,
+	Spell1,
+	Spell2,
+	Spell3
+};
 
 UCLASS(config=Game)
 class AThirdPersonProjectCharacter : public ABaseCharacter
@@ -95,7 +104,7 @@ protected:
 
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-		UClass* MainAction;
+		TSubclassOf<USpellData> MainAction;
 
 
 	void Jump() override;
@@ -111,7 +120,7 @@ protected:
 	// End of APawn interface
 
 	UFUNCTION(BlueprintCallable, Category = "Default", Server, Reliable, WithValidation)
-	void ExecuteSpell(UClass* action, const FVector& crosshairPosition);
+	void ExecuteSpell(FSpellAction action, const FVector& crosshairPosition);
 
 public:
 	/** Returns CameraBoom subobject **/
@@ -133,6 +142,7 @@ public:
 
 private:
 	float EnergyTickTime = 0;
+	TMap<FSpellAction, USpellData*> SpellData;
 
 	void OnLeftMouseButtonPressed();
 	void OnLeftMouseButtonReleased();

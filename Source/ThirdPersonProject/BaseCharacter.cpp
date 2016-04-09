@@ -5,7 +5,6 @@
 #include "MyPlayerState.h"
 #include "BaseCharacter.h"
 
-
 // Sets default values
 ABaseCharacter::ABaseCharacter()
 {
@@ -135,6 +134,10 @@ bool ABaseCharacter::ResetEnergyTimer_Validate()
 void ABaseCharacter::ResetEnergyTimer_Implementation()
 {
 	EnergyCooloffTime = 0;
+}
+
+void ABaseCharacter::OnSpellEffectsApplied(ASpellCPP* Spell)
+{
 }
 
 void ABaseCharacter::GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLifetimeProps) const

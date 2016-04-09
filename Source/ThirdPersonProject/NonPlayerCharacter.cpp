@@ -4,6 +4,9 @@
 #include "WidgetLayoutLibrary.h"
 #include "NonPlayerCharacter.h"
 #include "UnrealNetwork.h"
+#include "ThirdPersonProjectCharacter.h"
+#include "MainGameState.h"
+#include "MyPlayerState.h"
 
 static const float MaxHealthFrameVisibleTime = 2.0f;
 
@@ -65,4 +68,28 @@ void ANonPlayerCharacter::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >
 
 	DOREPLIFETIME(ANonPlayerCharacter, HealthFrameWidgetComponent);
 	DOREPLIFETIME(ANonPlayerCharacter, HealthFrameVisibleTime);
+}
+
+void ANonPlayerCharacter::OnSpellEffectsApplied(ASpellCPP* Spell)
+{
+	auto Player = Cast<AThirdPersonProjectCharacter>(Spell->GetNetOwner());
+	auto GameState = Cast<AMainGameState>(GetWorld()->GetGameState());
+	if (Player && TeamID != Player->TeamID) {
+		// Owner is a player, and its not friendly, so this is an enemy spell hit
+		int32 PlayerId = Player->Controller->PlayerState->PlayerId;
+		if (this->IsAlive()) {
+			DamagingPlayers.Add(PlayerId);
+		}
+		else {
+			// Track kill for player
+			GameState->TrackKill(PlayerId);
+
+			// Track assist for all other players
+			DamagingPlayers.Remove(PlayerId); // Remove this player just to be sure
+
+			for (int32 PlayerId : DamagingPlayers) {
+				GameState->TrackAssist(PlayerId);
+			}
+		}
+	}
 }

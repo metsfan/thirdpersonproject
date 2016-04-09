@@ -45,6 +45,18 @@ public:
 	UPROPERTY(BlueprintReadOnly, Replicated)
 		bool ReadyToRestart;
 
+	UPROPERTY(BlueprintReadOnly, Replicated)
+		int32 Kills;
+
+	UPROPERTY(BlueprintReadOnly, Replicated)
+		int32 Assists;
+
+	UPROPERTY(BlueprintReadOnly, Replicated)
+		int32 DamageDone;
+
+	UPROPERTY(BlueprintReadOnly, Replicated)
+		int32 DamageTaken;
+
 	UFUNCTION(Server, Reliable, WithValidation)
 	void SetPlayerReady(bool ready);
 	

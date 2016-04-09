@@ -5,6 +5,13 @@
 #include "Object.h"
 #include "SpellData.generated.h"
 
+UENUM()
+enum class FTargetType : uint8 {
+	Enemy,
+	Friendly,
+	All
+};
+
 /**
  * 
  */
@@ -27,4 +34,7 @@ public:
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 		TSubclassOf<ASpellCPP> Class;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+		TEnumAsByte<FTargetType> TargetType;
 };

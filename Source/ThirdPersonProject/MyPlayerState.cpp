@@ -55,6 +55,10 @@ void AMyPlayerState::GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & Ou
 	DOREPLIFETIME(AMyPlayerState, EnergyPercent);
 	DOREPLIFETIME(AMyPlayerState, Name);
 	DOREPLIFETIME(AMyPlayerState, ReadyToRestart);
+	DOREPLIFETIME(AMyPlayerState, Kills);
+	DOREPLIFETIME(AMyPlayerState, Assists);
+	DOREPLIFETIME(AMyPlayerState, DamageDone);
+	DOREPLIFETIME(AMyPlayerState, DamageTaken);
 }
 
 
