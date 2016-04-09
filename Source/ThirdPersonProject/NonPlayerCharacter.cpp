@@ -53,13 +53,22 @@ void ANonPlayerCharacter::SetupPlayerInputComponent(class UInputComponent* Input
 	Super::SetupPlayerInputComponent(InputComponent);
 }
 
-void ANonPlayerCharacter::AddHealth_Implementation(int32 delta)
+void ANonPlayerCharacter::AddHealth_Implementation(int32 delta, ABaseCharacter* InstigatorCharacter)
 {
-	Super::AddHealth_Implementation(delta);
+	Super::AddHealth_Implementation(delta, InstigatorCharacter);
 
 	HealthFrameVisibleTime = 0;
 
 	HealthFrameWidgetComponent->SetVisibility(true);
+
+	auto Player = Cast<AThirdPersonProjectCharacter>(InstigatorCharacter);
+	if (Player && TeamID != Player->TeamID) {
+		auto PlayerState = Cast<AMyPlayerState>(Player->Controller->PlayerState);
+
+		if (delta < 0) {
+			PlayerState->DamageDone += delta * -1;
+		}
+	}
 }
 
 void ANonPlayerCharacter::GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLifetimeProps) const

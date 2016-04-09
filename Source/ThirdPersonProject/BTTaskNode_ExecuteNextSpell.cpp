@@ -33,7 +33,7 @@ EBTNodeResult::Type UBTTaskNode_ExecuteNextSpell::ExecuteTask(UBehaviorTreeCompo
 			projectile->SetTargetLocation(target->GetActorLocation());
 		}
 		actor->AttachRootComponentToActor(owningActor);
-		actor->Data = spell;
+		actor->TargetType = spell->TargetType;
 		actor->Finish();
 	}
 	return EBTNodeResult::Type::Succeeded;

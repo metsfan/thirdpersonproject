@@ -54,7 +54,6 @@ void AFireball::BeginPlay()
 	Super::BeginPlay();
 
 	MovementComponent->SetActive(false);
-	this->RemoveInstanceComponent(MovementComponent);
 
 	MousePressedTime = 0;
 	
@@ -88,7 +87,6 @@ void AFireball::Finish()
 	Super::Finish();
 
 	MovementComponent->SetActive(true);
-	this->AddInstanceComponent(MovementComponent);
 	this->UpdateProjectileVelocity();
 
 	if (FireScale > 2) {

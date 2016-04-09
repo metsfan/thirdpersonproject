@@ -35,7 +35,7 @@ public:
 	UPROPERTY(BlueprintReadWrite, Replicated)
 		UWidgetComponent* HealthFrameWidgetComponent;
 
-	virtual void AddHealth_Implementation(int32 delta) override;
+	virtual void AddHealth_Implementation(int32 delta, ABaseCharacter* InstigatorCharacter) override;
 
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const;
 

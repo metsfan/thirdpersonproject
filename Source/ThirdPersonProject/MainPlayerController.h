@@ -70,6 +70,9 @@ protected:
 	UFUNCTION(BlueprintCallable, Category = "Default")
 	void OnPostLogin();
 
+	void ShowScore();
+	void HideScore();
+
 private:
 	UFUNCTION()
 	void OnRep_Nickname();

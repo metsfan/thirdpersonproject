@@ -43,7 +43,7 @@ void AProjectileSpell::OnCollision(class AActor* OtherActor)
 void AProjectileSpell::UpdateProjectileVelocity()
 {
 	auto character = Cast<ABaseCharacter>(this->GetInstigator());
-	if (character->Controller) {
+	if (character && character->Controller) {
 		FVector rotator;
 		FVector characterRotation = character->Controller->GetControlRotation().Vector();
 

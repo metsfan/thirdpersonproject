@@ -76,9 +76,9 @@ public:
 		int32 TeamID;
 
 	UFUNCTION(Server, Reliable, WithValidation)
-	virtual void AddHealth(int32 delta);
-	virtual bool AddHealth_Validate(int32 delta);
-	virtual void AddHealth_Implementation(int32 delta);
+	virtual void AddHealth(int32 delta, ABaseCharacter* InstigatorCharacter);
+	virtual bool AddHealth_Validate(int32 delta, ABaseCharacter* InstigatorCharacter);
+	virtual void AddHealth_Implementation(int32 delta, ABaseCharacter* InstigatorCharacter);
 
 	UFUNCTION(Server, Reliable, WithValidation)
 	virtual void AddEnergy(float delta);

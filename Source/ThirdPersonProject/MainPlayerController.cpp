@@ -37,7 +37,8 @@ void AMainPlayerController::SetupInputComponent()
 	//auto inputManager = UInputEventManager::Get();
 	//inputManager->Setup(InputComponent);
 
-	
+	InputComponent->BindAction("ShowScore", IE_Pressed, this, &AMainPlayerController::ShowScore);
+	InputComponent->BindAction("ShowScore", IE_Released, this, &AMainPlayerController::HideScore);
 }
 
 void AMainPlayerController::InitPlayerState()
@@ -124,8 +125,8 @@ void AMainPlayerController::Tick(float deltaSeconds)
 	auto PlayerState = Cast<AMyPlayerState>(this->PlayerState);
 	if (PlayerState) {
 		if (PlayerHUD != NULL) {
-			if (PlayerHUD->PlayerFrameWidget->Player == NULL) {
-				PlayerHUD->PlayerFrameWidget->Player = Cast<AMyPlayerState>(this->PlayerState);
+			if (PlayerHUD->GetPlayer() == NULL) {
+				PlayerHUD->SetPlayer(Cast<AMyPlayerState>(this->PlayerState));
 			}
 			
 			if (CrosshairPosition == FVector2D(0, 0)) {
@@ -134,6 +135,21 @@ void AMainPlayerController::Tick(float deltaSeconds)
 		}
 
 		PlayerState->Update(Player);
+	}
+}
+
+
+void AMainPlayerController::ShowScore()
+{
+	if (PlayerHUD) {
+		PlayerHUD->SetScoreVisible(true);
+	}
+}
+
+void AMainPlayerController::HideScore()
+{
+	if (PlayerHUD) {
+		PlayerHUD->SetScoreVisible(false);
 	}
 }
 

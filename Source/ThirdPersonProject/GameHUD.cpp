@@ -56,6 +56,18 @@ FText UGameHUD::GetCountdownTimerText()
 	return FText::FromString("");
 }
 
+void UGameHUD::SetPlayer(AMyPlayerState* pPlayer)
+{
+	Player = pPlayer;
+
+	PlayerFrameWidget->Player = pPlayer;
+}
+
+void UGameHUD::SetScoreVisible(bool visible)
+{
+	ScorePanelWidget->SetVisibility(visible ? ESlateVisibility::Visible : ESlateVisibility::Collapsed);
+}
+
 void UGameHUD::OnPlayerDied()
 {
 	//GameOverHUDWidget->SetState(UGameOverState::PlayerDead);

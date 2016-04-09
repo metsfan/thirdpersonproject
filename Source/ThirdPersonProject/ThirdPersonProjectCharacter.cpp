@@ -82,7 +82,7 @@ void AThirdPersonProjectCharacter::BeginPlay() {
 
 	AgroRadiusSphere->SetSphereRadius(AgroRadius);
 
-	SpellData.Emplace(FSpellAction::MainAction, NewObject<USpellData>(this, MainAction));
+	SpellData.Emplace(FSpellAction::MainAction, MainAction);
 }
 
 void AThirdPersonProjectCharacter::Tick(float deltaSeconds)
@@ -113,8 +113,9 @@ bool AThirdPersonProjectCharacter::ExecuteSpell_Validate(FSpellAction action, co
 
 void AThirdPersonProjectCharacter::ExecuteSpell_Implementation(FSpellAction action, const FVector& crosshairPosition)
 {
-	if (SpellData.Contains(action)) {
-		auto ActionData = SpellData[action];
+	if (SpellData.Contains(action) && IsAlive()) {
+		auto ActionDataClass = SpellData[action];
+		auto ActionData = NewObject<USpellData>(this, ActionDataClass);
 		FActorSpawnParameters spawnParams;
 		spawnParams.Owner = this;
 
@@ -123,7 +124,7 @@ void AThirdPersonProjectCharacter::ExecuteSpell_Implementation(FSpellAction acti
 		auto actor = Cast<ASpellCPP>(GetWorld()->SpawnActor(ActionData->Class, transform, spawnParams));
 		actor->Instigator = this;
 		actor->AttachRootComponentToActor(this);
-		actor->Data = ActionData;
+		actor->TargetType = ActionData->TargetType;
 
 		if (actor->IsA(AProjectileSpell::StaticClass())) {
 			auto projectile = Cast<AProjectileSpell>(actor);
@@ -163,7 +164,6 @@ void AThirdPersonProjectCharacter::SetupPlayerInputComponent(class UInputCompone
 	InputComponent->BindAction("Sprint", IE_Pressed, this, &AThirdPersonProjectCharacter::BeginSprint);
 	InputComponent->BindAction("Sprint", IE_Released, this, &AThirdPersonProjectCharacter::EndSprint);
 }
-
 
 void AThirdPersonProjectCharacter::OnLeftMouseButtonPressed()
 {
@@ -215,7 +215,7 @@ void AThirdPersonProjectCharacter::MouseTilt(float Pitch)
 
 void AThirdPersonProjectCharacter::BeginSprint()
 {
-	if (this->Energy > 0) {
+	if (this->Energy > 0 && !GetCharacterMovement()->IsFalling()) {
 		this->SetSprinting(true);
 
 		this->ResetEnergyTimer();
@@ -300,14 +300,19 @@ void AThirdPersonProjectCharacter::MoveRight(float Value)
 	}
 }
 
-void AThirdPersonProjectCharacter::AddHealth_Implementation(int32 delta)
+void AThirdPersonProjectCharacter::AddHealth_Implementation(int32 delta, ABaseCharacter* InstigatorCharacter)
 {
-	Super::AddHealth_Implementation(delta);
+	Super::AddHealth_Implementation(delta, InstigatorCharacter);
+
+	auto PlayerState = Cast<AMyPlayerState>(Controller->PlayerState);
+	if (delta < 0) {
+		PlayerState->DamageTaken += delta * -1;
+	}
 
 	if (Health <= 0) {
 		auto controller = Cast<AMainPlayerController>(this->Controller);
 		if (controller) {
-			controller->OnPlayerDied(Cast<AMyPlayerState>(PlayerState));
+			controller->OnPlayerDied(PlayerState);
 		}
 	}
 }

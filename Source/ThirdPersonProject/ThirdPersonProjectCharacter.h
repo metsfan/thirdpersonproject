@@ -67,7 +67,7 @@ public:
 	virtual void BeginPlay() override;
 	virtual void Tick(float deltaSeconds) override;
 
-	void AddHealth_Implementation(int32 delta) override;
+	void AddHealth_Implementation(int32 delta, ABaseCharacter* Instigator) override;
 
 protected:
 
@@ -78,8 +78,8 @@ protected:
 	void MoveRight(float Value);
 
 	void BeginSprint();
-
 	void EndSprint();
+
 	/** 
 	 * Called via input to turn at a given rate. 
 	 * @param Rate	This is a normalized rate, i.e. 1.0 means 100% of desired turn rate
@@ -142,7 +142,8 @@ public:
 
 private:
 	float EnergyTickTime = 0;
-	TMap<FSpellAction, USpellData*> SpellData;
+
+	TMap<FSpellAction, UClass*> SpellData;
 
 	void OnLeftMouseButtonPressed();
 	void OnLeftMouseButtonReleased();

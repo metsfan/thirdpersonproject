@@ -44,6 +44,10 @@ void ASpellCPP::ApplyEffects(const TArray<ABaseCharacter *>& targets)
 		for (auto effect : Effects) {
 			effect->ApplyEffect(targets);
 		}
+
+		for (auto target : targets) {
+			target->OnSpellEffectsApplied(this);
+		}
 	}
 }
 
@@ -75,7 +79,7 @@ void ASpellCPP::Finish()
 
 bool ASpellCPP::IsValidTarget(AActor* target)
 {
-	if (!target || !Data) {
+	if (!target) {
 		return false;
 	}
 
@@ -88,10 +92,10 @@ bool ASpellCPP::IsValidTarget(AActor* target)
 			}
 
 			if (ownerCharacter->TeamID != targetCharacter->TeamID) {
-				return Data->TargetType == FTargetType::Enemy || Data->TargetType == FTargetType::All;
+				return TargetType == FTargetType::Enemy || TargetType == FTargetType::All;
 			}
 			else {
-				return Data->TargetType == FTargetType::Friendly || Data->TargetType == FTargetType::All;
+				return TargetType == FTargetType::Friendly || TargetType == FTargetType::All;
 			}
 		}
 		else {
@@ -102,11 +106,4 @@ bool ASpellCPP::IsValidTarget(AActor* target)
 
 	// We'll collide with anything that isn't a character, probably environment geometry
 	return true;
-}
-
-void ASpellCPP::GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLifetimeProps) const
-{
-	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-
-	DOREPLIFETIME(ASpellCPP, Data);
 }

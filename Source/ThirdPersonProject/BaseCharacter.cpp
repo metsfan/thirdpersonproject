@@ -85,12 +85,12 @@ void ABaseCharacter::SetupPlayerInputComponent(class UInputComponent* InputCompo
 
 }
 
-bool ABaseCharacter::AddHealth_Validate(int32 delta)
+bool ABaseCharacter::AddHealth_Validate(int32 delta, ABaseCharacter* InstigatorCharacter)
 {
 	return true;
 }
 
-void ABaseCharacter::AddHealth_Implementation(int32 delta)
+void ABaseCharacter::AddHealth_Implementation(int32 delta, ABaseCharacter* InstigatorCharacter)
 {
 	Health = FMath::Clamp<int32>(Health + delta, 0, MaxHealth);
 

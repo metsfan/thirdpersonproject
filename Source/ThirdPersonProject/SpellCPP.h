@@ -28,12 +28,11 @@ public:
 	UPROPERTY(BlueprintReadWrite)
 		TArray<USpellEffect *> Effects;
 
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Replicated)
-		USpellData* Data;
-
 	void SetDamageScaleModifier(float modifier);
 
 	virtual void Finish();
+
+	FTargetType TargetType;
 
 protected:
 

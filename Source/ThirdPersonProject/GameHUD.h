@@ -28,6 +28,11 @@ class THIRDPERSONPROJECT_API UGameHUD : public UUserWidget
 
 	void UpdatePartyFrame();
 
+
+protected:
+	UPROPERTY(BlueprintReadWrite)
+	AMyPlayerState* Player;
+
 private:
 	UFUNCTION()
 	void OnRestartClick_Private();
@@ -38,6 +43,11 @@ public:
 
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FRestartClickSignature);
 	FRestartClickSignature OnRestartClick;
+
+	void SetPlayer(AMyPlayerState* pPlayer);
+	AMyPlayerState* GetPlayer() { return Player; }
+
+	void SetScoreVisible(bool visible);
 
 	void OnLocalPlayerJoined(AMyPlayerState* player);
 	void OnRemotePlayerJoined(AMyPlayerState* player);
@@ -58,4 +68,7 @@ public:
 
 	UPROPERTY(BlueprintReadWrite)
 	UImage* CrosshairWidget;
+
+	UPROPERTY(BlueprintReadWrite)
+	UWidget* ScorePanelWidget;
 };
