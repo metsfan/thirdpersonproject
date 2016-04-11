@@ -11,12 +11,12 @@ void AMainMenuGameMode::CheckIfGameReady()
 
 	bool allReady = true;
 	for (auto player : gameState->JoinedPlayers) {
-		allReady = player->Ready && allReady;
+		allReady = player->ReadyToPlay && allReady;
 	}
 
 	if (allReady) {
 		//UGameplayStatics::OpenLevel(this, TEXT("/Game/ThirdPersonCPP/Maps/ThirdPersonExampleMap"));
-		bUseSeamlessTravel = true;
-		GetWorld()->ServerTravel("/Game/ThirdPersonCPP/Maps/ThirdPersonExampleMap", true, false);
+		//bUseSeamlessTravel = true;
+ 		GetWorld()->ServerTravel("/Game/ThirdPersonCPP/Maps/ThirdPersonExampleMap", true);
 	}
 }

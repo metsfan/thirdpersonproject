@@ -19,9 +19,11 @@ class THIRDPERSONPROJECT_API ULobbyHUD : public UUserWidget
 
 	ULobbyHUD(const FObjectInitializer& ObjectInitializer);
 
+	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
+
 public:
 	UFUNCTION()
-	void OnPlayerJoinedLobby(AMainPlayerController* player);
+	void OnPlayerJoinedLobby(const TArray<AMyPlayerState*>& players);
 
 protected:
 	UFUNCTION(BlueprintCallable, Category = "Events")

@@ -163,15 +163,19 @@ void AMainPlayerController::SetNickname_Implementation(const FString& newNicknam
 	this->Nickname = newNickname;
 
 	auto gameState = Cast<AMainMenuGameState>(GetWorld()->GetGameState());
-	gameState->JoinedPlayers.Add(this);
+	auto playerState = Cast<AMyPlayerState>(PlayerState);
+	playerState->PlayerName = newNickname;
+	gameState->JoinedPlayers.Add(playerState);
 
 	auto gameMode = Cast<AMainMenuGameMode>(GetWorld()->GetAuthGameMode());
-	this->NotifyPlayerJoinedLobby();
+	gameState->NotifyPlayerJoinedLobby(gameState->JoinedPlayers);
 }
 
-void AMainPlayerController::NotifyPlayerJoinedLobby_Implementation()
+void AMainPlayerController::NotifyPlayerJoinedLobby(const TArray<AMyPlayerState*>& players)
 {
-	
+	if (LobbyHUDWidget) {
+		LobbyHUDWidget->OnPlayerJoinedLobby(players);
+	}
 }
 
 void AMainPlayerController::GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLifetimeProps) const
@@ -184,12 +188,9 @@ void AMainPlayerController::GetLifetimeReplicatedProps(TArray< FLifetimeProperty
 
 void AMainPlayerController::OnRep_Nickname()
 { 
-	if (LobbyHUDWidget) {
-		auto gameState = Cast<AMainMenuGameState>(GetWorld()->GetGameState());
-		gameState->JoinedPlayers.Add(this);
-
+	/*if (LobbyHUDWidget) {
 		LobbyHUDWidget->OnPlayerJoinedLobby(this);
-	}
+	}*/
 }
 
 bool AMainPlayerController::Server_NotifyReady_Validate(bool Ready)
@@ -199,7 +200,8 @@ bool AMainPlayerController::Server_NotifyReady_Validate(bool Ready)
 
 void AMainPlayerController::Server_NotifyReady_Implementation(bool pReady)
 {
-	this->Ready = pReady;
+	auto playerState = Cast<AMyPlayerState>(this->PlayerState);
+	playerState->ReadyToPlay = pReady;
 
 	auto gameMode = Cast<AMainMenuGameMode>(GetWorld()->GetAuthGameMode());
 	gameMode->CheckIfGameReady();

@@ -3,6 +3,7 @@
 #include "ThirdPersonProject.h"
 #include "MainMenuGameState.h"
 #include "UnrealNetwork.h"
+#include "MainPlayerController.h"
 
 AMainMenuGameState::AMainMenuGameState() : Super()
 {
@@ -14,4 +15,10 @@ void AMainMenuGameState::GetLifetimeReplicatedProps(TArray< FLifetimeProperty > 
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(AMainMenuGameState, JoinedPlayers);
+}
+
+void AMainMenuGameState::NotifyPlayerJoinedLobby_Implementation(const TArray<AMyPlayerState*>& players)
+{
+	auto pc = Cast<AMainPlayerController>(GetWorld()->GetFirstPlayerController());
+	pc->NotifyPlayerJoinedLobby(players);
 }

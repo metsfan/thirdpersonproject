@@ -8,6 +8,7 @@
 /**
  * 
  */
+class AMyPlayerState;
 class AMainPlayerController;
 
 UCLASS()
@@ -17,5 +18,5 @@ class THIRDPERSONPROJECT_API ULobbyPlayerFrame : public UUserWidget
 
 public:
 	UPROPERTY(BlueprintReadWrite)
-	AMainPlayerController* Player;
+	AMyPlayerState* Player;
 };

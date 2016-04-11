@@ -28,7 +28,6 @@ void ANonPlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
-	Cast<UHealthFrame>(HealthFrameWidgetComponent->GetUserWidgetObject())->Character = this;
 	HealthFrameWidgetComponent->SetVisibility(false);
 	HealthFrameWidgetComponent->SetIsReplicated(true);
 }
@@ -37,6 +36,15 @@ void ANonPlayerCharacter::BeginPlay()
 void ANonPlayerCharacter::Tick( float DeltaTime )
 {
 	Super::Tick( DeltaTime );
+
+	if (HealthFrameWidgetComponent) {
+		if (HealthFrameWidgetComponent->GetUserWidgetObject()) {
+			auto WidgetObject = Cast<UHealthFrame>(HealthFrameWidgetComponent->GetUserWidgetObject());
+			if (!WidgetObject->Character) {
+				WidgetObject->Character = this;
+			}
+		}
+	}
 
 	if (HealthFrameWidgetComponent && HealthFrameWidgetComponent->IsVisible()) {
 		HealthFrameVisibleTime += DeltaTime;

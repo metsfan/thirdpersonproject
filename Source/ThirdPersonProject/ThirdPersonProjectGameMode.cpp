@@ -133,15 +133,18 @@ void AThirdPersonProjectGameMode::SpawnEnemies()
 
 void AThirdPersonProjectGameMode::RestartGameIfAllReady()
 {
-	bool allReady = true;
-
 	auto gameState = Cast<AMainGameState>(this->GameState);
-	for (auto player : gameState->GetConnectedPlayers()) {
-		allReady &= player.Value->ReadyToRestart;
-	}
 
-	if (allReady) {
-		GetWorldTimerManager().ClearTimer(SpawnTimer);
-		GetWorld()->ServerTravel("?listen");
+	if (gameState->GetConnectedPlayers().Num() > 0) {
+		bool allReady = true;
+
+		for (auto player : gameState->GetConnectedPlayers()) {
+			allReady &= player.Value->ReadyToRestart;
+		}
+
+		if (allReady) {
+			GetWorldTimerManager().ClearTimer(SpawnTimer);
+			GetWorld()->ServerTravel("/Game/ThirdPersonCPP/Maps/ThirdPersonExampleMap", true);
+		}
 	}
 }

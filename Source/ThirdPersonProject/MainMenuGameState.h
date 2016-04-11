@@ -9,7 +9,7 @@
  * 
  */
 
-class AMainPlayerController;
+class AMyPlayerState;
 
 UCLASS()
 class THIRDPERSONPROJECT_API AMainMenuGameState : public AGameState
@@ -18,7 +18,12 @@ class THIRDPERSONPROJECT_API AMainMenuGameState : public AGameState
 
 	AMainMenuGameState();
 
+
+
 public:
 	UPROPERTY(BlueprintReadOnly, Replicated)
-	TArray<AMainPlayerController *> JoinedPlayers;
+	TArray<AMyPlayerState *> JoinedPlayers;
+
+	UFUNCTION(NetMulticast, Reliable)
+		void NotifyPlayerJoinedLobby(const TArray<AMyPlayerState*>& players);
 };

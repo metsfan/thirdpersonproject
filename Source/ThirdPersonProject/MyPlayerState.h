@@ -57,6 +57,9 @@ public:
 	UPROPERTY(BlueprintReadOnly, Replicated)
 		int32 DamageTaken;
 
+	UPROPERTY(BlueprintReadWrite, Replicated)
+		bool ReadyToPlay;
+
 	UFUNCTION(Server, Reliable, WithValidation)
 	void SetPlayerReady(bool ready);
 	

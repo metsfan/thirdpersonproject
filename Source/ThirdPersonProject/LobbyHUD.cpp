@@ -29,18 +29,32 @@ void ULobbyHUD::OnNicknameSubmitButtonClick()
 	pc->SetNickname(nickNameText);
 }
 
-void ULobbyHUD::OnPlayerJoinedLobby(AMainPlayerController* player)
+void ULobbyHUD::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
+{
+	Super::NativeTick(MyGeometry, InDeltaTime);
+
+	auto gameState = Cast<AMainMenuGameState>(GetWorld()->GetGameState());
+	auto connectedPlayers = gameState->PlayerArray;
+}
+
+void ULobbyHUD::OnPlayerJoinedLobby(const TArray<AMyPlayerState*>& players)
 {
 	auto gameState = Cast<AMainMenuGameState>(GetWorld()->GetGameState());
-	auto connectedPlayers = gameState->JoinedPlayers;
 
-	//ConnectedPlayersWidget->ClearChildren();
+	auto addPlayer = [this](AMyPlayerState* player) {
+		auto widget = CreateWidget<ULobbyPlayerFrame>(GetWorld(), LobbyPlayerFrameBPClass->Class);
+		widget->Player = player;
+		ConnectedPlayersWidget->AddChildToVerticalBox(widget);
+	};
 
-	//for (auto& connectedPlayer : connectedPlayers) {
-		UE_LOG(MyLog, Log, TEXT("Player name: %s"), *player->Nickname);
+	ConnectedPlayersWidget->ClearChildren();
 
-	auto widget = CreateWidget<ULobbyPlayerFrame>(GetWorld(), LobbyPlayerFrameBPClass->Class);
-	widget->Player = player;
-	ConnectedPlayersWidget->AddChildToVerticalBox(widget);
-	//}
+	for (auto& player : players) {
+		if (player->PlayerId > 0) {
+			auto myPlayer = Cast<AMyPlayerState>(player);
+			UE_LOG(MyLog, Log, TEXT("Player name: %s"), *myPlayer->Name);
+
+			addPlayer(myPlayer);
+		}
+	}
 }

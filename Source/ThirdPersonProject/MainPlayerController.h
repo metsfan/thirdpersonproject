@@ -30,8 +30,7 @@ public:
 	UFUNCTION(Server, Reliable, WithValidation)
 	void SetNickname(const FString& newNickname);
 
-	UFUNCTION(NetMulticast, Reliable)
-	void NotifyPlayerJoinedLobby();
+	void NotifyPlayerJoinedLobby(const TArray<AMyPlayerState*>& players);
 
 	UPROPERTY(BlueprintReadWrite, Replicated)
 	bool Ready;
