@@ -95,10 +95,14 @@ void UGameHUD::UpdatePartyFrame()
 	auto gameState = this->GetWorld()->GetGameState<AMainGameState>();
 	if (gameState && PlayerFrameWidget->Player) {
 		auto players = gameState->PlayerArray;
+
+		PartyPanelWidget->ClearChildren();
+
 		for (auto player : players) {
-			if (player->PlayerId != 0 && player->PlayerId != PlayerFrameWidget->Player->PlayerId) {
+			auto myPlayer = Cast<AMyPlayerState>(player);
+			if (myPlayer->PlayerId > 0 && player->PlayerId != PlayerFrameWidget->Player->PlayerId) {
 				auto widget = CreateWidget<UPlayerFrame>(GetWorld()->GetGameInstance(), PlayerFrameBPClass->Class);
-				widget->Player = Cast<AMyPlayerState>(player);
+				widget->Player = myPlayer;
 				PartyPanelWidget->AddChildToVerticalBox(widget);
 			}
 		}

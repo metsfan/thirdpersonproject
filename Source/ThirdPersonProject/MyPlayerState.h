@@ -60,10 +60,13 @@ public:
 	UPROPERTY(BlueprintReadWrite, Replicated)
 		bool ReadyToPlay;
 
+	UPROPERTY(BlueprintReadWrite, Replicated)
+		FGuid NetID;
+
 	UFUNCTION(Server, Reliable, WithValidation)
 	void SetPlayerReady(bool ready);
 	
-	void Update(ABaseCharacter* Character);
+	void Update(ABaseCharacter* Character, const FGuid& InNetID);
 
 	bool IsAlive() { return Health > 0;  }
 };

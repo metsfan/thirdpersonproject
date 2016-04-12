@@ -26,6 +26,9 @@ public:
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FPlayerRemovedSignature, class AMyPlayerState*, Player);
 	FPlayerAddedSignature OnPlayerRemoved;
 
+	UFUNCTION(NetMulticast, Reliable)
+		void OnPlayerJoined(AMyPlayerState* NewPlayer);
+
 	virtual void AddPlayerState(APlayerState* Player);
 	virtual void RemovePlayerState(APlayerState* Player);
 
@@ -34,6 +37,12 @@ public:
 	void TrackKill(int32 PlayerId);
 	void TrackAssist(int32 PlayerId);
 
+	UFUNCTION()
+	void OnRep_ConnectedPlayers();
+
 private:
+	
+
+	UPROPERTY(ReplicatedUsing=OnRep_ConnectedPlayers)
 	TMap<int32, AMyPlayerState*> ConnectedPlayers;
 };

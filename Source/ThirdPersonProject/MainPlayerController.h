@@ -27,6 +27,8 @@ public:
 	UPROPERTY(BlueprintReadWrite, ReplicatedUsing = OnRep_Nickname)
 	FString Nickname;
 
+	FGuid NetID;
+
 	UFUNCTION(Server, Reliable, WithValidation)
 	void SetNickname(const FString& newNickname);
 

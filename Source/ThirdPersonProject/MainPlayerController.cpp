@@ -16,6 +16,8 @@
 AMainPlayerController::AMainPlayerController(): Super()
 {
 	bReplicates = true;
+
+	NetID = FGuid::NewGuid();
 }
 
 void AMainPlayerController::BeginPlay()
@@ -24,7 +26,10 @@ void AMainPlayerController::BeginPlay()
 
 	this->InitPlayerState();
 
-	
+	auto gameState = Cast<AMainGameState>(this->GetWorld()->GetGameState());
+	if (gameState) {
+		gameState->OnPlayerAdded.AddDynamic(this, &AMainPlayerController::OnPlayerAdded);
+	}
 }
 
 void AMainPlayerController::SetupInputComponent()
@@ -57,9 +62,10 @@ void AMainPlayerController::OnRep_PlayerState()
 
 	auto gameState = Cast<AMainGameState>(this->GetWorld()->GetGameState());
 	if (gameState) {
-		gameState->OnPlayerAdded.AddDynamic(this, &AMainPlayerController::OnPlayerAdded);
-
-		this->OnPlayerAdded(Cast<AMyPlayerState>(this->PlayerState));
+		auto players = gameState->GetConnectedPlayers();
+		for (auto player : players) {
+			this->OnPlayerAdded(player.Value);
+		}
 	}
 
 	//PlayerHUD->OnPlayerJoined(Cast<AMyPlayerState>(this->PlayerState));
@@ -67,7 +73,7 @@ void AMainPlayerController::OnRep_PlayerState()
 
 void AMainPlayerController::OnPlayerAdded(AMyPlayerState* NewPlayer)
 {
-	if (PlayerHUD) {
+	if (PlayerHUD && PlayerState) {
 		if (NewPlayer->PlayerId == this->PlayerState->PlayerId) {
 			PlayerHUD->OnLocalPlayerJoined(NewPlayer);
 		}
@@ -134,7 +140,7 @@ void AMainPlayerController::Tick(float deltaSeconds)
 			}			
 		}
 
-		PlayerState->Update(Player);
+		PlayerState->Update(Player, NetID);
 	}
 }
 

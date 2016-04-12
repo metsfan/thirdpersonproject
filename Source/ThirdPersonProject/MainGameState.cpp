@@ -3,12 +3,19 @@
 #include "ThirdPersonProject.h"
 #include "MainGameState.h"
 #include "UnrealNetwork.h"
+#include "MainPlayerController.h"
 
 void AMainGameState::GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(AMainGameState, GameStartCountdown);
+	DOREPLIFETIME(AMainGameState, ConnectedPlayers);
+}
+
+void AMainGameState::OnRep_ConnectedPlayers() 
+{
+
 }
 
 void AMainGameState::AddPlayerState(APlayerState* Player)
@@ -17,10 +24,12 @@ void AMainGameState::AddPlayerState(APlayerState* Player)
 
 	if (Player->PlayerId > 0) {
 		auto myPlayer = Cast<AMyPlayerState>(Player);
-		OnPlayerAdded.Broadcast(myPlayer);
+		ConnectedPlayers.Emplace(myPlayer->PlayerId, myPlayer);
 	}
+}
 
-	ConnectedPlayers.Empty();
+void AMainGameState::OnPlayerJoined_Implementation(AMyPlayerState* NewPlayer)
+{
 }
 
 void AMainGameState::RemovePlayerState(APlayerState* Player)
@@ -29,18 +38,19 @@ void AMainGameState::RemovePlayerState(APlayerState* Player)
 
 	OnPlayerRemoved.Broadcast(Cast<AMyPlayerState>(Player));
 
-	ConnectedPlayers.Empty();
+	//ConnectedPlayers.Empty();
 }
 
 const TMap<int32, AMyPlayerState*>& AMainGameState::GetConnectedPlayers()
 {
-	if (ConnectedPlayers.Num() == 0) {
+	/*if (ConnectedPlayers.Num() == 0) {
 		for (auto player : PlayerArray) {
-			if (player->PlayerId > 0) {
-				ConnectedPlayers.Emplace(player->PlayerId, Cast<AMyPlayerState>(player));
+			auto myPlayer = Cast<AMyPlayerState>(player);
+			if (myPlayer->NetID.IsValid()) {
+				
 			}
 		}
-	}
+	}*/
 
 	return ConnectedPlayers;
 }
