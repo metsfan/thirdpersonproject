@@ -18,6 +18,9 @@ public:
 
 	void RestartGameIfAllReady();
 
+	void GameStartTimerCallback();
+	virtual void PostLogin(APlayerController * NewPlayer) override;
+
 protected:
 	void StartMatch() override;
 	void EndMatch() override;

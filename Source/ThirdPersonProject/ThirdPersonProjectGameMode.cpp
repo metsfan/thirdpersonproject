@@ -53,6 +53,17 @@ void AThirdPersonProjectGameMode::InitGame(const FString& MapName, const FString
 
 }
 
+void AThirdPersonProjectGameMode::PostLogin(APlayerController * NewPlayer)
+{
+	Super::PostLogin(NewPlayer);
+
+	auto playerState = Cast<AMyPlayerState>(NewPlayer->PlayerState);
+
+	auto gameState = this->GetGameState<AMainGameState>();
+	gameState->ConnectedPlayers.Emplace(playerState->PlayerId, playerState);
+	//gameState->OnPlayerJoined(playerState);
+}
+
 void AThirdPersonProjectGameMode::StartPlay()
 {
 	Super::StartPlay();
@@ -60,20 +71,21 @@ void AThirdPersonProjectGameMode::StartPlay()
 	auto gameState = this->GetGameState<AMainGameState>();
 	gameState->GameStartCountdown = 5;
 
-	FTimerDelegate TimerCallback;
-	TimerCallback.BindLambda([this, gameState] {
-		gameState->GameStartCountdown -= 1;
+	GetWorldTimerManager().SetTimer(GameStartTimer, this, &AThirdPersonProjectGameMode::GameStartTimerCallback, 1.0, true, 1.0);
+}
 
-		if (gameState->GameStartCountdown == 0) {
-			this->UpdateSpawnPoints();
-			//this->BeginSpawningEnemies();
-		}
-		else if (gameState->GameStartCountdown < 0) {
-			GetWorldTimerManager().ClearTimer(GameStartTimer);
-		}
-	});
+void AThirdPersonProjectGameMode::GameStartTimerCallback() 
+{
+	auto gameState = this->GetGameState<AMainGameState>();
+	gameState->GameStartCountdown -= 1;
 
-	GetWorldTimerManager().SetTimer(GameStartTimer, TimerCallback, 1.0, true, 1.0);
+	if (gameState->GameStartCountdown == 0) {
+		this->UpdateSpawnPoints();
+		//this->BeginSpawningEnemies();
+	}
+	else if (gameState->GameStartCountdown < 0) {
+		GetWorldTimerManager().ClearTimer(GameStartTimer);
+	}
 }
 
 void AThirdPersonProjectGameMode::StartMatch()

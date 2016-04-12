@@ -15,7 +15,14 @@ void AMainGameState::GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & Ou
 
 void AMainGameState::OnRep_ConnectedPlayers() 
 {
+	OnPlayerAdded.Broadcast(NULL);
+}
 
+void AMainGameState::OnPlayerJoined_Implementation(AMyPlayerState* NewPlayer)
+{
+	ConnectedPlayers.Emplace(NewPlayer->PlayerId, NewPlayer);
+
+	OnPlayerAdded.Broadcast(NewPlayer);
 }
 
 void AMainGameState::AddPlayerState(APlayerState* Player)
@@ -24,12 +31,10 @@ void AMainGameState::AddPlayerState(APlayerState* Player)
 
 	if (Player->PlayerId > 0) {
 		auto myPlayer = Cast<AMyPlayerState>(Player);
-		ConnectedPlayers.Emplace(myPlayer->PlayerId, myPlayer);
+		OnPlayerAdded.Broadcast(myPlayer);
 	}
-}
 
-void AMainGameState::OnPlayerJoined_Implementation(AMyPlayerState* NewPlayer)
-{
+	ConnectedPlayers.Empty();
 }
 
 void AMainGameState::RemovePlayerState(APlayerState* Player)
@@ -38,19 +43,19 @@ void AMainGameState::RemovePlayerState(APlayerState* Player)
 
 	OnPlayerRemoved.Broadcast(Cast<AMyPlayerState>(Player));
 
-	//ConnectedPlayers.Empty();
+	ConnectedPlayers.Empty();
 }
 
 const TMap<int32, AMyPlayerState*>& AMainGameState::GetConnectedPlayers()
 {
-	/*if (ConnectedPlayers.Num() == 0) {
+	if (ConnectedPlayers.Num() == 0) {
 		for (auto player : PlayerArray) {
 			auto myPlayer = Cast<AMyPlayerState>(player);
 			if (myPlayer->NetID.IsValid()) {
 				
 			}
 		}
-	}*/
+	}
 
 	return ConnectedPlayers;
 }

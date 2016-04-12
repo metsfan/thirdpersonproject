@@ -60,13 +60,13 @@ void AMainPlayerController::OnRep_PlayerState()
 {
 	Super::OnRep_PlayerState();
 
-	auto gameState = Cast<AMainGameState>(this->GetWorld()->GetGameState());
+	/*auto gameState = Cast<AMainGameState>(this->GetWorld()->GetGameState());
 	if (gameState) {
 		auto players = gameState->GetConnectedPlayers();
 		for (auto player : players) {
 			this->OnPlayerAdded(player.Value);
 		}
-	}
+	}*/
 
 	//PlayerHUD->OnPlayerJoined(Cast<AMyPlayerState>(this->PlayerState));
 }
