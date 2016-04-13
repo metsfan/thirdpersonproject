@@ -304,15 +304,17 @@ void AThirdPersonProjectCharacter::AddHealth_Implementation(int32 delta, ABaseCh
 {
 	Super::AddHealth_Implementation(delta, InstigatorCharacter);
 
-	auto PlayerState = Cast<AMyPlayerState>(Controller->PlayerState);
-	if (delta < 0) {
-		PlayerState->DamageTaken += delta * -1;
-	}
+	if (Controller) {
+		auto PlayerState = Cast<AMyPlayerState>(Controller->PlayerState);
+		if (delta < 0) {
+			PlayerState->DamageTaken += delta * -1;
+		}
 
-	if (Health <= 0) {
-		auto controller = Cast<AMainPlayerController>(this->Controller);
-		if (controller) {
-			controller->OnPlayerDied(PlayerState);
+		if (Health <= 0) {
+			auto controller = Cast<AMainPlayerController>(this->Controller);
+			if (controller) {
+				controller->OnPlayerDied(PlayerState);
+			}
 		}
 	}
 }

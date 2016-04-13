@@ -20,6 +20,8 @@ void AMainGameState::AddPlayerState(APlayerState* Player)
 	if (Player->PlayerId > 0) {
 		OnPlayerAdded.Broadcast(Cast<AMyPlayerState>(Player));
 	}
+
+	ConnectedPlayersMap.Empty();
 }
 
 void AMainGameState::OnPlayerJoined_Implementation(AMyPlayerState* NewPlayer)
@@ -33,6 +35,8 @@ void AMainGameState::RemovePlayerState(APlayerState* Player)
 	if (Player->PlayerId > 0) {
 		OnPlayerRemoved.Broadcast(Cast<AMyPlayerState>(Player));
 	}
+
+	ConnectedPlayersMap.Empty();
 }
 
 const TMap<int32, AMyPlayerState*>& AMainGameState::GetConnectedPlayers()
