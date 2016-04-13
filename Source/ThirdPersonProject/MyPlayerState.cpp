@@ -12,7 +12,7 @@ AMyPlayerState::AMyPlayerState(): Super(), ReadyToRestart(false)
 	Initialized = false;
 }
 
-void AMyPlayerState::Update(ABaseCharacter* Character, const FGuid& InNetID)
+void AMyPlayerState::Update(ABaseCharacter* Character)
 {
 	if (Character) {
 		Health = Character->Health;
@@ -37,8 +37,6 @@ void AMyPlayerState::Update(ABaseCharacter* Character, const FGuid& InNetID)
 		MaxHealth = 0;
 		HealthPercent = 0;
 	}
-
-	//NetID = InNetID;
 }
 
 bool AMyPlayerState::SetPlayerReady_Validate(bool ready)
@@ -68,7 +66,6 @@ void AMyPlayerState::GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & Ou
 	DOREPLIFETIME(AMyPlayerState, DamageDone);
 	DOREPLIFETIME(AMyPlayerState, DamageTaken);
 	DOREPLIFETIME(AMyPlayerState, ReadyToPlay);
-	DOREPLIFETIME(AMyPlayerState, NetID);
 	DOREPLIFETIME(AMyPlayerState, Initialized);
 }
 

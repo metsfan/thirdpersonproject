@@ -16,10 +16,6 @@
 AMainPlayerController::AMainPlayerController(): Super()
 {
 	bReplicates = true;
-
-	if (HasAuthority()) {
-		NetID = FGuid::NewGuid();
-	}
 }
 
 void AMainPlayerController::BeginPlay()
@@ -51,7 +47,7 @@ void AMainPlayerController::SetupInputComponent()
 void AMainPlayerController::InitPlayerState()
 {
 	if (PlayerState && HasAuthority()) {
-		// Prevent double init for hosting player
+		// Prevent double init for hosting player.  
 		return;
 	}
 
@@ -64,7 +60,7 @@ void AMainPlayerController::OnRep_PlayerState()
 
 	auto Player = Cast<AThirdPersonProjectCharacter>(GetPawn());
 	auto MyPlayerState = Cast<AMyPlayerState>(PlayerState);
-	MyPlayerState->Update(Player, NetID);
+	MyPlayerState->Update(Player);
 }
 
 void AMainPlayerController::OnPlayerAdded(AMyPlayerState* NewPlayer)
@@ -118,7 +114,7 @@ void AMainPlayerController::Tick(float deltaSeconds)
 			}			
 		}
 
-		PlayerState->Update(Player, NetID);
+		PlayerState->Update(Player);
 	}
 }
 
@@ -168,7 +164,6 @@ void AMainPlayerController::GetLifetimeReplicatedProps(TArray< FLifetimeProperty
 
 	DOREPLIFETIME(AMainPlayerController, Nickname);
 	DOREPLIFETIME(AMainPlayerController, Ready);
-	DOREPLIFETIME(AMainPlayerController, NetID);
 }
 
 void AMainPlayerController::OnRep_Nickname()
