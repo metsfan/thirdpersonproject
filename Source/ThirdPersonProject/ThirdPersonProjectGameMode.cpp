@@ -57,10 +57,14 @@ void AThirdPersonProjectGameMode::PostLogin(APlayerController * NewPlayer)
 {
 	Super::PostLogin(NewPlayer);
 
+	auto playerController = Cast<AMainPlayerController>(NewPlayer);
 	auto playerState = Cast<AMyPlayerState>(NewPlayer->PlayerState);
 
 	auto gameState = this->GetGameState<AMainGameState>();
-	gameState->ConnectedPlayers.Emplace(playerState->PlayerId, playerState);
+	if (playerState) {
+		playerState->NetID = playerController->NetID;
+		gameState->ConnectedPlayersArray.Add(playerState);
+	}
 	//gameState->OnPlayerJoined(playerState);
 }
 

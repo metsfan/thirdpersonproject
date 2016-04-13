@@ -10,19 +10,7 @@ void AMainGameState::GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & Ou
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(AMainGameState, GameStartCountdown);
-	DOREPLIFETIME(AMainGameState, ConnectedPlayers);
-}
-
-void AMainGameState::OnRep_ConnectedPlayers() 
-{
-	OnPlayerAdded.Broadcast(NULL);
-}
-
-void AMainGameState::OnPlayerJoined_Implementation(AMyPlayerState* NewPlayer)
-{
-	ConnectedPlayers.Emplace(NewPlayer->PlayerId, NewPlayer);
-
-	OnPlayerAdded.Broadcast(NewPlayer);
+	DOREPLIFETIME(AMainGameState, ConnectedPlayersArray);
 }
 
 void AMainGameState::AddPlayerState(APlayerState* Player)
@@ -30,34 +18,32 @@ void AMainGameState::AddPlayerState(APlayerState* Player)
 	Super::AddPlayerState(Player);
 
 	if (Player->PlayerId > 0) {
-		auto myPlayer = Cast<AMyPlayerState>(Player);
-		OnPlayerAdded.Broadcast(myPlayer);
+		OnPlayerAdded.Broadcast(Cast<AMyPlayerState>(Player));
 	}
+}
 
-	ConnectedPlayers.Empty();
+void AMainGameState::OnPlayerJoined_Implementation(AMyPlayerState* NewPlayer)
+{
 }
 
 void AMainGameState::RemovePlayerState(APlayerState* Player)
 {
 	Super::RemovePlayerState(Player);
 
-	OnPlayerRemoved.Broadcast(Cast<AMyPlayerState>(Player));
-
-	ConnectedPlayers.Empty();
+	if (Player->PlayerId > 0) {
+		OnPlayerRemoved.Broadcast(Cast<AMyPlayerState>(Player));
+	}
 }
 
 const TMap<int32, AMyPlayerState*>& AMainGameState::GetConnectedPlayers()
 {
-	if (ConnectedPlayers.Num() == 0) {
-		for (auto player : PlayerArray) {
-			auto myPlayer = Cast<AMyPlayerState>(player);
-			if (myPlayer->NetID.IsValid()) {
-				
-			}
+	if (ConnectedPlayersMap.Num() == 0) {
+		for (auto player : ConnectedPlayersArray) {
+			ConnectedPlayersMap.Emplace(player->PlayerId, player);
 		}
 	}
 
-	return ConnectedPlayers;
+	return ConnectedPlayersMap;
 }
 
 

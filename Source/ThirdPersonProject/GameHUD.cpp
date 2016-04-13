@@ -25,6 +25,21 @@ void UGameHUD::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 	Super::NativeTick(MyGeometry, InDeltaTime);
 
 	GameOverHUDWidget->UpdateState();
+
+	auto PlayerState = GetWorld()->GetFirstPlayerController()->PlayerState;
+	if (PlayerState) {
+		SetPlayer(Cast<AMyPlayerState>(PlayerState));
+	}
+
+	auto GameState = GetWorld()->GetGameState<AMainGameState>();
+
+	if (GameState && Player) {
+		if (GameState->ConnectedPlayersArray != ConnectedPlayers) {
+			ConnectedPlayers = GameState->ConnectedPlayersArray;
+
+			this->UpdatePartyFrame();
+		}
+	}
 }
 
 void UGameHUD::NativeConstruct()
@@ -93,16 +108,15 @@ void UGameHUD::OnRemotePlayerJoined(AMyPlayerState* player)
 void UGameHUD::UpdatePartyFrame()
 {
 	auto gameState = this->GetWorld()->GetGameState<AMainGameState>();
-	if (gameState && PlayerFrameWidget->Player) {
-		auto players = gameState->PlayerArray;
+	if (gameState && Player) {
+		auto players = gameState->ConnectedPlayersArray;
 
 		PartyPanelWidget->ClearChildren();
 
-		for (auto player : players) {
-			auto myPlayer = Cast<AMyPlayerState>(player);
-			if (myPlayer->PlayerId > 0 && player->PlayerId != PlayerFrameWidget->Player->PlayerId) {
+		for (auto netPlayer : players) {
+			if (netPlayer && netPlayer->PlayerId > 0 && netPlayer->PlayerId != Player->PlayerId) {
 				auto widget = CreateWidget<UPlayerFrame>(GetWorld()->GetGameInstance(), PlayerFrameBPClass->Class);
-				widget->Player = myPlayer;
+				widget->Player = netPlayer;
 				PartyPanelWidget->AddChildToVerticalBox(widget);
 			}
 		}

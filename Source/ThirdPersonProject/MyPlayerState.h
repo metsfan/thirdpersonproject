@@ -63,6 +63,9 @@ public:
 	UPROPERTY(BlueprintReadWrite, Replicated)
 		FGuid NetID;
 
+	UPROPERTY(BlueprintReadWrite, Replicated)
+		bool Initialized;
+
 	UFUNCTION(Server, Reliable, WithValidation)
 	void SetPlayerReady(bool ready);
 	

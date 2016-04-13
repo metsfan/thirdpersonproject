@@ -14,6 +14,8 @@
 UCLASS()
 class THIRDPERSONPROJECT_API AMainGameState : public AGameState
 {
+	friend class AThirdPersonProjectGameMode;
+
 	GENERATED_BODY()
 
 public:
@@ -38,13 +40,11 @@ public:
 	UFUNCTION(NetMulticast, Reliable)
 	void OnPlayerJoined(AMyPlayerState* NewPlayer);
 
-	UFUNCTION()
-	void OnRep_ConnectedPlayers();
-
-	UPROPERTY(ReplicatedUsing = OnRep_ConnectedPlayers)
-	TMap<int32, AMyPlayerState*> ConnectedPlayers;
+	UPROPERTY(Replicated)
+	TArray<AMyPlayerState *> ConnectedPlayersArray;
 
 private:
 	
-	
+
+	TMap<int32, AMyPlayerState*> ConnectedPlayersMap;
 };

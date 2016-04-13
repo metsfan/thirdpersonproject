@@ -27,6 +27,7 @@ public:
 	UPROPERTY(BlueprintReadWrite, ReplicatedUsing = OnRep_Nickname)
 	FString Nickname;
 
+	UPROPERTY(Replicated)
 	FGuid NetID;
 
 	UFUNCTION(Server, Reliable, WithValidation)
@@ -48,7 +49,7 @@ public:
 	UFUNCTION(Client, Reliable)
 	void ClientSetMouseCursorEnabled(bool enabled);
 
-	virtual void OnRep_PlayerState();
+	virtual void OnRep_PlayerState() override;
 
 	UFUNCTION()
 	void OnPlayerAdded(AMyPlayerState* NewPlayer);

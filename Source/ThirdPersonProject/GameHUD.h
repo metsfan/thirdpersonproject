@@ -26,8 +26,6 @@ class THIRDPERSONPROJECT_API UGameHUD : public UUserWidget
 
 	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
 
-	void UpdatePartyFrame();
-
 
 protected:
 	UPROPERTY(BlueprintReadWrite)
@@ -36,6 +34,8 @@ protected:
 private:
 	UFUNCTION()
 	void OnRestartClick_Private();
+
+	TArray<AMyPlayerState*> ConnectedPlayers;
 
 public:
 	UFUNCTION(BlueprintCallable, Category = TextBinding)
@@ -46,6 +46,8 @@ public:
 
 	void SetPlayer(AMyPlayerState* pPlayer);
 	AMyPlayerState* GetPlayer() { return Player; }
+
+	void UpdatePartyFrame();
 
 	void SetScoreVisible(bool visible);
 

@@ -32,15 +32,15 @@ void UGameOverHUD::UpdateState()
 {
 	auto player = GetWorld()->GetFirstPlayerController();
 	if (player) {
-		auto playerState = Cast<AMyPlayerState>(player->PlayerState);
-		if (playerState) {
+		auto PlayerState = Cast<AMyPlayerState>(player->PlayerState);
+		if (PlayerState && PlayerState->Initialized) {
 			if (State == PlayerAlive) {
-				if (!playerState->IsAlive()) {
+				if (!PlayerState->IsAlive()) {
 					SetState(PlayerDead);
 				}
 			}
 			else {
-				if (playerState->IsAlive()) {
+				if (PlayerState->IsAlive()) {
 					SetState(PlayerAlive);
 				}
 				else {

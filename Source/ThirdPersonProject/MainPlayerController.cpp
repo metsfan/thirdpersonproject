@@ -17,7 +17,9 @@ AMainPlayerController::AMainPlayerController(): Super()
 {
 	bReplicates = true;
 
-	NetID = FGuid::NewGuid();
+	if (HasAuthority()) {
+		NetID = FGuid::NewGuid();
+	}
 }
 
 void AMainPlayerController::BeginPlay()
@@ -48,39 +50,25 @@ void AMainPlayerController::SetupInputComponent()
 
 void AMainPlayerController::InitPlayerState()
 {
-	Super::InitPlayerState();
-
-	auto gameState = Cast<AMainGameState>(this->GetWorld()->GetGameState());
-	if (Role == ROLE_AutonomousProxy) {
-		
+	if (PlayerState && HasAuthority()) {
+		// Prevent double init for hosting player
+		return;
 	}
+
+	Super::InitPlayerState();
 }
 
 void AMainPlayerController::OnRep_PlayerState()
 {
 	Super::OnRep_PlayerState();
 
-	/*auto gameState = Cast<AMainGameState>(this->GetWorld()->GetGameState());
-	if (gameState) {
-		auto players = gameState->GetConnectedPlayers();
-		for (auto player : players) {
-			this->OnPlayerAdded(player.Value);
-		}
-	}*/
-
-	//PlayerHUD->OnPlayerJoined(Cast<AMyPlayerState>(this->PlayerState));
+	auto Player = Cast<AThirdPersonProjectCharacter>(GetPawn());
+	auto MyPlayerState = Cast<AMyPlayerState>(PlayerState);
+	MyPlayerState->Update(Player, NetID);
 }
 
 void AMainPlayerController::OnPlayerAdded(AMyPlayerState* NewPlayer)
 {
-	if (PlayerHUD && PlayerState) {
-		if (NewPlayer->PlayerId == this->PlayerState->PlayerId) {
-			PlayerHUD->OnLocalPlayerJoined(NewPlayer);
-		}
-		else {
-			PlayerHUD->OnRemotePlayerJoined(NewPlayer);
-		}
-	}
 }
 
 void AMainPlayerController::SetPawn(APawn* InPawn)
@@ -95,12 +83,6 @@ void AMainPlayerController::SetPawn(APawn* InPawn)
 void AMainPlayerController::OnPlayerDied_Implementation(AMyPlayerState* DeadPlayer)
 {
 	this->UnPossess();
-
-	//GetWorld()->GetAuthGameMode()->EndMatchIfAllDead();
-
-
-	//this->ClientShowGameOverHUD();
-	//this->ClientOnPlayerDied();
 
 	if (PlayerHUD) {
 		PlayerHUD->OnPlayerDied();
@@ -131,10 +113,6 @@ void AMainPlayerController::Tick(float deltaSeconds)
 	auto PlayerState = Cast<AMyPlayerState>(this->PlayerState);
 	if (PlayerState) {
 		if (PlayerHUD != NULL) {
-			if (PlayerHUD->GetPlayer() == NULL) {
-				PlayerHUD->SetPlayer(Cast<AMyPlayerState>(this->PlayerState));
-			}
-			
 			if (CrosshairPosition == FVector2D(0, 0)) {
 				CrosshairPosition = PlayerHUD->GetCrosshairPosition();
 			}			
@@ -190,6 +168,7 @@ void AMainPlayerController::GetLifetimeReplicatedProps(TArray< FLifetimeProperty
 
 	DOREPLIFETIME(AMainPlayerController, Nickname);
 	DOREPLIFETIME(AMainPlayerController, Ready);
+	DOREPLIFETIME(AMainPlayerController, NetID);
 }
 
 void AMainPlayerController::OnRep_Nickname()
