@@ -14,6 +14,7 @@
  */
 
 class AMyPlayerState;
+class UScoreOverlay;
 
 UCLASS()
 class THIRDPERSONPROJECT_API UGameHUD : public UUserWidget
@@ -72,5 +73,5 @@ public:
 	UImage* CrosshairWidget;
 
 	UPROPERTY(BlueprintReadWrite)
-	UWidget* ScorePanelWidget;
+	UScoreOverlay* ScorePanelWidget;
 };

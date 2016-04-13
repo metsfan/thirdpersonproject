@@ -40,7 +40,7 @@ public:
 	UFUNCTION(NetMulticast, Reliable)
 	void OnPlayerJoined(AMyPlayerState* NewPlayer);
 
-	UPROPERTY(Replicated)
+	UPROPERTY(Replicated, BlueprintReadOnly)
 	TArray<AMyPlayerState *> ConnectedPlayersArray;
 
 private:

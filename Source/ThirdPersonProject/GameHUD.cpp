@@ -10,6 +10,7 @@
 #include "MainGameState.h"
 #include "WidgetHelper.h"
 #include "Components/CanvasPanelSlot.h"
+#include "ScoreOverlay.h"
 
 static ConstructorHelpers::FClassFinder<UPlayerFrame> *PlayerFrameBPClass = NULL;
 
