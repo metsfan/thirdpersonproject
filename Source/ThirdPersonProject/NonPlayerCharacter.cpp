@@ -70,7 +70,7 @@ void ANonPlayerCharacter::AddHealth_Implementation(int32 delta, ABaseCharacter* 
 	HealthFrameWidgetComponent->SetVisibility(true);
 
 	auto Player = Cast<AThirdPersonProjectCharacter>(InstigatorCharacter);
-	if (Player && TeamID != Player->TeamID) {
+	if (Player && Player->Controller && Player->Controller->PlayerState && TeamID != Player->TeamID) {
 		auto PlayerState = Cast<AMyPlayerState>(Player->Controller->PlayerState);
 
 		if (delta < 0) {

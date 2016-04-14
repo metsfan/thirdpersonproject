@@ -2,7 +2,7 @@
 
 #include "ThirdPersonProject.h"
 #include "ScoreOverlay.h"
-#include "Components/TextBlock.h"
+#include "TextBlockEx.h"
 
 void UScoreOverlay::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 {
@@ -15,90 +15,53 @@ void UScoreOverlay::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 			this->UpdateScoreTable();
 		}
 	}
+
+	for (int i = 0; i < ConnectedPlayers.Num(); i++) {
+		auto Player = ConnectedPlayers[i];
+		
+		NameWidgets[i]->SetText(FText::FromString(Player->Name));
+		KillsWidgets[i]->SetText(FText::AsNumber(Player->Kills));
+		AssistsWidgets[i]->SetText(FText::AsNumber(Player->Assists));
+		DamageDoneWidgets[i]->SetText(FText::AsNumber(Player->DamageDone));
+		DamageTakenWidgets[i]->SetText(FText::AsNumber(Player->DamageTaken));
+	}
 }
 
 void UScoreOverlay::UpdateScoreTable()
 {
 	GridWidget->ClearChildren();
 
-	UTextBlock *TextBlock;
-	UGridSlot *GridSlot;
+	auto createTextBlock = [this](int row, int column, const FText& text) -> UTextBlockEx* {
+		UTextBlockEx* TextBlock = NewObject<UTextBlockEx>();
+		TextBlock->SetText(text);
+		TextBlock->SetMargin(50, 0, 50, 0);
+		UGridSlot* GridSlot = GridWidget->AddChildToGrid(TextBlock);
+		GridSlot->SetRow(row);
+		GridSlot->SetColumn(column);
+		GridSlot->SetHorizontalAlignment(EHorizontalAlignment::HAlign_Center);
 
-	GridWidget->ColumnFill.Add(0.2);
-	GridWidget->ColumnFill.Add(0.2);
-	GridWidget->ColumnFill.Add(0.2);
-	GridWidget->ColumnFill.Add(0.2);
-	GridWidget->ColumnFill.Add(0.2);
+		return TextBlock;
+	};
 
 	// First the header
-	TextBlock = NewObject<UTextBlock>();
-	TextBlock->SetText(FText::FromString("Name"));
-	GridSlot = GridWidget->AddChildToGrid(TextBlock);
-	GridSlot->Row = 0;
-	GridSlot->Column = 0;
-
-	TextBlock = NewObject<UTextBlock>();
-	TextBlock->SetText(FText::FromString("Kills"));
-	GridSlot = GridWidget->AddChildToGrid(TextBlock);
-	GridSlot->Row = 0;
-	GridSlot->Column = 1;
-
-	TextBlock = NewObject<UTextBlock>();
-	TextBlock->SetText(FText::FromString("Assists"));
-	GridSlot = GridWidget->AddChildToGrid(TextBlock);
-	GridSlot->Row = 0;
-	GridSlot->Column = 2;
-
-	TextBlock = NewObject<UTextBlock>();
-	TextBlock->SetText(FText::FromString("Damage Done"));
-	GridSlot = GridWidget->AddChildToGrid(TextBlock);
-	GridSlot->Row = 0;
-	GridSlot->Column = 3;
-
-	TextBlock = NewObject<UTextBlock>();
-	TextBlock->SetText(FText::FromString("Damage Taken"));
-	GridSlot = GridWidget->AddChildToGrid(TextBlock);
-	GridSlot->Row = 0;
-	GridSlot->Column = 4;
+	
+	createTextBlock(0, 0, FText::FromString("Name"));
+	createTextBlock(0, 1, FText::FromString("Kills"));
+	createTextBlock(0, 2, FText::FromString("Assists"));
+	createTextBlock(0, 3, FText::FromString("Damage Done"));
+	createTextBlock(0, 4, FText::FromString("Damage Taken"));
 
 	// Now the content
 	int row = 1;
+	FText emptyString;
+
 	for (auto Player : ConnectedPlayers) {
-		TextBlock = NewObject<UTextBlock>();
-		TextBlock->SetText(FText::FromString(Player->Name));
-		GridSlot = GridWidget->AddChildToGrid(TextBlock);
-		GridSlot->Row = row;
-		GridSlot->Column = 0;
-
-		TextBlock = NewObject<UTextBlock>();
-		TextBlock->SetText(FText::AsNumber(Player->Kills));
-		GridSlot = GridWidget->AddChildToGrid(TextBlock);
-		GridSlot->Row = row;
-		GridSlot->Column = 1;
-
-		TextBlock = NewObject<UTextBlock>();
-		TextBlock->SetText(FText::AsNumber(Player->Assists));
-		GridSlot = GridWidget->AddChildToGrid(TextBlock);
-		GridSlot->Row = row;
-		GridSlot->Column = 2;
-
-		TextBlock = NewObject<UTextBlock>();
-		TextBlock->SetText(FText::AsNumber(Player->DamageDone));
-		GridSlot = GridWidget->AddChildToGrid(TextBlock);
-		GridSlot->Row = row;
-		GridSlot->Column = 3;
-
-		TextBlock = NewObject<UTextBlock>();
-		TextBlock->SetText(FText::AsNumber(Player->DamageTaken));
-		GridSlot = GridWidget->AddChildToGrid(TextBlock);
-		GridSlot->Row = row;
-		GridSlot->Column = 4;
+		NameWidgets.Add(createTextBlock(row, 0, emptyString));
+		KillsWidgets.Add(createTextBlock(row, 1, emptyString));
+		AssistsWidgets.Add(createTextBlock(row, 2, emptyString));
+		DamageDoneWidgets.Add(createTextBlock(row, 3, emptyString));
+		DamageTakenWidgets.Add(createTextBlock(row, 4, emptyString));
 
 		row++;
 	}
-
-	this->SynchronizeProperties();
-	this->RebuildWidget();
-	this->ForceLayoutPrepass();
-	this->InvalidateLayoutAndVolatility();
 }
