@@ -91,7 +91,7 @@ void ANonPlayerCharacter::OnSpellEffectsApplied(ASpellCPP* Spell)
 {
 	auto Player = Cast<AThirdPersonProjectCharacter>(Spell->GetNetOwner());
 	auto GameState = Cast<AMainGameState>(GetWorld()->GetGameState());
-	if (Player && TeamID != Player->TeamID) {
+	if (Player && Player->Controller && Player->Controller->PlayerState && TeamID != Player->TeamID) {
 		// Owner is a player, and its not friendly, so this is an enemy spell hit
 		int32 PlayerId = Player->Controller->PlayerState->PlayerId;
 		if (this->IsAlive()) {
