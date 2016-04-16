@@ -125,7 +125,7 @@ bool AThirdPersonProjectCharacter::ExecuteSpell_Validate(FSpellAction action, co
 
 void AThirdPersonProjectCharacter::ExecuteSpell_Implementation(FSpellAction action, const FVector& crosshairPosition)
 {
-	if (SpellData.Contains(action) && IsAlive() && !ActiveSpell) {
+	if (SpellData.Contains(action) && IsAlive() && ActiveSpell.Get() == NULL) {
 		float CooldownRemaining = SpellCooldown[action];
 
 		if (CooldownRemaining <= 0) {
@@ -142,6 +142,7 @@ void AThirdPersonProjectCharacter::ExecuteSpell_Implementation(FSpellAction acti
 			actor->TargetType = ActionData->TargetType;
 			if (ActionData->Duration > 0) {
 				actor->SetLifeSpan(ActionData->Duration);
+				ActiveSpell = actor;
 			}
 
 			if (actor->IsA(AProjectileSpell::StaticClass())) {
@@ -150,8 +151,6 @@ void AThirdPersonProjectCharacter::ExecuteSpell_Implementation(FSpellAction acti
 			}
 
 			SpellCooldown[action] = ActionData->Cooldown;
-
-			ActiveSpell = actor;
 		}
 	}
 }
