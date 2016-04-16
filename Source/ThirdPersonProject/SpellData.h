@@ -41,4 +41,13 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 		float Duration;
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+		UTexture2D* Icon;
+
+	UPROPERTY(BlueprintReadOnly)
+		float CooldownRemaining;
+
+	UPROPERTY(BlueprintReadOnly)
+		FKey Hotkey;
+
 };

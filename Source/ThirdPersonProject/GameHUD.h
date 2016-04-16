@@ -7,6 +7,8 @@
 #include "GameOverHUD.h"
 #include "Components/VerticalBox.h"
 #include "Components/Image.h"
+#include "SpellIcon.h"
+#include "ThirdPersonProjectCharacter.h"
 #include "GameHUD.generated.h"
 
 /**
@@ -38,6 +40,8 @@ private:
 
 	TArray<AMyPlayerState*> ConnectedPlayers;
 
+	TMap<FSpellAction, USpellIcon*> SpellIconWidgets;
+
 public:
 	UFUNCTION(BlueprintCallable, Category = TextBinding)
 	FText GetCountdownTimerText();
@@ -57,6 +61,9 @@ public:
 	void OnPlayerDied();
 	void OnGameOver();
 	void OnPlayerReadyToRestart(AMyPlayerState* player);
+
+	UFUNCTION(BlueprintCallable, Category = "Setup")
+	void SetSpellIconWidget(FSpellAction Action, USpellIcon* Widget);
 
 	FVector2D GetCrosshairPosition();
 

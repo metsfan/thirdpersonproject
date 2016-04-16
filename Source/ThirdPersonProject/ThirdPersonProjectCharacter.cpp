@@ -9,6 +9,7 @@
 #include "ProjectileSpell.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "SpellCPP.h"
+#include "GameHUD.h"
 
 //////////////////////////////////////////////////////////////////////////
 // AThirdPersonProjectCharacter
@@ -82,15 +83,18 @@ void AThirdPersonProjectCharacter::BeginPlay() {
 
 	AgroRadiusSphere->SetSphereRadius(AgroRadius);
 
-	SpellData.Emplace(FSpellAction::MainAction, MainAction);
-	SpellData.Emplace(FSpellAction::Spell1, Spell1);
-	SpellData.Emplace(FSpellAction::Spell2, Spell2);
-	SpellData.Emplace(FSpellAction::Spell3, Spell3);
-
-	SpellCooldown.Emplace(FSpellAction::MainAction, 0);
-	SpellCooldown.Emplace(FSpellAction::Spell1, 0);
-	SpellCooldown.Emplace(FSpellAction::Spell2, 0);
-	SpellCooldown.Emplace(FSpellAction::Spell3, 0);
+	if (MainAction) {
+		SpellData.Emplace(FSpellAction::MainAction, NewObject<USpellData>(this, MainAction));
+	}
+	if (Spell1) {
+		SpellData.Emplace(FSpellAction::Spell1, NewObject<USpellData>(this, Spell1));
+	}
+	if (Spell2) {
+		SpellData.Emplace(FSpellAction::Spell2, NewObject<USpellData>(this, Spell2));
+	}
+	if (Spell3) {
+		SpellData.Emplace(FSpellAction::Spell3, NewObject<USpellData>(this, Spell3));
+	}
 }
 
 void AThirdPersonProjectCharacter::Tick(float deltaSeconds)
@@ -112,8 +116,8 @@ void AThirdPersonProjectCharacter::Tick(float deltaSeconds)
 			this->GetCharacterMovement()->MaxWalkSpeed = RunSpeed;
 		}
 
-		for (auto pair : SpellCooldown) {
-			SpellCooldown[pair.Key] = FMath::Max(0.0f, pair.Value - deltaSeconds);
+		for (auto pair : SpellData) {
+			pair.Value->CooldownRemaining = FMath::Max(0.0f, pair.Value->CooldownRemaining - deltaSeconds);
 		}
 	}
 }
@@ -126,11 +130,10 @@ bool AThirdPersonProjectCharacter::ExecuteSpell_Validate(FSpellAction action, co
 void AThirdPersonProjectCharacter::ExecuteSpell_Implementation(FSpellAction action, const FVector& crosshairPosition)
 {
 	if (SpellData.Contains(action) && IsAlive() && ActiveSpell.Get() == NULL) {
-		float CooldownRemaining = SpellCooldown[action];
+		auto ActionData = SpellData[action];
 
-		if (CooldownRemaining <= 0) {
-			auto ActionDataClass = SpellData[action];
-			auto ActionData = NewObject<USpellData>(this, ActionDataClass);
+		if (ActionData && ActionData->CooldownRemaining <= 0) {
+			
 			FActorSpawnParameters spawnParams;
 			spawnParams.Owner = this;
 
@@ -150,7 +153,7 @@ void AThirdPersonProjectCharacter::ExecuteSpell_Implementation(FSpellAction acti
 				projectile->SetTargetLocation(crosshairPosition);
 			}
 
-			SpellCooldown[action] = ActionData->Cooldown;
+			ActionData->CooldownRemaining = ActionData->Cooldown;
 		}
 	}
 }

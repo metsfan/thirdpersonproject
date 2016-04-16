@@ -43,6 +43,11 @@ void UGameHUD::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 	}
 }
 
+void UGameHUD::SetSpellIconWidget(FSpellAction Action, USpellIcon* Widget)
+{
+	SpellIconWidgets.Emplace(Action, Widget);
+}
+
 void UGameHUD::NativeConstruct()
 {
 	Super::NativeConstruct();

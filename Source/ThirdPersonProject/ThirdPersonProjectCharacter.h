@@ -4,7 +4,6 @@
 #include "BaseCharacter.h"
 #include "ActionEvent.h"
 #include "SpellCPP.h"
-#include "GameHUD.h"
 #include "Templates/UniquePtr.h"
 
 #include "ThirdPersonProjectCharacter.generated.h"
@@ -16,6 +15,8 @@ enum class FSpellAction : uint8 {
 	Spell2,
 	Spell3
 };
+
+class UGameHUD;
 
 UCLASS(config=Game)
 class AThirdPersonProjectCharacter : public ABaseCharacter
@@ -148,7 +149,7 @@ public:
 private:
 	float EnergyTickTime = 0;
 
-	TMap<FSpellAction, UClass*> SpellData;
+	TMap<FSpellAction, USpellData*> SpellData;
 
 	void OnLeftMouseButtonPressed();
 	void OnLeftMouseButtonReleased();
