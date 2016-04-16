@@ -83,6 +83,14 @@ void AThirdPersonProjectCharacter::BeginPlay() {
 	AgroRadiusSphere->SetSphereRadius(AgroRadius);
 
 	SpellData.Emplace(FSpellAction::MainAction, MainAction);
+	SpellData.Emplace(FSpellAction::Spell1, Spell1);
+	SpellData.Emplace(FSpellAction::Spell2, Spell2);
+	SpellData.Emplace(FSpellAction::Spell3, Spell3);
+
+	SpellCooldown.Emplace(FSpellAction::MainAction, 0);
+	SpellCooldown.Emplace(FSpellAction::Spell1, 0);
+	SpellCooldown.Emplace(FSpellAction::Spell2, 0);
+	SpellCooldown.Emplace(FSpellAction::Spell3, 0);
 }
 
 void AThirdPersonProjectCharacter::Tick(float deltaSeconds)
@@ -103,6 +111,10 @@ void AThirdPersonProjectCharacter::Tick(float deltaSeconds)
 		else {
 			this->GetCharacterMovement()->MaxWalkSpeed = RunSpeed;
 		}
+
+		for (auto pair : SpellCooldown) {
+			SpellCooldown[pair.Key] = FMath::Max(0.0f, pair.Value - deltaSeconds);
+		}
 	}
 }
 
@@ -113,25 +125,34 @@ bool AThirdPersonProjectCharacter::ExecuteSpell_Validate(FSpellAction action, co
 
 void AThirdPersonProjectCharacter::ExecuteSpell_Implementation(FSpellAction action, const FVector& crosshairPosition)
 {
-	if (SpellData.Contains(action) && IsAlive()) {
-		auto ActionDataClass = SpellData[action];
-		auto ActionData = NewObject<USpellData>(this, ActionDataClass);
-		FActorSpawnParameters spawnParams;
-		spawnParams.Owner = this;
+	if (SpellData.Contains(action) && IsAlive() && !ActiveSpell) {
+		float CooldownRemaining = SpellCooldown[action];
 
-		FTransform* transform = new FTransform(FVector(75, 0, 0));
+		if (CooldownRemaining <= 0) {
+			auto ActionDataClass = SpellData[action];
+			auto ActionData = NewObject<USpellData>(this, ActionDataClass);
+			FActorSpawnParameters spawnParams;
+			spawnParams.Owner = this;
 
-		auto actor = Cast<ASpellCPP>(GetWorld()->SpawnActor(ActionData->Class, transform, spawnParams));
-		actor->Instigator = this;
-		actor->AttachRootComponentToActor(this);
-		actor->TargetType = ActionData->TargetType;
+			FTransform* transform = new FTransform(FVector(75, 0, 0));
 
-		if (actor->IsA(AProjectileSpell::StaticClass())) {
-			auto projectile = Cast<AProjectileSpell>(actor);
-			projectile->SetTargetLocation(crosshairPosition);
+			auto actor = Cast<ASpellCPP>(GetWorld()->SpawnActor(ActionData->Class, transform, spawnParams));
+			actor->Instigator = this;
+			actor->AttachRootComponentToActor(this);
+			actor->TargetType = ActionData->TargetType;
+			if (ActionData->Duration > 0) {
+				actor->SetLifeSpan(ActionData->Duration);
+			}
+
+			if (actor->IsA(AProjectileSpell::StaticClass())) {
+				auto projectile = Cast<AProjectileSpell>(actor);
+				projectile->SetTargetLocation(crosshairPosition);
+			}
+
+			SpellCooldown[action] = ActionData->Cooldown;
+
+			ActiveSpell = actor;
 		}
-
-		ActiveSpell = Cast<ASpellCPP>(actor);
 	}
 }
 
@@ -161,6 +182,10 @@ void AThirdPersonProjectCharacter::SetupPlayerInputComponent(class UInputCompone
 	InputComponent->BindAction("MainAction", IE_Pressed, this, &AThirdPersonProjectCharacter::OnLeftMouseButtonPressed);
 	InputComponent->BindAction("MainAction", IE_Released, this, &AThirdPersonProjectCharacter::OnLeftMouseButtonReleased);
 
+	InputComponent->BindAction("Spell1", IE_Pressed, this, &AThirdPersonProjectCharacter::CastSpellAction);
+	InputComponent->BindAction("Spell2", IE_Pressed, this, &AThirdPersonProjectCharacter::CastSpellAction);
+	InputComponent->BindAction("Spell3", IE_Pressed, this, &AThirdPersonProjectCharacter::CastSpellAction);
+
 	InputComponent->BindAction("Sprint", IE_Pressed, this, &AThirdPersonProjectCharacter::BeginSprint);
 	InputComponent->BindAction("Sprint", IE_Released, this, &AThirdPersonProjectCharacter::EndSprint);
 }
@@ -168,23 +193,29 @@ void AThirdPersonProjectCharacter::SetupPlayerInputComponent(class UInputCompone
 void AThirdPersonProjectCharacter::OnLeftMouseButtonPressed()
 {
 	if (MainAction) {
-		auto controller = Cast<AMainPlayerController>(Controller);
-		const FVector2D ViewportCenter = controller->GetCrosshairPosition();
-
-		FVector WorldPosition, WorldDirection;
-		UGameplayStatics::DeprojectScreenToWorld(controller, ViewportCenter, WorldPosition, WorldDirection);
-
-		FVector WorldPositionNear = WorldPosition + (WorldDirection * 200);
-		FVector WorldPositionFar = WorldPosition + (WorldDirection * 20000);
-
-		FHitResult hit;
-		FCollisionQueryParams params;
-		params.AddIgnoredActor(this);
-
-		GetWorld()->LineTraceSingleByChannel(hit, WorldPositionNear, WorldPositionFar, ECollisionChannel::ECC_Visibility, params);
-
-		this->ExecuteSpell(FSpellAction::MainAction, hit.Location);
+		
+		this->ExecuteSpell(FSpellAction::MainAction, this->GetCrosshairPosition());
 	}
+}
+
+FVector AThirdPersonProjectCharacter::GetCrosshairPosition()
+{
+	auto controller = Cast<AMainPlayerController>(Controller);
+	const FVector2D ViewportCenter = controller->GetCrosshairPosition();
+
+	FVector WorldPosition, WorldDirection;
+	UGameplayStatics::DeprojectScreenToWorld(controller, ViewportCenter, WorldPosition, WorldDirection);
+
+	FVector WorldPositionNear = WorldPosition + (WorldDirection * 200);
+	FVector WorldPositionFar = WorldPosition + (WorldDirection * 20000);
+
+	FHitResult hit;
+	FCollisionQueryParams params;
+	params.AddIgnoredActor(this);
+
+	GetWorld()->LineTraceSingleByChannel(hit, WorldPositionNear, WorldPositionFar, ECollisionChannel::ECC_Visibility, params);
+
+	return hit.Location;
 }
 
 void AThirdPersonProjectCharacter::OnLeftMouseButtonReleased()
@@ -199,6 +230,23 @@ void AThirdPersonProjectCharacter::OnLeftMouseButtonReleased()
 		ActiveSpell->Finish();
 		ActiveSpell = NULL;
 	}*/
+}
+
+void AThirdPersonProjectCharacter::CastSpellAction(FKey Key)
+{
+	auto CrosshairPosition = GetCrosshairPosition();
+
+	auto name = Key.GetDisplayName().ToString();
+
+	if (name == "1") {
+		ExecuteSpell(FSpellAction::Spell1, CrosshairPosition);
+	}
+	else if (name == "2") {
+		ExecuteSpell(FSpellAction::Spell2, CrosshairPosition);
+	}
+	else if (name == "3") {
+		ExecuteSpell(FSpellAction::Spell3, CrosshairPosition);
+	}
 }
 
 void AThirdPersonProjectCharacter::MouseTurn(float Yaw)

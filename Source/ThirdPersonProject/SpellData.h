@@ -37,4 +37,8 @@ public:
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 		TEnumAsByte<FTargetType> TargetType;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+		float Duration;
+
 };

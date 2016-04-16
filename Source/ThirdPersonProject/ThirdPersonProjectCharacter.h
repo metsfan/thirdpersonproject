@@ -39,7 +39,7 @@ protected:
 	bool InCombat;
 
 	UPROPERTY(BlueprintReadOnly)
-	ASpellCPP* ActiveSpell;
+	TWeakObjectPtr<ASpellCPP> ActiveSpell;
 
 	UPROPERTY(BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	AThirdPersonProjectCharacter *Target;
@@ -98,12 +98,19 @@ protected:
 	/** Handler for when a touch input stops. */
 	void TouchStopped(ETouchIndex::Type FingerIndex, FVector Location);
 
-	
-
+	void CastSpellAction(FKey Key);
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 		TSubclassOf<USpellData> MainAction;
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+		TSubclassOf<USpellData> Spell1;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+		TSubclassOf<USpellData> Spell2;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+		TSubclassOf<USpellData> Spell3;
 
 	void Jump() override;
 
@@ -145,6 +152,10 @@ private:
 
 	void OnLeftMouseButtonPressed();
 	void OnLeftMouseButtonReleased();
+
+	FVector GetCrosshairPosition();
+
+	TMap<FSpellAction, float> SpellCooldown;
 	
 };
 
