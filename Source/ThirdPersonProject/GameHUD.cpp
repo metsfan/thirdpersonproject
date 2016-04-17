@@ -48,6 +48,13 @@ void UGameHUD::SetSpellIconWidget(FSpellAction Action, USpellIcon* Widget)
 	SpellIconWidgets.Emplace(Action, Widget);
 }
 
+void UGameHUD::SetSpellData(FSpellAction Action, USpellData* Data)
+{
+	if (SpellIconWidgets.Contains(Action)) {
+		SpellIconWidgets[Action]->Spell = Data;
+	}
+}
+
 void UGameHUD::NativeConstruct()
 {
 	Super::NativeConstruct();

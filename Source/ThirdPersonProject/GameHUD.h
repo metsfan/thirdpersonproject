@@ -65,6 +65,8 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Setup")
 	void SetSpellIconWidget(FSpellAction Action, USpellIcon* Widget);
 
+	void SetSpellData(FSpellAction Action, USpellData* Data);
+
 	FVector2D GetCrosshairPosition();
 
 	UPROPERTY(BlueprintReadWrite)

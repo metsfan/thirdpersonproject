@@ -88,12 +88,15 @@ void AThirdPersonProjectCharacter::BeginPlay() {
 	}
 	if (Spell1) {
 		SpellData.Emplace(FSpellAction::Spell1, NewObject<USpellData>(this, Spell1));
+		SpellData[FSpellAction::Spell1]->Hotkey = FKey("1");
 	}
 	if (Spell2) {
 		SpellData.Emplace(FSpellAction::Spell2, NewObject<USpellData>(this, Spell2));
+		SpellData[FSpellAction::Spell2]->Hotkey = FKey("2");
 	}
 	if (Spell3) {
 		SpellData.Emplace(FSpellAction::Spell3, NewObject<USpellData>(this, Spell3));
+		SpellData[FSpellAction::Spell3]->Hotkey = FKey("3");
 	}
 }
 
@@ -115,10 +118,10 @@ void AThirdPersonProjectCharacter::Tick(float deltaSeconds)
 		else {
 			this->GetCharacterMovement()->MaxWalkSpeed = RunSpeed;
 		}
+	}
 
-		for (auto pair : SpellData) {
-			pair.Value->CooldownRemaining = FMath::Max(0.0f, pair.Value->CooldownRemaining - deltaSeconds);
-		}
+	for (auto pair : SpellData) {
+		pair.Value->CooldownRemaining = FMath::Max(0.0f, pair.Value->CooldownRemaining - deltaSeconds);
 	}
 }
 
@@ -240,14 +243,24 @@ void AThirdPersonProjectCharacter::CastSpellAction(FKey Key)
 
 	auto name = Key.GetDisplayName().ToString();
 
+	FSpellAction Action;
+
 	if (name == "1") {
-		ExecuteSpell(FSpellAction::Spell1, CrosshairPosition);
+		Action = FSpellAction::Spell1;
 	}
 	else if (name == "2") {
-		ExecuteSpell(FSpellAction::Spell2, CrosshairPosition);
+		Action = FSpellAction::Spell2;
 	}
 	else if (name == "3") {
-		ExecuteSpell(FSpellAction::Spell3, CrosshairPosition);
+		Action = FSpellAction::Spell3;
+	}
+
+	auto Spell = SpellData.FindChecked(Action);
+	if (Spell && Spell->CooldownRemaining == 0) {
+		auto Spell = SpellData[Action];
+		ExecuteSpell(Action, CrosshairPosition);
+
+		Spell->CooldownRemaining = Spell->Cooldown;
 	}
 }
 

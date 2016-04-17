@@ -23,6 +23,8 @@ class AThirdPersonProjectCharacter : public ABaseCharacter
 {
 	GENERATED_BODY()
 
+	friend class AMainPlayerController;
+
 protected:
 	/** Camera boom positioning the camera behind the character */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
@@ -67,6 +69,8 @@ public:
 	virtual void Tick(float deltaSeconds) override;
 
 	void AddHealth_Implementation(int32 delta, ABaseCharacter* Instigator) override;
+
+	USpellData* GetSpell(FSpellAction Action);
 
 protected:
 

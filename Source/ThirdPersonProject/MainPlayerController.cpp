@@ -73,6 +73,13 @@ void AMainPlayerController::SetPawn(APawn* InPawn)
 
 	if (InPawn) {
 		this->ClientSetMouseCursorEnabled(false);
+
+		auto character = Cast<AThirdPersonProjectCharacter>(InPawn);
+		if (PlayerHUD) {
+			for (auto pair : character->SpellData) {
+				PlayerHUD->SetSpellData(pair.Key, pair.Value);
+			}
+		}
 	}
 }
 
