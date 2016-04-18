@@ -35,6 +35,8 @@ EBTNodeResult::Type UBTTaskNode_ExecuteNextSpell::ExecuteTask(UBehaviorTreeCompo
 		actor->AttachRootComponentToActor(owningActor);
 		actor->TargetType = spell->TargetType;
 		actor->Finish();
+
+		OwnerComp.GetBlackboardComponent()->SetValueAsObject("CurrentTarget", NULL);
 	}
 	return EBTNodeResult::Type::Succeeded;
 }

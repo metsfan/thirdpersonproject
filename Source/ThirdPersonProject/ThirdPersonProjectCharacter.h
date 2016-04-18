@@ -155,6 +155,9 @@ private:
 
 	TMap<FSpellAction, USpellData*> SpellData;
 
+	UPROPERTY()
+	TArray<USpellData*> SpellsArray;
+
 	void OnLeftMouseButtonPressed();
 	void OnLeftMouseButtonReleased();
 

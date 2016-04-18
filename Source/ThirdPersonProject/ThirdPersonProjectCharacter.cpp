@@ -84,19 +84,37 @@ void AThirdPersonProjectCharacter::BeginPlay() {
 	AgroRadiusSphere->SetSphereRadius(AgroRadius);
 
 	if (MainAction) {
-		SpellData.Emplace(FSpellAction::MainAction, NewObject<USpellData>(this, MainAction));
+		auto spell = NewObject<USpellData>(this, MainAction);
+		SpellsArray.Add(spell);
+		SpellData.Emplace(FSpellAction::MainAction, spell);
 	}
 	if (Spell1) {
-		SpellData.Emplace(FSpellAction::Spell1, NewObject<USpellData>(this, Spell1));
-		SpellData[FSpellAction::Spell1]->Hotkey = FKey("1");
+		auto spell = NewObject<USpellData>(this, Spell1);
+		SpellsArray.Add(spell);
+		SpellData.Emplace(FSpellAction::Spell1, spell);
+		spell->Hotkey = FKey("1");
 	}
 	if (Spell2) {
-		SpellData.Emplace(FSpellAction::Spell2, NewObject<USpellData>(this, Spell2));
-		SpellData[FSpellAction::Spell2]->Hotkey = FKey("2");
+		auto spell = NewObject<USpellData>(this, Spell2);
+		SpellsArray.Add(spell);
+		SpellData.Emplace(FSpellAction::Spell2, spell);
+		spell->Hotkey = FKey("2");
 	}
 	if (Spell3) {
-		SpellData.Emplace(FSpellAction::Spell3, NewObject<USpellData>(this, Spell3));
-		SpellData[FSpellAction::Spell3]->Hotkey = FKey("3");
+		auto spell = NewObject<USpellData>(this, Spell3);
+		SpellsArray.Add(spell);
+		SpellData.Emplace(FSpellAction::Spell3, spell);
+		spell->Hotkey = FKey("E");
+	}
+
+	if (Controller) {
+		auto MController = Cast<AMainPlayerController>(Controller);
+		auto HUD = MController->GetPlayerHUD();
+		if (HUD) {
+			for (auto pair : SpellData) {
+				HUD->SetSpellData(pair.Key, pair.Value);
+			}
+		}
 	}
 }
 
@@ -132,7 +150,7 @@ bool AThirdPersonProjectCharacter::ExecuteSpell_Validate(FSpellAction action, co
 
 void AThirdPersonProjectCharacter::ExecuteSpell_Implementation(FSpellAction action, const FVector& crosshairPosition)
 {
-	if (SpellData.Contains(action) && IsAlive() && ActiveSpell.Get() == NULL) {
+	if (SpellData.Contains(action) && IsAlive() && (ActiveSpell.Get() == NULL || ActiveSpell.Get()->GetLifeSpan() == 0)) {
 		auto ActionData = SpellData[action];
 
 		if (ActionData && ActionData->CooldownRemaining <= 0) {
@@ -251,13 +269,13 @@ void AThirdPersonProjectCharacter::CastSpellAction(FKey Key)
 	else if (name == "2") {
 		Action = FSpellAction::Spell2;
 	}
-	else if (name == "3") {
+	else if (name == "E") {
 		Action = FSpellAction::Spell3;
 	}
 
-	auto Spell = SpellData.FindChecked(Action);
-	if (Spell && Spell->CooldownRemaining == 0) {
-		auto Spell = SpellData[Action];
+	auto SpellIter = SpellData.Find(Action);
+	if (SpellIter && (*SpellIter)->CooldownRemaining == 0) {
+		auto Spell = *SpellIter;
 		ExecuteSpell(Action, CrosshairPosition);
 
 		Spell->CooldownRemaining = Spell->Cooldown;
