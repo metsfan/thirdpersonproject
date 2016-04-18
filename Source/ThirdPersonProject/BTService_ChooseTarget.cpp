@@ -28,15 +28,10 @@ void UBTService_ChooseTarget::TickNode(UBehaviorTreeComponent& OwnerComp, uint8*
 
 		for (auto player : PlayerActors) {
 			if (player->IsAlive()) {
-				if (MinDistancePlayer) {
-					double distance = player->GetDistanceTo(owningActor);
-					if (distance < MinDistance) {
-						MinDistancePlayer = player;
-						MinDistance = distance;
-					}
-				}
-				else {
+				double distance = player->GetDistanceTo(owningActor);
+				if (distance < MinDistance) {
 					MinDistancePlayer = player;
+					MinDistance = distance;
 				}
 			}
 		}
