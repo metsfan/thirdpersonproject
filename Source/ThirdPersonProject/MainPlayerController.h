@@ -55,7 +55,7 @@ public:
 
 	UGameHUD* GetPlayerHUD() { return PlayerHUD; }
 
-	FVector2D GetCrosshairPosition() { return CrosshairPosition;  }
+	FVector GetCrosshairPosition();
 
 protected:
 	virtual void SetupInputComponent() override;

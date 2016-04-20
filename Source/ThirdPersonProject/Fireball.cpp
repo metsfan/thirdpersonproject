@@ -73,6 +73,7 @@ void AFireball::BeginPlay()
 void AFireball::OnMouseEvent(UActionEvent* args)
 {
 	if (args->Type == EActionEvent::AE_Released) {
+		this->SetTargetLocation(args->CrosshairPosition);
 		this->Finish();
 	}
 }
@@ -86,9 +87,6 @@ void AFireball::Finish()
 {
 	Super::Finish();
 
-	MovementComponent->SetActive(true);
-	this->UpdateProjectileVelocity();
-
 	if (FireScale > 2) {
 		this->SetDamageScaleModifier(FMath::Pow(FireScale, 1.1));
 	}
@@ -101,6 +99,8 @@ void AFireball::Finish()
 	});
 
 	GetWorldTimerManager().SetTimer(ExplosionTimer, TimerCallback, 0.0, false, 3.0);
+
+	this->DetachRootComponentFromParent();
 
 	UE_LOG(MyLog, Log, TEXT("Shooting Fireball animation on machine with role: %d"), (int32)Role.GetValue())
 }

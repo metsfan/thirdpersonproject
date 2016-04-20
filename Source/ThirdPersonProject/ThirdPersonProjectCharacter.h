@@ -161,8 +161,6 @@ private:
 	void OnLeftMouseButtonPressed();
 	void OnLeftMouseButtonReleased();
 
-	FVector GetCrosshairPosition();
-
 	TMap<FSpellAction, float> SpellCooldown;
 	
 };

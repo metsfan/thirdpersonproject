@@ -125,6 +125,25 @@ void AMainPlayerController::Tick(float deltaSeconds)
 	}
 }
 
+FVector AMainPlayerController::GetCrosshairPosition()
+{
+	const FVector2D ViewportCenter = PlayerHUD->GetCrosshairPosition();
+
+	FVector WorldPosition, WorldDirection;
+	UGameplayStatics::DeprojectScreenToWorld(this, ViewportCenter, WorldPosition, WorldDirection);
+
+	FVector WorldPositionNear = WorldPosition + (WorldDirection * 300);
+	FVector WorldPositionFar = WorldPosition + (WorldDirection * 20000);
+
+	FHitResult hit;
+	FCollisionQueryParams params;
+	params.AddIgnoredActor(GetPawn());
+
+	GetWorld()->LineTraceSingleByChannel(hit, WorldPositionNear, WorldPositionFar, ECollisionChannel::ECC_Visibility, params);
+
+	return hit.Location;
+}
+
 
 void AMainPlayerController::ShowScore()
 {

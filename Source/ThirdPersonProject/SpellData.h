@@ -50,4 +50,7 @@ public:
 	UPROPERTY(BlueprintReadOnly)
 		FKey Hotkey;
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+		bool AttachToParent;
+
 };

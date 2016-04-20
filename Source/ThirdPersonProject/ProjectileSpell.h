@@ -37,6 +37,8 @@ public:
 		this->TargetDirection = Direction;
 	}
 
+	virtual void Finish() override;
+
 protected:
 	
 	virtual void OnCollision(class AActor* OtherActor);

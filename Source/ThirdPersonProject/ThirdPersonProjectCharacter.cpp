@@ -158,11 +158,16 @@ void AThirdPersonProjectCharacter::ExecuteSpell_Implementation(FSpellAction acti
 			FActorSpawnParameters spawnParams;
 			spawnParams.Owner = this;
 
-			FTransform* transform = new FTransform(FVector(75, 0, 0));
+			FTransform transform(FVector(75, 0, 0));
+			if (!ActionData->AttachToParent) {
+				transform = this->GetTransform() * transform;
+			}
 
-			auto actor = Cast<ASpellCPP>(GetWorld()->SpawnActor(ActionData->Class, transform, spawnParams));
+			auto actor = Cast<ASpellCPP>(GetWorld()->SpawnActor(ActionData->Class, &transform, spawnParams));
 			actor->Instigator = this;
-			actor->AttachRootComponentToActor(this);
+			if (ActionData->AttachToParent) {
+				actor->AttachRootComponentToActor(this);
+			}
 			actor->TargetType = ActionData->TargetType;
 			if (ActionData->Duration > 0) {
 				actor->SetLifeSpan(ActionData->Duration);
@@ -172,6 +177,7 @@ void AThirdPersonProjectCharacter::ExecuteSpell_Implementation(FSpellAction acti
 			if (actor->IsA(AProjectileSpell::StaticClass())) {
 				auto projectile = Cast<AProjectileSpell>(actor);
 				projectile->SetTargetLocation(crosshairPosition);
+				projectile->UpdateProjectileVelocity();
 			}
 
 			ActionData->CooldownRemaining = ActionData->Cooldown;
@@ -216,29 +222,8 @@ void AThirdPersonProjectCharacter::SetupPlayerInputComponent(class UInputCompone
 void AThirdPersonProjectCharacter::OnLeftMouseButtonPressed()
 {
 	if (MainAction) {
-		
-		this->ExecuteSpell(FSpellAction::MainAction, this->GetCrosshairPosition());
+		this->ExecuteSpell(FSpellAction::MainAction, Cast<AMainPlayerController>(Controller)->GetCrosshairPosition());
 	}
-}
-
-FVector AThirdPersonProjectCharacter::GetCrosshairPosition()
-{
-	auto controller = Cast<AMainPlayerController>(Controller);
-	const FVector2D ViewportCenter = controller->GetCrosshairPosition();
-
-	FVector WorldPosition, WorldDirection;
-	UGameplayStatics::DeprojectScreenToWorld(controller, ViewportCenter, WorldPosition, WorldDirection);
-
-	FVector WorldPositionNear = WorldPosition + (WorldDirection * 200);
-	FVector WorldPositionFar = WorldPosition + (WorldDirection * 20000);
-
-	FHitResult hit;
-	FCollisionQueryParams params;
-	params.AddIgnoredActor(this);
-
-	GetWorld()->LineTraceSingleByChannel(hit, WorldPositionNear, WorldPositionFar, ECollisionChannel::ECC_Visibility, params);
-
-	return hit.Location;
 }
 
 void AThirdPersonProjectCharacter::OnLeftMouseButtonReleased()
@@ -246,7 +231,7 @@ void AThirdPersonProjectCharacter::OnLeftMouseButtonReleased()
 	UActionEvent* args = NewObject<UActionEvent>();
 	args->Button = 0;
 	args->Type = EActionEvent::AE_Released;
-
+	args->CrosshairPosition = Cast<AMainPlayerController>(Controller)->GetCrosshairPosition();
 	OnMouseEvent.Broadcast(args);
 
 	/*if (ActiveSpell) {
@@ -257,7 +242,8 @@ void AThirdPersonProjectCharacter::OnLeftMouseButtonReleased()
 
 void AThirdPersonProjectCharacter::CastSpellAction(FKey Key)
 {
-	auto CrosshairPosition = GetCrosshairPosition();
+	auto controller = Cast<AMainPlayerController>(Controller);
+	auto CrosshairPosition = controller->GetCrosshairPosition();
 
 	auto name = Key.GetDisplayName().ToString();
 
@@ -276,7 +262,7 @@ void AThirdPersonProjectCharacter::CastSpellAction(FKey Key)
 	auto SpellIter = SpellData.Find(Action);
 	if (SpellIter && (*SpellIter)->CooldownRemaining == 0) {
 		auto Spell = *SpellIter;
-		ExecuteSpell(Action, CrosshairPosition);
+		ExecuteSpell(Action, Cast<AMainPlayerController>(Controller)->GetCrosshairPosition());
 
 		Spell->CooldownRemaining = Spell->Cooldown;
 	}

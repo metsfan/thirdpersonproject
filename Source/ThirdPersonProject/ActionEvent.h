@@ -26,5 +26,8 @@ public:
 
 	UPROPERTY(BlueprintReadOnly)
 	int32 Button;
+
+	UPROPERTY(BlueprintReadOnly)
+	FVector CrosshairPosition;
 	
 };

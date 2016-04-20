@@ -34,7 +34,7 @@ void AProjectileSpell::OnCollision(class AActor* OtherActor)
 {
 	if (Role == ROLE_Authority) {
 		auto character = Cast<ABaseCharacter>(OtherActor);
-		if (character && this->IsValidTarget(OtherActor)) {
+		if (this->IsValidTarget(OtherActor)) {
 			this->ApplyEffects(character);
 		}
 	}
@@ -67,6 +67,13 @@ void AProjectileSpell::GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & 
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(AProjectileSpell, GeometryComponent);
+}
+
+void AProjectileSpell::Finish() {
+	Super::Finish();
+
+	MovementComponent->SetActive(true);
+	this->UpdateProjectileVelocity();
 }
 
 void AProjectileSpell::StopCollision()
