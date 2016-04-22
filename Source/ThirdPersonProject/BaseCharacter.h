@@ -7,6 +7,7 @@
 #include "BaseCharacter.generated.h"
 
 class ASpellCPP;
+class UStatusEffect;
 
 UCLASS()
 class THIRDPERSONPROJECT_API ABaseCharacter : public ACharacter
@@ -90,6 +91,19 @@ public:
 
 	virtual void OnSpellEffectsApplied(ASpellCPP* Spell);
 
+	void SetMovementSpeedMultiplier(float Value) { MovementSpeedMultiplier = Value; }
+	void SetAttackDamageMultiplier(float Value) { AttackDamageMultiplier = Value; }
+	void SetDefenseMultiplier(float Value) { DefenseMultiplier = Value; }
+	void SetSizeScale(float Value) { SizeScale = Value; }
+
+	float GetMovementSpeedMultiplier() { return MovementSpeedMultiplier; }
+	float GetAttackDamageMultiplier() { return AttackDamageMultiplier; }
+	float GetDefenseMultiplier() { return DefenseMultiplier; }
+	float GetSizeScale() { return SizeScale; }
+
+	UFUNCTION(Server, Reliable, WithValidation)
+	virtual void AddStatusEffect(UStatusEffect* Effect);
+
 protected:
 	float HealthCooloffTime = 0;
 	float EnergyCooloffTime = 0;
@@ -99,6 +113,14 @@ protected:
 
 	UFUNCTION(Server, Reliable, WithValidation)
 	void ResetEnergyTimer();
+
+	// Status Effect Multipliers
+	float MovementSpeedMultiplier;
+	float AttackDamageMultiplier;
+	float DefenseMultiplier;
+	float SizeScale;
+
+	TArray<UStatusEffect*> StatusEffects;
 
 private:
 	float DeadTime;
