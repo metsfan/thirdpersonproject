@@ -91,14 +91,7 @@ void AFireball::Finish()
 		this->SetDamageScaleModifier(FMath::Pow(FireScale, 1.1));
 	}
 
-	FTimerDelegate TimerCallback;
-	TimerCallback.BindLambda([this] {
-		this->ShowExplosionEffect();
-
-		this->Destroy();
-	});
-
-	GetWorldTimerManager().SetTimer(ExplosionTimer, TimerCallback, 0.0, false, 3.0);
+	this->SetLifeSpan(3);
 
 	this->DetachRootComponentFromParent();
 
