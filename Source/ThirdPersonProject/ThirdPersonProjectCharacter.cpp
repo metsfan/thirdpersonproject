@@ -164,23 +164,25 @@ void AThirdPersonProjectCharacter::ExecuteSpell_Implementation(FSpellAction acti
 			}
 
 			auto actor = Cast<ASpellCPP>(GetWorld()->SpawnActor(ActionData->Class, &transform, spawnParams));
-			actor->Instigator = this;
-			if (ActionData->AttachToParent) {
-				actor->AttachRootComponentToActor(this);
-			}
-			actor->TargetType = ActionData->TargetType;
-			if (ActionData->Duration > 0) {
-				actor->SetLifeSpan(ActionData->Duration);
-				ActiveSpell = actor;
-			}
+			if (actor) {
+				actor->Instigator = this;
+				if (ActionData->AttachToParent) {
+					actor->AttachRootComponentToActor(this);
+				}
+				actor->TargetType = ActionData->TargetType;
+				if (ActionData->Duration > 0) {
+					actor->SetLifeSpan(ActionData->Duration);
+					ActiveSpell = actor;
+				}
 
-			if (actor->IsA(AProjectileSpell::StaticClass())) {
-				auto projectile = Cast<AProjectileSpell>(actor);
-				projectile->SetTargetLocation(crosshairPosition);
-				projectile->UpdateProjectileVelocity();
-			}
+				if (actor->IsA(AProjectileSpell::StaticClass())) {
+					auto projectile = Cast<AProjectileSpell>(actor);
+					projectile->SetTargetLocation(crosshairPosition);
+					projectile->UpdateProjectileVelocity();
+				}
 
-			ActionData->CooldownRemaining = ActionData->Cooldown;
+				ActionData->CooldownRemaining = ActionData->Cooldown;
+			}
 		}
 	}
 }

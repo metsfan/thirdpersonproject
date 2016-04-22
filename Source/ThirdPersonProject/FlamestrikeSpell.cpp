@@ -8,6 +8,6 @@ void AFlamestrikeSpell::OnCollision(class AActor* OtherActor)
 	Super::OnCollision(OtherActor);
 
 	if (IsValidTarget(OtherActor)) {
-		//this->Destroy();
+		this->Destroy();
 	}
 }
