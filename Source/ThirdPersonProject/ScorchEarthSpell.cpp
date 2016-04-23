@@ -39,7 +39,7 @@ void AScorchEarthSpell::TimerTick()
 
 	if (OutHit.Actor.IsValid()) {
 		FActorSpawnParameters spawnParams;
-		spawnParams.Owner = this;
+		spawnParams.Owner = this->GetOwner();
 
 		FTransform transform(OutHit.Location);
 

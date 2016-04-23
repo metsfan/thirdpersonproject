@@ -72,6 +72,12 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = Character)
 		int32 TeamID;
 
+	UPROPERTY(BlueprintReadWrite)
+		bool Sprinting;
+
+	UFUNCTION(Server, Reliable, WithValidation)
+		void SetSprinting(bool newSprinting);
+
 	UFUNCTION(Server, Reliable, WithValidation)
 	virtual void AddHealth(int32 delta, ABaseCharacter* InstigatorCharacter);
 	virtual bool AddHealth_Validate(int32 delta, ABaseCharacter* InstigatorCharacter);
@@ -102,7 +108,9 @@ public:
 	float GetSizeScale() { return SizeScale; }
 
 	UFUNCTION(Server, Reliable, WithValidation)
-	virtual void AddStatusEffect(UStatusEffect* Effect);
+	virtual void AddStatusEffect(TSubclassOf<UStatusEffect> Effect);
+
+	void ApplyStatusEffects();
 
 protected:
 	float HealthCooloffTime = 0;

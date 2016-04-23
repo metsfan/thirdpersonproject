@@ -122,22 +122,6 @@ void AThirdPersonProjectCharacter::Tick(float deltaSeconds)
 {
 	Super::Tick(deltaSeconds);
 
-	if (HasAuthority()) {
-		if (Sprinting) {
-			if (Energy > 0) {
-				this->AddEnergy(-0.25);
-				this->GetCharacterMovement()->MaxWalkSpeed = SprintSpeed;
-				this->ResetEnergyTimer();
-			}
-			else {
-				Sprinting = false;
-			}
-		}
-		else {
-			this->GetCharacterMovement()->MaxWalkSpeed = RunSpeed;
-		}
-	}
-
 	for (auto pair : SpellData) {
 		pair.Value->CooldownRemaining = FMath::Max(0.0f, pair.Value->CooldownRemaining - deltaSeconds);
 	}
@@ -294,16 +278,6 @@ void AThirdPersonProjectCharacter::BeginSprint()
 void AThirdPersonProjectCharacter::EndSprint()
 {
 	this->SetSprinting(false);
-}
-
-bool AThirdPersonProjectCharacter::SetSprinting_Validate(bool newSprinting)
-{
-	return true;
-}
-
-void AThirdPersonProjectCharacter::SetSprinting_Implementation(bool newSprinting)
-{
-	Sprinting = newSprinting;
 }
 
 void AThirdPersonProjectCharacter::TouchStarted(ETouchIndex::Type FingerIndex, FVector Location)

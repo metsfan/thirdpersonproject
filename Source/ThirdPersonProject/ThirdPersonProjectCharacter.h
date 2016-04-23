@@ -121,9 +121,6 @@ protected:
 
 	bool CanJumpInternal_Implementation() const override;
 
-	UPROPERTY(BlueprintReadWrite)
-		bool Sprinting;
-
 protected:
 	// APawn interface
 	virtual void SetupPlayerInputComponent(class UInputComponent* InputComponent) override;
@@ -147,8 +144,7 @@ public:
 	UPROPERTY(BlueprintAssignable)
 		FOnMouseEvent OnMouseEvent;
 
-	UFUNCTION(Server, Reliable, WithValidation)
-	void SetSprinting(bool newSprinting);
+	
 
 private:
 	float EnergyTickTime = 0;

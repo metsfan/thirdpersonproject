@@ -6,6 +6,8 @@
 
 void UStatusEffect::Tick(float DeltaSeconds, ABaseCharacter* Character)
 {
+	TimeAlive += DeltaSeconds;
+
 	if (TimeSinceTick >= TickTime) {
 		TimeSinceTick -= TickTime;
 

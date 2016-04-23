@@ -12,7 +12,7 @@
 
 class ABaseCharacter;
 
-UCLASS()
+UCLASS(Blueprintable)
 class THIRDPERSONPROJECT_API UStatusEffect : public UObject
 {
 	GENERATED_BODY()
@@ -43,6 +43,8 @@ public:
 		ABaseCharacter* Instigator;
 
 	virtual void Tick(float DeltaSeconds, ABaseCharacter* Character);
+
+	void Refresh() { TimeAlive = 0; }
 
 private:
 	float TimeSinceTick = 0;

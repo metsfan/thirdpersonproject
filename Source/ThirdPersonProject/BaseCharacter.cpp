@@ -4,6 +4,7 @@
 #include "UnrealNetwork.h"
 #include "MyPlayerState.h"
 #include "BaseCharacter.h"
+#include "StatusEffect.h"
 
 // Sets default values
 ABaseCharacter::ABaseCharacter()
@@ -21,6 +22,8 @@ ABaseCharacter::ABaseCharacter()
 
 	DespawnTime = 0;
 	DeadTime = 0;
+
+	RunSpeed = 600.0f;
 }
 
 // Called when the game starts or when spawned
@@ -31,6 +34,27 @@ void ABaseCharacter::BeginPlay()
 	CurrentRotation = this->GetActorRotation();
 }
 
+void ABaseCharacter::ApplyStatusEffects()
+{
+	MovementSpeedMultiplier = 1;
+	AttackDamageMultiplier = 1;
+	DefenseMultiplier = 1;
+
+	for (auto Effect : StatusEffects) {
+		if (Effect->ModMovementSpeed) {
+			MovementSpeedMultiplier = Effect->ModMovementSpeed;
+		}
+
+		if (Effect->ModAttackDamage) {
+			AttackDamageMultiplier *= Effect->ModAttackDamage;
+		}
+		
+		if (Effect->ModDefense) {
+			DefenseMultiplier *= Effect->ModDefense;
+		}
+	}
+}
+
 // Called every frame
 void ABaseCharacter::Tick( float DeltaTime )
 {
@@ -38,6 +62,8 @@ void ABaseCharacter::Tick( float DeltaTime )
 
 	if (this->IsAlive()) {
 		if (HasAuthority()) {
+			ApplyStatusEffects();
+
 			EnergyCooloffTime += DeltaTime;
 
 			if (EnergyCooloffTime >= EnergyCooloff && Energy < MaxEnergy) {
@@ -51,6 +77,22 @@ void ABaseCharacter::Tick( float DeltaTime )
 				Health += HealthRegenRate * DeltaTime;
 				Health = FMath::Min(Health, MaxHealth);
 			}
+
+			if (Sprinting) {
+				if (Energy > 0) {
+					this->AddEnergy(-0.25);
+					this->GetCharacterMovement()->MaxWalkSpeed = SprintSpeed;
+					this->ResetEnergyTimer();
+				}
+				else {
+					Sprinting = false;
+				}
+			}
+			else {
+				this->GetCharacterMovement()->MaxWalkSpeed = RunSpeed;
+			}
+
+			this->GetCharacterMovement()->MaxWalkSpeed *= MovementSpeedMultiplier;
 		}
 	}
 
@@ -78,6 +120,16 @@ void ABaseCharacter::Tick( float DeltaTime )
 	//this->SetActorTransform(transform);
 }
 
+bool ABaseCharacter::SetSprinting_Validate(bool newSprinting)
+{
+	return true;
+}
+
+void ABaseCharacter::SetSprinting_Implementation(bool newSprinting)
+{
+	Sprinting = newSprinting;
+}
+
 // Called to bind functionality to input
 void ABaseCharacter::SetupPlayerInputComponent(class UInputComponent* InputComponent)
 {
@@ -92,9 +144,14 @@ bool ABaseCharacter::AddHealth_Validate(int32 delta, ABaseCharacter* InstigatorC
 
 void ABaseCharacter::AddHealth_Implementation(int32 delta, ABaseCharacter* InstigatorCharacter)
 {
-	Health = FMath::Clamp<int32>(Health + delta, 0, MaxHealth);
+	float HealthDelta = delta;
+	if (HealthDelta < 0) {
+		// This is damage, so we need to apply attack and defense multipliers
+		HealthDelta *= InstigatorCharacter->GetAttackDamageMultiplier() * DefenseMultiplier;
+	}
+	Health = FMath::Clamp<int32>(Health + HealthDelta, 0, MaxHealth);
 
-	if (delta < 0) {
+	if (HealthDelta < 0) {
 		this->ResetHealthTimer();
 	}
 
@@ -149,5 +206,28 @@ void ABaseCharacter::GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & Ou
 	DOREPLIFETIME(ABaseCharacter, Energy);
 	DOREPLIFETIME(ABaseCharacter, MaxEnergy);
 	DOREPLIFETIME(ABaseCharacter, CurrentRotation);
+}
+
+bool ABaseCharacter::AddStatusEffect_Validate(TSubclassOf<UStatusEffect> Effect)
+{
+	return true;
+}
+
+void ABaseCharacter::AddStatusEffect_Implementation(TSubclassOf<UStatusEffect> Effect)
+{
+	UStatusEffect* ExistingEffect = nullptr;
+	for (auto StatusEffect : StatusEffects) {
+		if (Effect == StatusEffect->GetClass()) {
+			ExistingEffect = StatusEffect;
+			break;
+		}
+	}
+
+	if (ExistingEffect) {
+		ExistingEffect->Refresh();
+	}
+	else {
+		StatusEffects.Add(NewObject<UStatusEffect>(this, Effect));
+	}
 }
 
