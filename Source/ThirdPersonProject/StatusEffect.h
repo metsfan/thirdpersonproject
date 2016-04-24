@@ -18,6 +18,8 @@ class THIRDPERSONPROJECT_API UStatusEffect : public UObject
 	GENERATED_BODY()
 	
 public:
+	UStatusEffect();
+	
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 		float Duration;
 
@@ -42,12 +44,19 @@ public:
 	UPROPERTY(BlueprintReadOnly)
 		ABaseCharacter* Instigator;
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+		int32 MaxStacks;
+
 	virtual void Tick(float DeltaSeconds, ABaseCharacter* Character);
 
-	void Refresh() { TimeAlive = 0; }
+	void Refresh();
+	void AddStack();
+
+	bool IsExpired() { return TimeAlive >= Duration; }
 
 private:
 	float TimeSinceTick = 0;
 	float TimeAlive = 0;
+	int32 StackCount = 1;
 
 };

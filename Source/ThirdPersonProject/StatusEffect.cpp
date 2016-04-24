@@ -4,34 +4,41 @@
 #include "StatusEffect.h"
 #include "BaseCharacter.h"
 
+UStatusEffect::UStatusEffect(): Super()
+{
+	MaxStacks = FMath::Max(MaxStacks, 1);
+}
+
 void UStatusEffect::Tick(float DeltaSeconds, ABaseCharacter* Character)
 {
 	TimeAlive += DeltaSeconds;
+	TimeSinceTick += DeltaSeconds;
 
 	if (TimeSinceTick >= TickTime) {
 		TimeSinceTick -= TickTime;
 
-		// Apply Effects
+		// Apply Damage Effects, if needed
 		if (ModHealthPerTick) {
-			Character->AddHealth(ModHealthPerTick, Instigator);
-		}
-
-		if (ModMovementSpeed > 0) {
-			Character->SetMovementSpeedMultiplier(ModMovementSpeed);
-		}
-
-		if (ModAttackDamage > 0) {
-			Character->SetAttackDamageMultiplier(ModAttackDamage);
-		}
-
-		if (ModDefense > 0) {
-			Character->SetDefenseMultiplier(ModDefense);
-		}
-
-		if (ModSize > 0) {
-			Character->SetSizeScale(ModSize);
+			Character->AddHealth(ModHealthPerTick * StackCount, Instigator);
 		}
 	}
+
+	// Apply all other effects
+	Character->SetMovementSpeedMultiplier(ModMovementSpeed * StackCount);
+	Character->SetAttackDamageMultiplier(ModAttackDamage * StackCount);
+	Character->SetDefenseMultiplier(ModDefense * StackCount);
+	Character->SetSizeScale(ModSize * StackCount);
+}
+
+void UStatusEffect::Refresh()
+{
+	TimeAlive = 0;
+}
+
+void UStatusEffect::AddStack()
+{
+	StackCount = FMath::Min(MaxStacks, StackCount + 1);
+	this->Refresh();
 }
 
 

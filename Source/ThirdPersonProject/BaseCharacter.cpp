@@ -34,25 +34,39 @@ void ABaseCharacter::BeginPlay()
 	CurrentRotation = this->GetActorRotation();
 }
 
-void ABaseCharacter::ApplyStatusEffects()
+void ABaseCharacter::ApplyStatusEffects(float DeltaSeconds)
 {
 	MovementSpeedMultiplier = 1;
 	AttackDamageMultiplier = 1;
 	DefenseMultiplier = 1;
 
-	for (auto Effect : StatusEffects) {
-		if (Effect->ModMovementSpeed) {
-			MovementSpeedMultiplier = Effect->ModMovementSpeed;
-		}
+	StatusEffects = StatusEffects.FilterByPredicate([](UStatusEffect* Effect) {
+		return !Effect->IsExpired();
+	});
 
-		if (Effect->ModAttackDamage) {
-			AttackDamageMultiplier *= Effect->ModAttackDamage;
-		}
-		
-		if (Effect->ModDefense) {
-			DefenseMultiplier *= Effect->ModDefense;
-		}
+	for (auto Effect : StatusEffects) {
+		Effect->Tick(DeltaSeconds, this);
 	}
+}
+
+void ABaseCharacter::SetMovementSpeedMultiplier(float Value)
+{ 
+	MovementSpeedMultiplier += Value; 
+}
+
+void ABaseCharacter::SetAttackDamageMultiplier(float Value)
+{ 
+	AttackDamageMultiplier += Value; 
+}
+
+void ABaseCharacter::SetDefenseMultiplier(float Value)
+{ 
+	DefenseMultiplier += Value; 
+}
+
+void ABaseCharacter::SetSizeScale(float Value)
+{ 
+	SizeScale = Value;
 }
 
 // Called every frame
@@ -62,7 +76,7 @@ void ABaseCharacter::Tick( float DeltaTime )
 
 	if (this->IsAlive()) {
 		if (HasAuthority()) {
-			ApplyStatusEffects();
+			ApplyStatusEffects(DeltaTime);
 
 			EnergyCooloffTime += DeltaTime;
 
@@ -208,12 +222,12 @@ void ABaseCharacter::GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & Ou
 	DOREPLIFETIME(ABaseCharacter, CurrentRotation);
 }
 
-bool ABaseCharacter::AddStatusEffect_Validate(TSubclassOf<UStatusEffect> Effect)
+bool ABaseCharacter::AddStatusEffect_Validate(TSubclassOf<UStatusEffect> Effect, ABaseCharacter* StatusInstigator)
 {
 	return true;
 }
 
-void ABaseCharacter::AddStatusEffect_Implementation(TSubclassOf<UStatusEffect> Effect)
+void ABaseCharacter::AddStatusEffect_Implementation(TSubclassOf<UStatusEffect> Effect, ABaseCharacter* StatusInstigator)
 {
 	UStatusEffect* ExistingEffect = nullptr;
 	for (auto StatusEffect : StatusEffects) {
@@ -224,10 +238,12 @@ void ABaseCharacter::AddStatusEffect_Implementation(TSubclassOf<UStatusEffect> E
 	}
 
 	if (ExistingEffect) {
-		ExistingEffect->Refresh();
+		ExistingEffect->AddStack();
 	}
 	else {
-		StatusEffects.Add(NewObject<UStatusEffect>(this, Effect));
+		auto NewStatus = NewObject<UStatusEffect>(this, Effect);
+		NewStatus->Instigator = StatusInstigator;
+		StatusEffects.Add(NewStatus);
 	}
 }
 

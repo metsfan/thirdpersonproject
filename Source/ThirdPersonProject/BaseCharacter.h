@@ -97,10 +97,10 @@ public:
 
 	virtual void OnSpellEffectsApplied(ASpellCPP* Spell);
 
-	void SetMovementSpeedMultiplier(float Value) { MovementSpeedMultiplier = Value; }
-	void SetAttackDamageMultiplier(float Value) { AttackDamageMultiplier = Value; }
-	void SetDefenseMultiplier(float Value) { DefenseMultiplier = Value; }
-	void SetSizeScale(float Value) { SizeScale = Value; }
+	void SetMovementSpeedMultiplier(float Value);
+	void SetAttackDamageMultiplier(float Value);
+	void SetDefenseMultiplier(float Value);
+	void SetSizeScale(float Value);
 
 	float GetMovementSpeedMultiplier() { return MovementSpeedMultiplier; }
 	float GetAttackDamageMultiplier() { return AttackDamageMultiplier; }
@@ -108,9 +108,9 @@ public:
 	float GetSizeScale() { return SizeScale; }
 
 	UFUNCTION(Server, Reliable, WithValidation)
-	virtual void AddStatusEffect(TSubclassOf<UStatusEffect> Effect);
+	virtual void AddStatusEffect(TSubclassOf<UStatusEffect> Effect, ABaseCharacter* StatusInstigator);
 
-	void ApplyStatusEffects();
+	void ApplyStatusEffects(float DeltaSeconds);
 
 protected:
 	float HealthCooloffTime = 0;

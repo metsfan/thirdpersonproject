@@ -6,7 +6,7 @@
 void UStatusEffectSpellEffect::ApplyEffect(TArray<ABaseCharacter*> characters)
 {
 	for (auto Character : characters) {
-		Character->AddStatusEffect(StatusEffectClass);
+		Character->AddStatusEffect(StatusEffectClass, Cast<ABaseCharacter>(this->GetOwner()->GetInstigator()));
 	}
 }
 
