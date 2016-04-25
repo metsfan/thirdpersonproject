@@ -17,6 +17,6 @@ void AMainMenuGameMode::CheckIfGameReady()
 	if (allReady) {
 		//UGameplayStatics::OpenLevel(this, TEXT("/Game/ThirdPersonCPP/Maps/ThirdPersonExampleMap"));
 		//bUseSeamlessTravel = true;
- 		GetWorld()->ServerTravel("/Game/ThirdPersonCPP/Maps/ThirdPersonExampleMap", true);
+ 		GetWorld()->ServerTravel("/Game/ThirdPersonCPP/Maps/ThirdPersonExampleMap?listen", true);
 	}
 }

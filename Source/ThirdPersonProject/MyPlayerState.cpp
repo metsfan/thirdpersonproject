@@ -10,6 +10,7 @@ AMyPlayerState::AMyPlayerState(): Super(), ReadyToRestart(false)
 	this->bReplicates = true;
 
 	Initialized = false;
+	Name = "";
 }
 
 void AMyPlayerState::Update(ABaseCharacter* Character)
@@ -26,7 +27,7 @@ void AMyPlayerState::Update(ABaseCharacter* Character)
 		/*if (Name != Character->Name) {
 			Name = Character->Name;
 		}*/
-		Name = FText::AsNumber(PlayerId).ToString();
+		//Name = FText::AsNumber(PlayerId).ToString();
 
 		if (!Initialized) {
 			Initialized = true;

@@ -11,6 +11,7 @@
  */
 class AMainPlayerController;
 class UVerticalBox;
+class AMyPlayerState;
 
 UCLASS()
 class THIRDPERSONPROJECT_API ULobbyHUD : public UUserWidget

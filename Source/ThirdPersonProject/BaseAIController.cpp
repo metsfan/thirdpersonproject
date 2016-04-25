@@ -26,8 +26,7 @@ void ABaseAIController::Tick(float deltaSeconds)
 
 		FRotator rotation = UKismetMathLibrary::FindLookAtRotation(character->GetActorLocation(), currentTarget->GetActorLocation());
 		rotation.Roll = rotation.Pitch = 0;
-		SetControlRotation(rotation);
-		//character->CurrentRotation = rotation;
+		GetPawn()->SetActorRotation(rotation);
 	}
 }
 
