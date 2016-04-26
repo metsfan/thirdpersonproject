@@ -53,4 +53,6 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 		bool AttachToParent;
 
+	ASpellCPP* SpawnSpell(UWorld* World, AActor* Owner, APawn* Instigator, const FTransform& Transform);
+
 };

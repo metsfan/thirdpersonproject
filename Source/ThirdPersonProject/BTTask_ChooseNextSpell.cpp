@@ -12,8 +12,8 @@ EBTNodeResult::Type UBTTaskNode_ChooseNextSpell::ExecuteTask(UBehaviorTreeCompon
 	auto controller = Cast<ABaseAIController>(OwnerComp.GetAIOwner());
 	auto blackboard = OwnerComp.GetBlackboardComponent();
 
-	auto spellClass = controller->GetNextSpell();
-	auto spellData = NewObject<USpellData>(GetTransientPackage(), spellClass);
+	auto spellData = controller->GetNextSpell();
+
 	blackboard->SetValueAsObject("NextSpell", spellData);
 
 	return EBTNodeResult::Type::Succeeded;

@@ -32,9 +32,6 @@ void ULobbyHUD::OnNicknameSubmitButtonClick()
 void ULobbyHUD::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 {
 	Super::NativeTick(MyGeometry, InDeltaTime);
-
-	auto gameState = Cast<AMainMenuGameState>(GetWorld()->GetGameState());
-	auto connectedPlayers = gameState->PlayerArray;
 }
 
 void ULobbyHUD::OnPlayerJoinedLobby(const TArray<AMyPlayerState*>& players)

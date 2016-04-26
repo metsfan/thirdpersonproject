@@ -70,4 +70,13 @@ void AMyPlayerState::GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & Ou
 	DOREPLIFETIME(AMyPlayerState, Initialized);
 }
 
+void AMyPlayerState::CopyProperties(class APlayerState* PlayerState)
+{
+	Super::CopyProperties(PlayerState);
+
+	auto MyPlayerState = Cast<AMyPlayerState>(PlayerState);
+	if (MyPlayerState) {
+		MyPlayerState->Name = Name;
+	}
+}
 

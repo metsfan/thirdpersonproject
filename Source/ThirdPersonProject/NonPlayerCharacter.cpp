@@ -30,6 +30,14 @@ void ANonPlayerCharacter::BeginPlay()
 
 	HealthFrameWidgetComponent->SetVisibility(false);
 	HealthFrameWidgetComponent->SetIsReplicated(true);
+
+	for (auto SpellClass : Spells) {
+		auto Spell = NewObject<USpellData>(this, SpellClass);
+
+		// Start all NPC spells on cooldown
+		Spell->CooldownRemaining = Spell->Cooldown;
+		SpellsArray.Add(Spell);
+	}
 }
 
 // Called every frame

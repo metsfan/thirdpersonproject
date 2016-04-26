@@ -9,6 +9,7 @@
 #include "Components/WidgetComponent.h"
 #include "Components/CanvasPanel.h"
 #include "BehaviorTree/BlackboardComponent.h"
+#include "SpellData.h"
 #include "NonPlayerCharacter.generated.h"
 
 UCLASS()
@@ -34,6 +35,9 @@ public:
 
 	UPROPERTY(BlueprintReadWrite, Replicated)
 		UWidgetComponent* HealthFrameWidgetComponent;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+		TArray<TSubclassOf<USpellData>> Spells;
 
 	virtual void AddHealth_Implementation(int32 delta, ABaseCharacter* InstigatorCharacter) override;
 

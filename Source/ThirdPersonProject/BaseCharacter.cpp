@@ -5,6 +5,7 @@
 #include "MyPlayerState.h"
 #include "BaseCharacter.h"
 #include "StatusEffect.h"
+#include "SpellData.h"
 
 // Sets default values
 ABaseCharacter::ABaseCharacter()
@@ -107,6 +108,10 @@ void ABaseCharacter::Tick( float DeltaTime )
 			}
 
 			this->GetCharacterMovement()->MaxWalkSpeed *= MovementSpeedMultiplier;
+		}
+
+		for (auto Spell : SpellsArray) {
+			Spell->CooldownRemaining = FMath::Max(0.0f, Spell->CooldownRemaining - DeltaTime);
 		}
 	}
 

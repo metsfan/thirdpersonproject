@@ -170,7 +170,7 @@ void AMainPlayerController::SetNickname_Implementation(const FString& newNicknam
 
 	auto gameState = Cast<AMainMenuGameState>(GetWorld()->GetGameState());
 	auto playerState = Cast<AMyPlayerState>(PlayerState);
-	playerState->PlayerName = newNickname;
+	playerState->Name = newNickname;
 	gameState->JoinedPlayers.Add(playerState);
 
 	auto gameMode = Cast<AMainMenuGameMode>(GetWorld()->GetAuthGameMode());

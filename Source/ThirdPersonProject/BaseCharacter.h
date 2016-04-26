@@ -4,6 +4,7 @@
 
 #include "GameFramework/Character.h"
 #include "BaseMovementController.h"
+#include "SpellData.h"
 #include "BaseCharacter.generated.h"
 
 class ASpellCPP;
@@ -112,6 +113,8 @@ public:
 
 	void ApplyStatusEffects(float DeltaSeconds);
 
+	const TArray<USpellData*>& GetSpells() { return SpellsArray; }
+
 protected:
 	float HealthCooloffTime = 0;
 	float EnergyCooloffTime = 0;
@@ -129,6 +132,9 @@ protected:
 	float SizeScale;
 
 	TArray<UStatusEffect*> StatusEffects;
+
+	UPROPERTY()
+	TArray<USpellData*> SpellsArray;
 
 private:
 	float DeadTime;

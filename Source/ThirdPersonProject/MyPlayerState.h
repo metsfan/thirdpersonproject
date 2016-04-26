@@ -69,4 +69,6 @@ public:
 	void Update(ABaseCharacter* Character);
 
 	bool IsAlive() { return Health > 0;  }
+
+	virtual void CopyProperties(class APlayerState* PlayerState) override;
 };

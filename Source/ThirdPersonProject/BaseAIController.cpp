@@ -4,6 +4,7 @@
 #include "BehaviorTree/BlackboardComponent.h"
 #include "BaseCharacter.h"
 #include "BaseAIController.h"
+#include "NonPlayerCharacter.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Fireball.h"
 
@@ -30,8 +31,23 @@ void ABaseAIController::Tick(float deltaSeconds)
 	}
 }
 
-TSubclassOf<USpellData> ABaseAIController::GetNextSpell_Implementation()
+USpellData* ABaseAIController::GetNextSpell_Implementation()
 {
+	// A very simple generic spell choosing algorithm: Choose the spell with the longest cooldown that isn't currently on cooldown.
+
+	auto Character = Cast<ANonPlayerCharacter>(GetPawn());
+	if (Character) {
+		TArray<USpellData*> Spells = Character->GetSpells();
+		Spells.Sort([](const USpellData& Spell1, const USpellData& Spell2) -> bool {
+			return Spell1.Cooldown > Spell2.Cooldown;
+		});
+		for (auto Spell : Spells) {
+			if (Spell->CooldownRemaining == 0.0f) {
+				return Spell;
+			}
+		}
+	}
+
 	return NULL;
 }
 

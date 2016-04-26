@@ -121,10 +121,6 @@ void AThirdPersonProjectCharacter::BeginPlay() {
 void AThirdPersonProjectCharacter::Tick(float deltaSeconds)
 {
 	Super::Tick(deltaSeconds);
-
-	for (auto pair : SpellData) {
-		pair.Value->CooldownRemaining = FMath::Max(0.0f, pair.Value->CooldownRemaining - deltaSeconds);
-	}
 }
 
 bool AThirdPersonProjectCharacter::ExecuteSpell_Validate(FSpellAction action, const FVector& crosshairPosition)

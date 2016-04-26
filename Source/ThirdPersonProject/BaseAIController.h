@@ -20,7 +20,7 @@ class THIRDPERSONPROJECT_API ABaseAIController : public AAIController
 
 public:
 	UFUNCTION(BlueprintNativeEvent)
-	TSubclassOf<USpellData> GetNextSpell();
+		USpellData* GetNextSpell();
 	
-	virtual TSubclassOf<USpellData> GetNextSpell_Implementation();
+	virtual USpellData* GetNextSpell_Implementation();
 };

@@ -7,5 +7,8 @@ void AHomingProjectileSpell::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
 
-
+	if (Target.Get()) {
+		this->SetTargetLocation(Target->GetActorLocation());
+		this->UpdateProjectileVelocity();
+	}
 }
