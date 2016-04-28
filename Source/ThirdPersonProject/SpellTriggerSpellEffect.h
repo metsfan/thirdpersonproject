@@ -16,6 +16,12 @@ enum class FSpellTriggerLocation : uint8 {
 	RelativeToWorld
 };
 
+UENUM()
+enum class FSpellTriggerType : uint8 {
+	SingleSpawn,
+	SpawnPerTarget
+};
+
 UCLASS(meta = (BlueprintSpawnableComponent))
 class THIRDPERSONPROJECT_API USpellTriggerSpellEffect : public USpellEffect
 {
@@ -23,14 +29,16 @@ class THIRDPERSONPROJECT_API USpellTriggerSpellEffect : public USpellEffect
 
 
 public:
-	UFUNCTION(BlueprintCallable, Category = "Default")
-		virtual void ApplyEffect(TArray<ABaseCharacter*> characters);
+	virtual void ApplyEffect_Implementation(const TArray<ABaseCharacter*>& Characters);
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	TSubclassOf<USpellData> SpellTrigger;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	FSpellTriggerLocation SpawnLocation;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	FSpellTriggerType SpawnType;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	FTransform SpawnTransform;

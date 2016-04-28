@@ -17,7 +17,7 @@ void AAreaEffectSpell::OnAreaBeginOverlap(class AActor* OtherActor, class UPrimi
 	if (Role == ROLE_Authority) {
 		auto character = Cast<ABaseCharacter>(OtherActor);
 		if (character && this->IsValidTarget(character)) {
-			this->ApplyEffects(character);
+			this->ApplyEffectsSingle(character);
 		}
 	}
 }

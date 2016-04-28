@@ -98,9 +98,9 @@ void AFireball::Finish()
 	UE_LOG(MyLog, Log, TEXT("Shooting Fireball animation on machine with role: %d"), (int32)Role.GetValue())
 }
 
-void AFireball::OnCollision(class AActor* OtherActor)
+void AFireball::OnCollision_Implementation(class AActor* OtherActor)
 {
-	Super::OnCollision(OtherActor);
+	Super::OnCollision_Implementation(OtherActor);
 
 	if (this->IsValidTarget(OtherActor)) {
 		StopCollision();

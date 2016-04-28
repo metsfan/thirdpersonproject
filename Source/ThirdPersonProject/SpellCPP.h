@@ -35,15 +35,18 @@ public:
 	FTargetType TargetType;
 
 protected:
+	UFUNCTION(BlueprintCallable, Category = "Spell")
+	void ApplyEffectsSingle(ABaseCharacter* target);
 
-	virtual void ApplyEffects(ABaseCharacter* target);
-	virtual void ApplyEffects(const TArray<ABaseCharacter *>& targets);
+	UFUNCTION(BlueprintCallable, Category = "Spell")
+	void ApplyEffectsMulti(const TArray<ABaseCharacter *>& targets);
 
 	UFUNCTION(Server, Reliable, WithValidation)
 	virtual void ServerFinish();
 	virtual bool ServerFinish_Validate();
 	virtual void ServerFinish_Implementation();
 	
+	UFUNCTION(BlueprintCallable, Category = "Spell")
 	bool IsValidTarget(AActor* target);
 	
 };

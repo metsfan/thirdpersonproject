@@ -3,11 +3,7 @@
 #include "ThirdPersonProject.h"
 #include "FlamestrikeSpell.h"
 
-void AFlamestrikeSpell::OnCollision(class AActor* OtherActor)
+void AFlamestrikeSpell::OnCollision_Implementation(class AActor* OtherActor)
 {
-	Super::OnCollision(OtherActor);
-
-	if (IsValidTarget(OtherActor)) {
-		this->Destroy();
-	}
+	Super::OnCollision_Implementation(OtherActor);
 }

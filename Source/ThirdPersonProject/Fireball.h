@@ -32,7 +32,7 @@ protected:
 
 	FTimerHandle ExplosionTimer;
 
-	void OnCollision(class AActor* OtherActor) override;
+	void OnCollision_Implementation(class AActor* OtherActor) override;
 
 	UFUNCTION()
 	virtual void Finish() override;

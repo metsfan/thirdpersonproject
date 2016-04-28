@@ -40,9 +40,7 @@ void APulseAreaEffectSpell::Tick(float DeltaSeconds)
 		if (TimeSincePulse >= PulseTime) {
 			TimeSincePulse = 0;
 
-			for (auto Character : OverlappingTargets) {
-				this->ApplyEffects(Character);
-			}
+			this->ApplyEffectsMulti(OverlappingTargets);
 		}
 	}
 }

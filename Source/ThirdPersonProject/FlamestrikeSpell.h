@@ -14,6 +14,6 @@ class THIRDPERSONPROJECT_API AFlamestrikeSpell : public AProjectileSpell
 	GENERATED_BODY()
 	
 	
-		virtual void OnCollision(class AActor* OtherActor) override;
+		virtual void OnCollision_Implementation(class AActor* OtherActor) override;
 	
 };

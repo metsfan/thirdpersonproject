@@ -14,8 +14,8 @@ class THIRDPERSONPROJECT_API UDirectDamageSpellEffect : public USpellEffect
 	GENERATED_BODY()
 
 public:
-	UFUNCTION(BlueprintCallable, Category = "Default")
-		virtual void ApplyEffect(TArray<ABaseCharacter*> characters);
+
+	virtual void ApplyEffect_Implementation(const TArray<ABaseCharacter*>& Characters);
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		int32 Damage;

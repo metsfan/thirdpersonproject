@@ -34,7 +34,7 @@ void USpellEffect::TickComponent( float DeltaTime, ELevelTick TickType, FActorCo
 	// ...
 }
 
-void USpellEffect::ApplyEffect(TArray<ABaseCharacter*> characters)
+void USpellEffect::ApplyEffect_Implementation(const TArray<ABaseCharacter*>& Characters)
 {
 }
 

@@ -21,20 +21,15 @@ EBTNodeResult::Type UBTTaskNode_ExecuteNextSpell::ExecuteTask(UBehaviorTreeCompo
 	if (spell) {
 		auto owningActor = OwnerComp.GetAIOwner()->GetPawn();
 
-		FActorSpawnParameters spawnParams;
-		spawnParams.Owner = owningActor;
-		spawnParams.Instigator = owningActor;
+		FSpellSpawnParams params;
+		params.Target = target;
+		params.TargetLocation = target->GetActorLocation();
 
-		FTransform* transform = new FTransform(FVector(75, 0, 0));
-
-		auto actor = Cast<ASpellCPP>(GetWorld()->SpawnActor(spell->Class, transform, spawnParams));
-		if (actor->IsA(AProjectileSpell::StaticClass())) {
-			auto projectile = Cast<AProjectileSpell>(actor);
-			projectile->SetTargetLocation(target->GetActorLocation());
+		FTransform transform(FVector(75, 0, 0));
+		auto actor = spell->SpawnSpell(GetWorld(), owningActor, owningActor, transform, params);
+		if (actor) {
+			actor->Finish();
 		}
-		actor->AttachRootComponentToActor(owningActor);
-		actor->TargetType = spell->TargetType;
-		actor->Finish();
 
 		OwnerComp.GetBlackboardComponent()->SetValueAsObject("CurrentTarget", NULL);
 		OwnerComp.GetBlackboardComponent()->SetValueAsObject("NextSpell", NULL);

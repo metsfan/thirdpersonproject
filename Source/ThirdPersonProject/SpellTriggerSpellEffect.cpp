@@ -5,7 +5,7 @@
 #include "SpellCPP.h"
 #include "BaseCharacter.h"
 
-void USpellTriggerSpellEffect::ApplyEffect(TArray<ABaseCharacter*> characters)
+void USpellTriggerSpellEffect::ApplyEffect_Implementation(const TArray<ABaseCharacter*>& Characters)
 {
 	auto Owner = Cast<ASpellCPP>(this->GetOwner());
 	auto Caster = Cast<ABaseCharacter>(Owner->GetOwner());
@@ -25,16 +25,29 @@ void USpellTriggerSpellEffect::ApplyEffect(TArray<ABaseCharacter*> characters)
 
 	FTransform FinalTransform = BaseTransform * SpawnTransform;
 
-	FActorSpawnParameters spawnParams;
-	spawnParams.Owner = Caster;
+	switch (SpawnType) {
+	case FSpellTriggerType::SingleSpawn:
+	{
+		FSpellSpawnParams spawnParams;
+		auto SpellData = NewObject<USpellData>(Owner, SpellTrigger);
+		SpellData->SpawnSpell(GetWorld(), Caster, Caster, FinalTransform, spawnParams);
 
-	auto SpellData = NewObject<USpellData>(Owner, SpellTrigger);
-	auto actor = Cast<ASpellCPP>(GetWorld()->SpawnActor(SpellData->Class, &FinalTransform, spawnParams));
-	actor->Instigator = Caster;
-	actor->TargetType = SpellData->TargetType;
-	if (SpellData->Duration > 0) {
-		actor->SetLifeSpan(SpellData->Duration);
+		break;
 	}
+	case FSpellTriggerType::SpawnPerTarget:
+	{
+		for (auto Character : Characters) {
+			FSpellSpawnParams spawnParams;
+			spawnParams.Target = Character;
+			spawnParams.TargetLocation = Character->GetActorLocation();
+
+			auto SpellData = NewObject<USpellData>(Owner, SpellTrigger);
+			SpellData->SpawnSpell(GetWorld(), Caster, Caster, FinalTransform, spawnParams);
+		}
+		break;
+	}
+	}
+	
 }
 
 

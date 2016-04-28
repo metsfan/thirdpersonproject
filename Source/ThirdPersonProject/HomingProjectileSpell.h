@@ -14,6 +14,7 @@ class THIRDPERSONPROJECT_API AHomingProjectileSpell : public AProjectileSpell
 {
 	GENERATED_BODY()
 
+public:
 	TWeakObjectPtr<ABaseCharacter> Target;
 	
 	virtual void Tick(float DeltaSeconds) override;

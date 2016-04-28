@@ -15,8 +15,7 @@ class THIRDPERSONPROJECT_API UStatusEffectSpellEffect : public USpellEffect
 	GENERATED_BODY()
 	
 public:
-	UFUNCTION(BlueprintCallable, Category = "Default")
-	virtual void ApplyEffect(TArray<ABaseCharacter*> characters);
+	virtual void ApplyEffect_Implementation(const TArray<ABaseCharacter*>& Characters);
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 		TSubclassOf<UStatusEffect> StatusEffectClass;

@@ -134,35 +134,12 @@ void AThirdPersonProjectCharacter::ExecuteSpell_Implementation(FSpellAction acti
 		auto ActionData = SpellData[action];
 
 		if (ActionData && ActionData->CooldownRemaining <= 0) {
-			
-			FActorSpawnParameters spawnParams;
-			spawnParams.Owner = this;
+			FSpellSpawnParams SpawnParams;
+			SpawnParams.TargetLocation = crosshairPosition;
 
 			FTransform transform(FVector(75, 0, 0));
-			if (!ActionData->AttachToParent) {
-				transform = this->GetTransform() * transform;
-			}
 
-			auto actor = Cast<ASpellCPP>(GetWorld()->SpawnActor(ActionData->Class, &transform, spawnParams));
-			if (actor) {
-				actor->Instigator = this;
-				if (ActionData->AttachToParent) {
-					actor->AttachRootComponentToActor(this);
-				}
-				actor->TargetType = ActionData->TargetType;
-				if (ActionData->Duration > 0) {
-					actor->SetLifeSpan(ActionData->Duration);
-					ActiveSpell = actor;
-				}
-
-				if (actor->IsA(AProjectileSpell::StaticClass())) {
-					auto projectile = Cast<AProjectileSpell>(actor);
-					projectile->SetTargetLocation(crosshairPosition);
-					projectile->UpdateProjectileVelocity();
-				}
-
-				ActionData->CooldownRemaining = ActionData->Cooldown;
-			}
+			ActiveSpell = ActionData->SpawnSpell(GetWorld(), this, this, transform, SpawnParams);
 		}
 	}
 }
@@ -229,7 +206,7 @@ void AThirdPersonProjectCharacter::CastSpellAction(FKey Key)
 
 	auto name = Key.GetDisplayName().ToString();
 
-	FSpellAction Action;
+	FSpellAction Action = FSpellAction::Spell1;
 
 	if (name == "1") {
 		Action = FSpellAction::Spell1;

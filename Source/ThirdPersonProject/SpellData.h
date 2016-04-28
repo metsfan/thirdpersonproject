@@ -16,6 +16,12 @@ enum class FTargetType : uint8 {
  * 
  */
 class ASpellCPP;
+class ABaseCharacter;
+
+struct FSpellSpawnParams {
+	FVector TargetLocation;
+	ABaseCharacter* Target;
+};
 
 UCLASS(Blueprintable)
 class THIRDPERSONPROJECT_API USpellData : public UObject
@@ -53,6 +59,9 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 		bool AttachToParent;
 
-	ASpellCPP* SpawnSpell(UWorld* World, AActor* Owner, APawn* Instigator, const FTransform& Transform);
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+		bool SpawnRelativeToParent;
+
+	ASpellCPP* SpawnSpell(UWorld* World, AActor* Owner, APawn* Instigator, const FTransform& Transform, const FSpellSpawnParams& SpawnParams);
 
 };

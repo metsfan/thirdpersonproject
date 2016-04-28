@@ -33,16 +33,16 @@ void ASpellCPP::Tick( float DeltaTime )
 
 }
 
-void ASpellCPP::ApplyEffects(ABaseCharacter* target)
+void ASpellCPP::ApplyEffectsSingle(ABaseCharacter* target)
 {
 	TArray<ABaseCharacter *> Targets;
 	if (target) {
 		Targets.Add(target);
 	}
-	this->ApplyEffects(Targets);
+	this->ApplyEffectsMulti(Targets);
 }
 
-void ASpellCPP::ApplyEffects(const TArray<ABaseCharacter *>& targets)
+void ASpellCPP::ApplyEffectsMulti(const TArray<ABaseCharacter *>& targets)
 {
 	for (auto effect : Effects) {
 		effect->ApplyEffect(targets);

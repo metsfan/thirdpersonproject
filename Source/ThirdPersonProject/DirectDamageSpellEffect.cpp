@@ -5,10 +5,10 @@
 #include "BaseCharacter.h"
 
 
-void UDirectDamageSpellEffect::ApplyEffect(TArray<ABaseCharacter*> characters)
+void UDirectDamageSpellEffect::ApplyEffect_Implementation(const TArray<ABaseCharacter*>& Characters)
 {
-	for (auto character : characters) {
-		character->AddHealth(Damage * -1, Cast<ABaseCharacter>(this->GetOwner()->GetOwner()));
+	for (auto Character : Characters) {
+		Character->AddHealth(Damage * -1, Cast<ABaseCharacter>(this->GetOwner()->GetOwner()));
 	}
 }
 

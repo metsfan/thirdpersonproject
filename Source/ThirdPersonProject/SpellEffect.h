@@ -23,7 +23,8 @@ public:
 	// Called every frame
 	virtual void TickComponent( float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction ) override;
 
-	UFUNCTION(BlueprintCallable, Category="Default")
-		virtual void ApplyEffect(TArray<ABaseCharacter*> character);
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category="Default")
+	void ApplyEffect(const TArray<ABaseCharacter*>& Characters);
+	virtual void ApplyEffect_Implementation(const TArray<ABaseCharacter*>& Characters);
 	
 };

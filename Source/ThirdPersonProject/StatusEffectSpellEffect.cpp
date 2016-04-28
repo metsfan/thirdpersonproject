@@ -3,9 +3,9 @@
 #include "ThirdPersonProject.h"
 #include "StatusEffectSpellEffect.h"
 
-void UStatusEffectSpellEffect::ApplyEffect(TArray<ABaseCharacter*> characters)
+void UStatusEffectSpellEffect::ApplyEffect_Implementation(const TArray<ABaseCharacter*>& Characters)
 {
-	for (auto Character : characters) {
+	for (auto Character : Characters) {
 		Character->AddStatusEffect(StatusEffectClass, Cast<ABaseCharacter>(this->GetOwner()->GetInstigator()));
 	}
 }

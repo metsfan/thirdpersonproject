@@ -30,13 +30,17 @@ void AProjectileSpell::OnGeometryComponentBeginOverlap(class AActor* OtherActor,
 	this->OnCollision(OtherActor);
 }
 
-void AProjectileSpell::OnCollision(class AActor* OtherActor)
+void AProjectileSpell::OnCollision_Implementation(class AActor* OtherActor)
 {
 	if (Role == ROLE_Authority) {
 		auto character = Cast<ABaseCharacter>(OtherActor);
 		if (this->IsValidTarget(OtherActor)) {
-			this->ApplyEffects(character);
+			this->ApplyEffectsSingle(character);
 		}
+	}
+
+	if (DestroyOnValidCollision && this->IsValidTarget(OtherActor)) {
+		this->Destroy();
 	}
 }
 
@@ -67,6 +71,7 @@ void AProjectileSpell::GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & 
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(AProjectileSpell, GeometryComponent);
+	DOREPLIFETIME(AProjectileSpell, DestroyOnValidCollision);
 }
 
 void AProjectileSpell::Finish() {

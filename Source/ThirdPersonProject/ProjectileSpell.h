@@ -25,6 +25,9 @@ public:
 	UPROPERTY(BlueprintReadWrite, Replicated)
 		UShapeComponent* GeometryComponent = NULL;
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Replicated)
+		bool DestroyOnValidCollision;
+
 	void UpdateProjectileVelocity();
 
 	void StopCollision();
@@ -41,7 +44,9 @@ public:
 
 protected:
 	
-	virtual void OnCollision(class AActor* OtherActor);
+	UFUNCTION(BlueprintNativeEvent)
+	void OnCollision(class AActor* OtherActor);
+	virtual void OnCollision_Implementation(class AActor* OtherActor);
 
 	UFUNCTION(Server, Reliable, WithValidation)
 		virtual void ServerFinish();
