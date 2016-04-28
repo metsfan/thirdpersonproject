@@ -15,21 +15,21 @@ AScorchEarthSpell::AScorchEarthSpell(): Super()
 
 AScorchEarthSpell::~AScorchEarthSpell()
 {
-	if (GetWorld()) {
+	/*if (GetWorld()) {
 		GetWorldTimerManager().ClearTimer(Timer);
-	}
+	}*/
 }
 
 void AScorchEarthSpell::BeginPlay()
 {
 	Super::BeginPlay();
 
-	GetWorldTimerManager().SetTimer(Timer, this, &AScorchEarthSpell::TimerTick, 0.5, true);
+	//GetWorldTimerManager().SetTimer(Timer, this, &AScorchEarthSpell::TimerTick, 0.5, true);
 }
 
 void AScorchEarthSpell::TimerTick()
 {
-	auto TraceStart = this->GetActorLocation();
+	/*auto TraceStart = this->GetActorLocation();
 	auto TraceEnd = TraceStart + (FVector(0, 0, -1) * 1000);
 
 	FCollisionQueryParams TraceParams;
@@ -38,20 +38,10 @@ void AScorchEarthSpell::TimerTick()
 	GetWorld()->LineTraceSingleByChannel(OutHit, TraceStart, TraceEnd, ECollisionChannel::ECC_WorldStatic, TraceParams);
 
 	if (OutHit.Actor.IsValid()) {
-		FActorSpawnParameters spawnParams;
-		spawnParams.Owner = this->GetOwner();
-
+		FSpellSpawnParams spawnParams;
 		FTransform transform(OutHit.Location);
 
-		auto ActionData = NewObject<USpellData>(this, EffectBPClass->Class);
-		auto actor = Cast<ASpellCPP>(GetWorld()->SpawnActor(ActionData->Class, &transform, spawnParams));
-		if (actor) {
-			actor->TargetType = ActionData->TargetType;
-			if (ActionData->Duration > 0) {
-				actor->SetLifeSpan(ActionData->Duration);
-			}
-
-			ActionData->CooldownRemaining = ActionData->Cooldown;
-		}
-	}
+		auto EffectSpell = NewObject<USpellData>(this, EffectBPClass->Class);
+		EffectSpell->SpawnSpell(GetWorld(), GetOwner(), GetInstigator(), transform, spawnParams);
+	}*/
 }

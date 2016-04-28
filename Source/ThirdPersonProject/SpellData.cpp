@@ -6,7 +6,7 @@
 #include "ProjectileSpell.h"
 #include "HomingProjectileSpell.h"
 
-ASpellCPP* USpellData::SpawnSpell(UWorld* World, AActor* Owner, APawn* Instigator, const FTransform& Transform, const FSpellSpawnParams& SpawnParams)
+ASpellCPP* USpellData::SpawnSpell(UObject* WorldContextObject, AActor* Owner, APawn* Instigator, const FTransform& Transform, const FSpellSpawnParams& SpawnParams)
 {
 	FActorSpawnParameters spawnParams;
 	spawnParams.Owner = Owner;
@@ -17,7 +17,7 @@ ASpellCPP* USpellData::SpawnSpell(UWorld* World, AActor* Owner, APawn* Instigato
 		FinalTransform = Owner->GetTransform() * Transform;
 	}
 
-	auto Spell = Cast<ASpellCPP>(World->SpawnActor(Class, &FinalTransform, spawnParams));
+	auto Spell = Cast<ASpellCPP>(WorldContextObject->GetWorld()->SpawnActor(Class, &FinalTransform, spawnParams));
 	if (Spell) {
 		if (AttachToParent) {
 			Spell->AttachRootComponentToActor(Owner);
@@ -43,4 +43,10 @@ ASpellCPP* USpellData::SpawnSpell(UWorld* World, AActor* Owner, APawn* Instigato
 	CooldownRemaining = Cooldown;
 
 	return Spell;
+}
+
+ASpellCPP* USpellData::SpawnSpellOfType(UObject* WorldContextObject, TSubclassOf<USpellData> Type, AActor* Owner, APawn* Instigator, const FTransform& Transform, const FSpellSpawnParams& SpawnParams)
+{
+	auto SpellData = NewObject<USpellData>(WorldContextObject, Type);
+	return SpellData->SpawnSpell(WorldContextObject, Owner, Instigator, Transform, SpawnParams);
 }

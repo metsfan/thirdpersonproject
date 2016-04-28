@@ -18,8 +18,14 @@ enum class FTargetType : uint8 {
 class ASpellCPP;
 class ABaseCharacter;
 
+USTRUCT(Blueprintable)
 struct FSpellSpawnParams {
+	GENERATED_BODY()
+
+	UPROPERTY(BlueprintReadWrite)
 	FVector TargetLocation;
+
+	UPROPERTY(BlueprintReadWrite)
 	ABaseCharacter* Target;
 };
 
@@ -62,6 +68,10 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 		bool SpawnRelativeToParent;
 
-	ASpellCPP* SpawnSpell(UWorld* World, AActor* Owner, APawn* Instigator, const FTransform& Transform, const FSpellSpawnParams& SpawnParams);
+	UFUNCTION(BlueprintCallable, Category = "Spawn", meta=(WorldContext = "WorldContextObject"))
+	ASpellCPP* SpawnSpell(UObject* WorldContextObject, AActor* Owner, APawn* Instigator, const FTransform& Transform, const FSpellSpawnParams& SpawnParams);
+
+	UFUNCTION(BlueprintCallable, Category = "Spawn", meta = (WorldContext = "WorldContextObject"))
+	static ASpellCPP* SpawnSpellOfType(UObject* WorldContextObject, TSubclassOf<USpellData> Type, AActor* Owner, APawn* Instigator, const FTransform& Transform, const FSpellSpawnParams& SpawnParams);
 
 };
