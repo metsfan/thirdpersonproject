@@ -234,6 +234,10 @@ bool ABaseCharacter::AddStatusEffect_Validate(TSubclassOf<UStatusEffect> Effect,
 
 void ABaseCharacter::AddStatusEffect_Implementation(TSubclassOf<UStatusEffect> Effect, ABaseCharacter* StatusInstigator)
 {
+	if (!Effect) {
+		return;
+	}
+
 	UStatusEffect* ExistingEffect = nullptr;
 	for (auto StatusEffect : StatusEffects) {
 		if (Effect == StatusEffect->GetClass()) {

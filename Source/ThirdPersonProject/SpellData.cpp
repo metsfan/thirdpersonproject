@@ -14,7 +14,7 @@ ASpellCPP* USpellData::SpawnSpell(UObject* WorldContextObject, AActor* Owner, AP
 
 	FTransform FinalTransform = Transform;
 	if (SpawnRelativeToParent) {
-		FinalTransform = Owner->GetTransform() * Transform;
+		FinalTransform = Transform * Owner->GetTransform();
 	}
 
 	auto Spell = Cast<ASpellCPP>(WorldContextObject->GetWorld()->SpawnActor(Class, &FinalTransform, spawnParams));

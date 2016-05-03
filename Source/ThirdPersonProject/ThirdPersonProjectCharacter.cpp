@@ -130,7 +130,7 @@ bool AThirdPersonProjectCharacter::ExecuteSpell_Validate(FSpellAction action, co
 
 void AThirdPersonProjectCharacter::ExecuteSpell_Implementation(FSpellAction action, const FVector& crosshairPosition)
 {
-	if (SpellData.Contains(action) && IsAlive() && (ActiveSpell.Get() == NULL || ActiveSpell.Get()->GetLifeSpan() == 0)) {
+	if (SpellData.Contains(action) && IsAlive() && !(ActiveSpell.IsValid() && ActiveSpell->IsAttachedTo(this))) {
 		auto ActionData = SpellData[action];
 
 		if (ActionData && ActionData->CooldownRemaining <= 0) {
